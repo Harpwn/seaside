@@ -1,0 +1,16 @@
+{
+    "rootDir": ".", 
+    "compilerOptions": {
+      "target": "es5",
+      "module": "none",
+      "lib": ["dom", "esnext"],  
+      "sourceMap": false,
+      "outFile": "seaside.js",
+    },
+    "files": [
+        "bga-framework.d.ts",
+        "seaside.d.ts",
+        "seaside.ts",
+        "define.ts"
+    ]
+}

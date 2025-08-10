@@ -1,0 +1,24 @@
+{
+    "player": {
+        "points-crabs-rocks": {
+            "id": 10,
+            "name": "Number of Crabs & Rock Pools",
+            "type": "int"
+        },
+        "points-isopod-birds": {
+            "id": 11,
+            "name": "Number of Isopods & Sandpipers",
+            "type": "int"
+        },
+        "points-beach-shells": {
+            "id": 12,
+            "name": "Number of Beaches & Shells",
+            "type": "int"
+        },
+        "points-waves": {
+            "id": 13,
+            "name": "Number of Waves",
+            "type": "int"
+        }
+    }
+}
