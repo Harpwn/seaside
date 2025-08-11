@@ -19,8 +19,23 @@ class Seaside extends GameGui<SeasideGamedatas> {
     this.getGameAreaElement().insertAdjacentHTML(
       "beforeend",
       `<div id="seaside-game-area">
+        <div id="seaside-sea">
+          <div id="seaside-draw-bag"></div>
+          <div id="seaside-other-players"></div>
+          <div id="seaside-sea-tokens">
+          </div>
+          <div id="seaside-player-area"></div>
+        </div>
       </div>`
     );
+
+    Object.keys(gamedatas.players).forEach(player_id => {
+      if(this.player_id.toString() != player_id) {
+        document.getElementById("seaside-other-players").insertAdjacentHTML("beforeend", `<div id="seaside-other-player-${player_id}" class="seaside-other-player"></div>`);
+      }
+    });
+
+    //Per player, create a "Shore" area
 
     //Setup game notifications to handle (see "setupNotifications" method below)
     this.setupNotifications();
@@ -58,6 +73,4 @@ class Seaside extends GameGui<SeasideGamedatas> {
     console.log("notifications subscriptions setup");
     this.bgaSetupPromiseNotifications();
   }
-
-
 }

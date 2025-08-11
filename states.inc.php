@@ -60,19 +60,16 @@ $machinestates = [
 
     2 => GameStateBuilder::create()
         ->name('playerTurn')
-        ->description(clienttranslate('${actplayer} must play a card or pass'))
-        ->descriptionmyturn(clienttranslate('${you} must play a card or pass'))
+        ->description(clienttranslate('${actplayer} must choose a side to play'))
+        ->descriptionmyturn(clienttranslate('${you} must choose a side to play'))
         ->type(StateType::ACTIVE_PLAYER)
         ->args('argPlayerTurn')
         ->possibleactions([
-            // these actions are called from the front with bgaPerformAction, and matched to the function on the game.php file
-            'actPlayCard', 
-            'actPass',
+            'actPlayToken',
         ])
         ->transitions([
-            'playCard' => 3, 
-            'pass' => 3,
-        ])
+            'tokenPlayed' => 3,
+        ]) 
         ->build(),
 
     3 => GameStateBuilder::create()

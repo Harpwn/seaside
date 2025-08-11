@@ -1,3 +1,80 @@
   #seaside-game-area {
-      background-color: rgba(0,0,0,0.5);
+    background-color: rgba(0, 0, 0, 0.5);
+
+    #seaside-draw-bag {
+      background-image: url('img/draw-bag.png');
+      background-repeat: no-repeat;
+      position: absolute;
+      top: 30%;
+      margin-left: 10px;
+      width: 20vh;
+      height: 20vh;
+      background-size: contain;
+    }
+
+    #seaside-sea {
+      display: flex;
+      flex-direction: column;
+      min-height: 75vh;
+      background-color: darkblue;
+    }
+
+    #seaside-other-players {
+      height: 10vh;
+      display: flex;
+      flex-direction: row;
+      gap: 10px;
+
+      .seaside-other-player {
+        flex-grow: 1;
+        background: sandybrown;
+
+      }
+    }
+
+    #seaside-sea-tokens {
+      border: 5px dashed lightblue;
+      flex-grow: 1;
+    }
+
+    #seaside-player-area {
+      background-color: sandybrown;
+      height: 20vh;
+    }
+
+    .seaside-tile {
+      background-image: url("img/chips.png");
+      height: 75px;
+      width: 75px;
+      background-repeat: no-repeat;
+      background-size: 700%;
+
+      &.seaside-tile-wave {
+        background-position-x: -0px;
+      }
+
+      &.seaside-tile-rocks {
+        background-position-x: -74px;
+      }
+
+      &.seaside-tile-isopod {
+        background-position-x: -147px;
+      }
+
+      &.seaside-tile-shell {
+        background-position-x: -223px;
+      }
+
+      &.seaside-tile-crab {
+        background-position-x: -298px;
+      }
+
+      &.seaside-tile-bird {
+        background-position-x: -373px;
+      }
+
+      &.seaside-tile-beach {
+        background-position-x: -449px;
+      }
+    }
   }
