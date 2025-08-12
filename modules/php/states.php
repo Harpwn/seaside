@@ -30,11 +30,4 @@ trait StatesTrait
             $this->gamestate->nextState("nextPlayer");
         }
     }
-
-    public function stEndScore(): void
-    {
-        // Here, we would compute scores if they are not updated live, and compute average statistics
-
-        $this->gamestate->nextState();
-    }
 }

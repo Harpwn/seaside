@@ -17,74 +17,87 @@
 use Bga\GameFramework\GameStateBuilder;
 use Bga\GameFramework\StateType;
 
-/*
-   Game state machine is a tool used to facilitate game developpement by doing common stuff that can be set up
-   in a very easy way from this configuration file.
-
-   Please check the BGA Studio presentation about game state to understand this, and associated documentation.
-
-   Summary:
-
-   States types:
-   _ activeplayer: in this type of state, we expect some action from the active player.
-   _ multipleactiveplayer: in this type of state, we expect some action from multiple players (the active players)
-   _ game: this is an intermediary state where we don't expect any actions from players. Your game logic must decide what is the next game state.
-   _ manager: special type for initial and final state
-
-   Arguments of game states:
-   _ name: the name of the GameState, in order you can recognize it on your own code.
-   _ description: the description of the current game state is always displayed in the action status bar on
-                  the top of the game. Most of the time this is useless for game state with `StateType::GAME` type.
-   _ descriptionmyturn: the description of the current game state when it's your turn.
-   _ type: defines the type of game states (activeplayer / multipleactiveplayer / game / manager)
-   _ action: name of the method to call when this game state become the current game state. Usually, the
-             action method is prefixed by 'st' (ex: 'stMyGameStateName').
-   _ possibleactions: array that specify possible player actions on this step. It allows you to use `checkAction`
-                      method on both client side (Javacript: `this.checkAction`) and server side (PHP: `$this->checkAction`).
-                      Note that autowired actions and calls with this.bgaPerformAction call the checkAction except if it's explicitely disabled in the call
-   _ transitions: the transitions are the possible paths to go from a game state to another. You must name
-                  transitions in order to use transition names in `nextState` PHP method, and use IDs to
-                  specify the next game state for each transition.
-   _ args: name of the method to call to retrieve arguments for this gamestate. Arguments are sent to the
-           client side to be used on `onEnteringState` or to set arguments in the gamestate description.
-   _ updateGameProgression: when specified, the game progression is updated (=> call to your getGameProgression
-                            method).
-*/
-
-//    !! It is not a good idea to modify this file when a game is running !!
-
 
 $machinestates = [
-    // only keep this line if your initial state is not 2. In that case, uncomment and replace '2' by your first state id.
-    // 1 => GameStateBuilder::gameSetup(2)->build(), 
+    GAME_STATE_GAME_SETUP => GameStateBuilder::gameSetup(GAME_STATE_PLAYER_PLAY_TOKEN)->build(), 
 
-    2 => GameStateBuilder::create()
-        ->name('playerTurn')
+    GAME_STATE_PLAYER_PLAY_TOKEN => GameStateBuilder::create()
+        ->name('playToken')
         ->description(clienttranslate('${actplayer} must choose a side to play'))
         ->descriptionmyturn(clienttranslate('${you} must choose a side to play'))
         ->type(StateType::ACTIVE_PLAYER)
-        ->args('argPlayerTurn')
+        ->args('argPlayToken')
         ->possibleactions([
             'actPlayToken',
         ])
         ->transitions([
-            'tokenPlayed' => 3,
+            TRANSITION_END_TURN => GAME_STATE_NEXT_PLAYER,
+            TRANSITION_PLAY_AGAIN => GAME_STATE_PLAYER_PLAY_TOKEN,
+            TRANSITION_STEAL_CRAB => GAME_STATE_PLAYER_ROCK_STEAL_CRAB,
+            TRANSITION_FLIP_BEACH => GAME_STATE_PLAYER_WAVE_FLIP_BEACH,
+            TRANSITION_SELECT_ISOPODS => GAME_STATE_PLAYER_SANDPIPER_SELECT_ISOPODS
         ]) 
         ->build(),
 
-    3 => GameStateBuilder::create()
+    GAME_STATE_PLAYER_ROCK_STEAL_CRAB => GameStateBuilder::create()
+        ->name('stealCrab')
+        ->description(clienttranslate('${actplayer} may steal a crab from another player'))
+        ->descriptionmyturn(clienttranslate('${you} may steal a crab from another player'))
+        ->type(StateType::ACTIVE_PLAYER)
+        ->args('argStealCrab')
+        ->possibleactions([
+            'actStealCrab',
+        ])
+        ->transitions([
+            TRANSITION_END_TURN => GAME_STATE_NEXT_PLAYER,
+        ]) 
+        ->build(),
+
+    GAME_STATE_PLAYER_WAVE_FLIP_BEACH => GameStateBuilder::create()
+        ->name('flipBeach')
+        ->description(clienttranslate('${actplayer} may flip a beach'))
+        ->descriptionmyturn(clienttranslate('${you} may flip a beach'))
+        ->type(StateType::ACTIVE_PLAYER)
+        ->args('argFlipBeach')
+        ->possibleactions([
+            'actFlipBeach',
+        ])
+        ->transitions([
+            TRANSITION_END_TURN => GAME_STATE_NEXT_PLAYER,
+            TRANSITION_PLAY_AGAIN => GAME_STATE_PLAYER_PLAY_TOKEN,
+            TRANSITION_STEAL_CRAB => GAME_STATE_PLAYER_ROCK_STEAL_CRAB,
+            TRANSITION_FLIP_BEACH => GAME_STATE_PLAYER_WAVE_FLIP_BEACH,
+            TRANSITION_SELECT_ISOPODS => GAME_STATE_PLAYER_SANDPIPER_SELECT_ISOPODS
+        ]) 
+        ->build(),
+
+    GAME_STATE_PLAYER_SANDPIPER_SELECT_ISOPODS => GameStateBuilder::create()
+        ->name('selectIsopods')
+        ->description(clienttranslate('${actplayer} may take isopods from the sea'))
+        ->descriptionmyturn(clienttranslate('${you} may take isopods from the sea'))
+        ->type(StateType::ACTIVE_PLAYER)
+        ->args('argSelectIsopods')
+        ->possibleactions([
+            'actSelectIsopods',
+        ])
+        ->transitions([
+            TRANSITION_END_TURN => GAME_STATE_NEXT_PLAYER,
+        ]) 
+        ->build(),
+
+    GAME_STATE_NEXT_PLAYER => GameStateBuilder::create()
         ->name('nextPlayer')
         ->description('')
         ->type(StateType::GAME)
         ->action('stNextPlayer')
         ->updateGameProgression(true)
         ->transitions([
-            'endScore' => 98, 
-            'nextPlayer' => 2,
-        ])
+            TRANSITION_END_SCORE => GAME_STATE_END_GAME,
+            TRANSITION_NEXT_PLAYER => GAME_STATE_PLAYER_PLAY_TOKEN
+        ]) 
         ->build(),
 
-    98 => GameStateBuilder::endScore()->build(),
+    GAME_STATE_END_GAME => GameStateBuilder::create()->build(),
 ];
 
 

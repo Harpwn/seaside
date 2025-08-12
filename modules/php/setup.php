@@ -44,6 +44,6 @@ trait SetupTrait
         {
             $tokens[] = ['type' => 1, 'type_arg' => 1, 'side1' => $token[1], 'side2' => $token[2] ];
         }
-        $this->tokens->createCards($tokens, 'bag');
+        $this->tokens->createCards($tokens, BAG_LOCATION);
     }
 }

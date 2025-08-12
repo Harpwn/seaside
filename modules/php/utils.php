@@ -5,25 +5,30 @@
  */
 trait UtilsTrait
 {
-    function drawRandomToken($deck)
+    function drawRandomToken(): Token
     {
-        sort($deck);
-        $idx = bga_rand(0, count($deck) - 1); // find a random card
-        $drawn = $deck[$idx];
-        array_splice($deck, $idx, 1);
-        return $drawn;
+        return new Token($this->tokens->getCardOnTop(BAG_LOCATION));
     }
 
-    function getPlayersIds()
+    /**
+     * @return int[]
+     */
+    function getPlayersIds(): array
     {
         return array_keys($this->loadPlayersBasicInfos());
     }
 
-    function getAllTokensOfTypeForLocation(int $location, string $type, int $location_args = NULL) 
+    /**
+     * @return Token[]
+     */
+    function getAllTokensOfTypeForLocation(int $location, string $type, int $location_args = NULL): array
     {
         $tokens = $this->tokens->getCardsInLocation($location, $location_args);
-        return array_filter($tokens, function ($token) use ($type) {
+        $items = array_filter($tokens, function ($token) use ($type) {
             return (new Token($token))->getSide() === $type;
         });
+        return array_map(function ($item) {
+            return new Token($item);
+        }, $items);
     }
 }

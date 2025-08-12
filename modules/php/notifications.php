@@ -28,11 +28,20 @@ trait NotificationsTrait
 
     function nfTokensToPlayerArea(int $player_id, array $tokens, int $pile_id) {
         $ids = array_keys(array_filter(array_column($tokens, "call", "id")));
-        $this->notify->all("tokenToPlayerArea", clienttranslate('${token_side}\'s played into ${player_name}\'s shore'), [
+        $this->notify->all("tokensToPlayerArea", clienttranslate('${token_side}\'s played into ${player_name}\'s shore'), [
             "token_side" => $tokens[0]->getSide(),
             "token_ids" => $ids,
             "player_id" => $player_id,
             "pile_id" => $pile_id
+        ]);
+    }
+
+    function nfTokensToDiscard(int $player_id, array $tokens) {
+        $ids = array_keys(array_filter(array_column($tokens, "call", "id")));
+        $this->notify->all("tokensToDiscard", clienttranslate('${player_name} discards ${token_count} tokens'), [
+            "token_ids" => $ids,
+            "player_id" => $player_id,
+            "token_count" => count($ids)
         ]);
     }
 

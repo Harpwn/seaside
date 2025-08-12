@@ -9,6 +9,34 @@ trait LogicTrait
 {
     use UtilsTrait;
     use NotificationsTrait;
+    use DbTrait;
+
+    function playToken(Token $token, int $player_id): void
+    {
+        switch ($token->getSide()) {
+            case BEACH:
+                $this->handlePlayBeachToken($player_id, $token);
+                break;
+            case SANDPIPER:
+                $this->handlePlaySandpiperToken($player_id, $token);
+                break;
+            case ISOPOD:
+                $this->handlePlayIsopodToken($token);
+                break;
+            case CRAB:
+                $this->handlePlayCrabToken($token);
+                break;
+            case ROCK:
+                $this->handlePlayRockToken($player_id, $token);
+                break;
+            case SHELL:
+                $this->handlePlayShellToken($token);
+                break;
+            case WAVE:
+                $this->handlePlayWaveToken($player_id, $token);
+                break;
+        }
+    }
 
     function handlePlayBeachToken(int $player_id, Token $token)
     {
@@ -26,72 +54,146 @@ trait LogicTrait
         $shellsToMoveCount = min($playerBeachesCount, $seaShellsCount);
         $shellsToMove = array_slice($seaShells, 0, $shellsToMoveCount);
         $this->sendTokensToPlayerArea($shellsToMove, $player_id);
+
+        //End turn
+        $this->gamestate->nextState(TRANSITION_END_TURN);
     }
 
-    function handlePlaySandpipeToken(int $player_id, Token $token)
+    function handlePlaySandpiperToken(int $player_id, Token $sandpiper)
     {
         $playerSandpipers = $this->getAllTokensOfTypeForLocation($player_id, SANDPIPER);
         if (count($playerSandpipers) === 0) {
-            $this->sendTokenToPlayerArea($token, $player_id, 100);
+            $this->sendTokenToPlayerArea($sandpiper, $player_id, SANDPIPER_PILE_INIT);
         }
         $newSandpiperPileId = max(array_column($playerSandpipers, 'location_args')) + 1;
         //Send token to player area
-        $this->sendTokenToPlayerArea($token, $player_id);
+        $this->sendTokenToPlayerArea($sandpiper, $player_id . $newSandpiperPileId);
 
-        //player must select any number of isopods from sea
-
-        //player discards any isopods / sandpiper piles smaller than ths biggest pile
+        //prompt player to select isopods
+        $this->gamestate->nextState(TRANSITION_SELECT_ISOPODS);
     }
 
-    function handlePlayIsopodToken(int $player_id, Token $token)
+    function handlePlayIsopodToken(Token $isopod)
     {
-        $this->sendTokenToSea($token);
-        //player plays again
+        $this->sendTokenToSea($isopod);
+        $this->gamestate->nextState(TRANSITION_PLAY_AGAIN);
     }
 
-    function handlePlayCrabToken(int $player_id, Token $token)
+    function handlePlayCrabToken(Token $crab)
     {
-        //Crab goes to sea and player plays again
-        $this->sendTokenToSea($token);
+        $this->sendTokenToSea($crab);
+        $this->gamestate->nextState(TRANSITION_PLAY_AGAIN);
     }
 
-    function handlePlayRockToken(int $player_id, Token $token)
+    function handlePlayRockToken(int $player_id, Token $rock)
     {
         $playerRocks = $this->getAllTokensOfTypeForLocation($player_id, ROCK);
         if (count($playerRocks) % 2 === 1) {
             //Odd number of rocks, attract crabs
 
-            //new pile id to place crabs and rocks
-            $newRockPileId = max(array_column($playerRocks, 'location_args')) + 1;
+            $newRockPileId = ROCK_PILE_INIT;
+            if (count($playerRocks) !== 0) {
+                //new pile id to place crabs and rocks
+                $newRockPileId = max(array_column($playerRocks, 'location_args')) + 1;
+            }
+
             //Find rock to create pair
             $unPiledRockToken = $this->getAllTokensOfTypeForLocation($player_id, ROCK, 0)[0];
+
             //Send main rock to player area
-            $this->sendTokenToPlayerArea($token, $player_id, $newRockPileId);
+            $this->sendTokenToPlayerArea($rock, $player_id, $newRockPileId);
             $this->sendTokenToPlayerArea($unPiledRockToken, $player_id, $newRockPileId);
-            //Send all crabs in sea to new pile
+
+            //Send all crabs in sea to player area
             $seaCrabs = $this->getAllTokensOfTypeForLocation(SEA_LOCATION, CRAB);
+            $this->sendTokensToPlayerArea($seaCrabs, $player_id);
 
             //Prompt player to steal crabs
-
+            $this->gamestate->nextState(TRANSITION_STEAL_CRAB);
         } else {
             //even number of rocks, crabs not interested
-            $this->sendTokenToPlayerArea($token, $player_id);
+            $this->sendTokenToPlayerArea($rock, $player_id);
+            $this->gamestate->nextState(TRANSITION_END_TURN);
         }
     }
 
-    function handlePlayShellToken(int $player_id, Token $token)
+    function handlePlayShellToken(Token $shell)
     {
-        //Shell goes to sea and player plays again
-        $this->sendTokenToSea($token);
+        $this->sendTokenToSea($shell);
+        $this->gamestate->nextState(TRANSITION_PLAY_AGAIN);
+
+        //End turn
+        $this->gamestate->nextState(TRANSITION_END_TURN);
     }
 
-    function handlePlayWaveToken(int $player_id, Token $token)
+    function handlePlayWaveToken(int $player_id, Token $wave)
     {
         //Send token to player area
-        $this->sendTokenToPlayerArea($token, $player_id);
+        $this->sendTokenToPlayerArea($wave, $player_id);
 
         //If player has any beaches, ask them if they want to flip one.
+        $playerBeaches = $this->getAllTokensOfTypeForLocation($player_id, BEACH);
+        if (count($playerBeaches) !== 0) {
+            //Prompt player to flip beach
 
+        }
+    }
+
+    function handleSelectIsopods(int $player_id, Token $sandpiper, array $isopod_ids)
+    {
+        //Get isopod tokens
+        $isopods = $this->tokens->getCards($isopod_ids);
+
+        //Send isopods to player area, pile of current sandpiper
+        $this->sendTokensToPlayerArea($isopods, $player_id, $sandpiper->locationArg);
+
+        $piles = [];
+        $piles[$sandpiper->id] = $isopod_ids;
+
+        // Get other piles
+        $playerSandpipers = $this->getAllTokensOfTypeForLocation($player_id, SANDPIPER);
+        foreach ($playerSandpipers as $playerSandpiper) {
+            $sandpiperToken = new Token($playerSandpiper);
+            if ($sandpiperToken->id !== $sandpiper->id) {
+                $sandpiperIsopods = $this->getAllTokensOfTypeForLocation($player_id, ISOPOD, $sandpiper->locationArg);
+                $piles[$playerSandpiper->id] = array_column($sandpiperIsopods, 'id');
+            }
+        }
+        //Remove all but the highest pile
+        $highestPileSize = max(array_map('count', $piles));
+
+        $smallerPiles = array_filter($piles, function ($pile) use ($highestPileSize) {
+            return count($pile) < $highestPileSize;
+        });
+
+
+        foreach ($smallerPiles as $pileTokens) {
+            $this->sendTokensToDiscard($pileTokens, $player_id);
+        }
+
+        //End turn
+        $this->gamestate->nextState(TRANSITION_END_TURN);
+    }
+
+    function handleStealCrab(int $player_id, int $victim_id)
+    {
+        //Get all crabs for victim player
+        $crabs = $this->getAllTokensOfTypeForLocation($victim_id, CRAB);
+
+        //Send one crab to player board
+        $this->sendTokenToPlayerArea($crabs[0], $player_id);
+
+        //End turn
+        $this->gamestate->nextState(TRANSITION_END_TURN);
+    }
+
+    function handleFlipBeach(int $player_id, Token $beach) {
+        //Flip the beach
+        $beach->flip();
+        $this->dbFlipToken($beach);
+
+        //Play it
+        $this->playToken($beach, $player_id);
     }
 
     function sendTokenToSea(Token $token)
@@ -110,5 +212,11 @@ trait LogicTrait
     {
         $this->tokens->moveCards($tokens, $player_id, $pile_id);
         $this->nfTokensToPlayerArea($player_id, $tokens, $pile_id);
+    }
+
+    function sendTokensToDiscard(array $tokens, int $player_id)
+    {
+        $this->tokens->moveCards($tokens, DISCARD_LOCATION);
+        $this->nfTokensToDiscard($player_id, $tokens);
     }
 }

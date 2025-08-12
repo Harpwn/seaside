@@ -40,6 +40,11 @@ class Token
         }
     }
 
+    public function flip()
+    {
+        $this->flipped = !$this->flipped;
+    }
+
     public function getSide()
     {
         if ($this->flipped) {

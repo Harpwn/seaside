@@ -8,7 +8,7 @@ trait ArgsTrait {
         game state.
     */
 
-    public function argPlayerTurn(): array
+    public function argPlayToken(): array
     {
         // Get some values from the current game situation from the database.
         $token = $this->drawRandomToken();
@@ -17,5 +17,22 @@ trait ArgsTrait {
             "Token" => $token
         ];
     }
-    
+
+    public function argStealCrab(): array
+    {
+        return [
+        ];
+    }
+
+    public function argFlipBeach(): array
+    {
+        return [
+        ];
+    }
+
+    public function argSelectIsopods(): array
+    {
+        return [
+        ];
+    }
 }

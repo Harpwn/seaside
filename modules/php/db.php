@@ -13,4 +13,11 @@ trait DbTrait
         $sql .= implode(',', $values);
         $this->DbQuery($sql);
     }
+
+    private function dbFlipToken(Token $token) {
+        // bool as tinyiny
+        $tinyIntFlipped = $token->flipped ? 1 : 0;
+        $tokenId = $token->id;
+        $this->DbQuery("UPDATE token SET `flipped` = $tinyIntFlipped WHERE `card_id` = $tokenId");
+    }
 }
