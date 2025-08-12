@@ -17,16 +17,6 @@ declare(strict_types=1);
  * In this PHP file, you are going to defines the rules of the game.
  */
 
-require_once('modules/php/constants.inc.php');
-require_once('modules/php/utils.php');
-require_once('modules/php/actions.php');
-require_once('modules/php/states.php');
-require_once('modules/php/args.php');
-require_once('modules/php/debug-utils.php');
-require_once('modules/php/misc.php');
-require_once('modules/php/setup.php');
-require_once('module/php/notifications.php');
-
 class Game extends \Bga\GameFramework\Table
 {
     use UtilsTrait;
@@ -37,6 +27,8 @@ class Game extends \Bga\GameFramework\Table
     use MiscTrait;
     use SetupTrait;
     use NotificationsTrait;
+    use DbTrait;
+    use LogicTrait;
 
     private \Bga\GameFramework\Components\Deck $tokens;
 

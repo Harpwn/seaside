@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * @property \Bga\GameFramework\Components\Deck $tokens
+ */
 trait SetupTrait
 {
     /**
@@ -8,24 +11,11 @@ trait SetupTrait
      */
     protected function setupNewGame($players, $options = [])
     {
-        // Set the colors of the players with HTML color code. The default below is red/green/blue/orange/brown. The
-        // number of colors defined here must correspond to the maximum number of players allowed for the gams.
         $gameinfos = $this->getGameinfos();
         $default_colors = $gameinfos['player_colors'];
-
-        // Create players
-        // Note: if you added some extra field on "player" table in the database (dbmodel.sql), you can initialized it there.
-        $sql = "INSERT INTO player (player_id, player_color, player_canal, player_name, player_avatar) VALUES ";
-        $values = [];
-        foreach ($players as $player_id => $player) {
-            $color = array_shift($default_colors);
-            $values[] = "('" . $player_id . "','$color','" . $player['player_canal'] . "','" . addslashes($player['player_name']) . "','" . addslashes($player['player_avatar']) . "')";
-        }
-        $sql .= implode(',', $values);
-        $this->DbQuery($sql);
+        $this->createPlayers($players, $default_colors);
         $this->reattributeColorsBasedOnPreferences($players, $gameinfos['player_colors']);
         $this->reloadPlayersBasicInfos();
-
         $this->activeNextPlayer();
     }
 
@@ -49,13 +39,11 @@ trait SetupTrait
 
     function setupTokens()
     {
-        foreach ([1, 2] as $row) {
-            $tokens = [];
-            foreach ($this->tokens[$row] as $index => $cardType) {
-                $tokens[] = ['type' => $row, 'type_arg' => $index, 'nbr' => 1];
-            }
-
-            $this->tokens->createCards($tokens, "deck$row");
+        $tokens = [];
+        foreach (TOKENS as $token) 
+        {
+            $tokens[] = ['type' => 1, 'type_arg' => 1, 'side1' => $token[1], 'side2' => $token[2] ];
         }
+        $this->tokens->createCards($tokens, 'bag');
     }
 }

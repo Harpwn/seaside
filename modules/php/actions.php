@@ -5,12 +5,15 @@
  */
 trait ActionTrait
 {
+    use UtilsTrait;
+    use NotificationsTrait;
+    use ArgsTrait;
+    use LogicTrait;
 
     /*
         Each time a player is doing some game action, one of the methods below is called.
         (note: each method below must match an input method in nicodemus.action.php)
     */
-
     public function actPlayToken()
     {
         $player_id = (int)$this->getActivePlayerId();
@@ -18,53 +21,43 @@ trait ActionTrait
         // check input values
         $args = $this->argPlayerTurn();
 
-        $tokenData = $this->getTokenData($args['Token']['id'], $args['Side']);
-        $token = $this->tokens->getCard($args['Token']['id']);
+        $token_id = $args['token_id'];
+        $flipped = $args['flipped'];
+
+        $token = new Token($this->token->getCard($token_id, $flipped));
 
         $this->nfTokenPlayed($player_id, $token);
 
+        $this->playToken($token, $player_id);
+
         // at the end of the action, move to the next state
-        $this->gamestate->nextState("playTokenSide");
+        $this->gamestate->nextState("playToken");
     }
 
-    function playTokenSide($tokenData, $side, $player_id): void
+    function playToken(Token $token, int $player_id): void
     {
-        switch ($tokenData[$side]) {
-            case 'BEACH':
-                $this->handlePlayBeachToken($player_id);
+        switch ($token->getSide()) {
+            case BEACH:
+                $this->handlePlayBeachToken($player_id, $token);
                 break;
-            case 'BIRD':
-                $this->handlePlayBirdToken($player_id);
+            case SANDPIPER:
+                $this->handlePlaySandpiperToken($player_id, $token);
                 break;
-            case 'BUG':
-                $this->handlePlayBugToken($player_id);
+            case ISOPOD:
+                $this->handlePlayIsopodToken($player_id, $token);
                 break;
-            case 'CRAB':
-                $this->handlePlayCrabToken($player_id);
+            case CRAB:
+                $this->handlePlayCrabToken($player_id, $token);
                 break;
-            case 'ROCK':
-                $this->handlePlayRockToken($player_id);
+            case ROCK:
+                $this->handlePlayRockToken($player_id, $token);
                 break;
-            case 'SHELL':
-                $this->handlePlayShellToken($player_id);
+            case SHELL:
+                $this->handlePlayShellToken($player_id, $token);
                 break;
-            case 'WAVE':
-                $this->handlePlayWaveToken($player_id);
+            case WAVE:
+                $this->handlePlayWaveToken($player_id, $token);
                 break;
         }
     }
-
-    function handlePlayBeachToken($player_id) {}
-
-    function handlePlayBirdToken($player_id) {}
-
-    function handlePlayBugToken($player_id) {}
-
-    function handlePlayCrabToken($player_id) {}
-
-    function handlePlayRockToken($player_id) {}
-
-    function handlePlayShellToken($player_id) {}
-
-    function handlePlayWaveToken($player_id) {}
 }

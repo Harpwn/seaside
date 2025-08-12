@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * @property \Bga\GameFramework\Components\Deck $tokens
+ */
 trait UtilsTrait
 {
     function drawRandomToken($deck)
@@ -16,7 +19,11 @@ trait UtilsTrait
         return array_keys($this->loadPlayersBasicInfos());
     }
 
-    function getTokenData($tokenId) {
-        return TOKENS[$tokenId] ?? null;
+    function getAllTokensOfTypeForLocation(int $location, string $type, int $location_args = NULL) 
+    {
+        $tokens = $this->tokens->getCardsInLocation($location, $location_args);
+        return array_filter($tokens, function ($token) use ($type) {
+            return (new Token($token))->getSide() === $type;
+        });
     }
 }
