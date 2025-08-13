@@ -1,4 +1,10 @@
 <?php
+declare(strict_types=1);
+
+require_once('utils.php');
+require_once('args.php');
+require_once('logic.php');
+require_once('notifications.php');
 
 /**
  * @property \Bga\GameFramework\Components\Deck $tokens
@@ -23,11 +29,11 @@ trait ActionTrait
         $token_id = $args['token_id'];
         $flipped = $args['flipped'];
 
-        $token = new Token($this->token->getCard($token_id, $flipped));
+        $token = new Token($this->token->getCard($token_id));
 
-        $this->nfTokenPlayed($player_id, $token);
+        //Validation Here
 
-        $this->playToken($token, $player_id);
+        $this->playToken($token, $player_id, $flipped);
     }
 
     public function actStealCrab() 
@@ -36,6 +42,11 @@ trait ActionTrait
 
         // check input values
         $args = $this->argStealCrab();
+        $victim_id = $args['victim_id'];
+
+        //Validation here
+
+        $this->handleStealCrab($player_id, $victim_id);
     }
 
     public function actFlipBeach()
@@ -44,6 +55,13 @@ trait ActionTrait
 
         // check input values
         $args = $this->argFlipBeach();
+
+        $token_id = $args['beach_id'];
+        $beach = new Token($this->token->getCard($token_id));
+
+        //Validation here
+
+        $this->handleFlipBeach($player_id, $beach);
     }
 
     public function actSelectIsopods()
@@ -52,5 +70,15 @@ trait ActionTrait
 
         // check input values
         $args = $this->argSelectIsopods();
+        $token_id = $args['sandpiper_id'];
+        $isopod_ids = $args['isopod_ids'];
+
+        $sandpiper = new Token($this->token->getCard($token_id));
+
+        $isopods = $this->tokens->getCards($isopod_ids);
+
+        //Validation here
+
+        $this->handleSelectIsopods($player_id, $sandpiper, $isopods);
     }
 }

@@ -4,52 +4,34 @@ class Token
 {
     public int $id;
 
-    public int $type;
-
-    public string $side1;
-    public string $side2;
-
+    public string $type;
     public string $location;
 
     /** 
      * 0 - Main, Unpiled
      * 1 - 10 - Reservered For Rock Pairs
-     * 11+ - Reserved for Sandpiper/Isopod piles
+     * 100+ - Reserved for Sandpiper/Isopod piles
      */
     public int $locationArg;
 
-    /**
-     * false: side1
-     * true: side2
-     */
     public bool $flipped;
 
-    public function __construct($dbCard, bool $flipped = null)
+    public function __construct($dbCard)
     {
-        $this->id = intval($dbCard['card_id']);
-        $this->location = $dbCard['card_location'];
-        $this->locationArg = intval($dbCard['card_location_arg']);
-        $this->type = intval($dbCard['card_type']);
-        $this->side1 = intval($dbCard['side1']);
-        $this->side2 = intval($dbCard['side2']);
-
-        if ($flipped === null) {
-            $this->flipped = $dbCard['card_flipped'] == 1;
-        } else {
-            $this->flipped = $flipped;
-        }
+        $this->id = intval($dbCard['id']);
+        $this->location = $dbCard['location'];
+        $this->locationArg = intval($dbCard['location_arg']);
+        $this->type = (string)$dbCard['type'];
     }
 
-    public function flip()
+    public function getActiveType(bool $flipped): string
     {
-        $this->flipped = !$this->flipped;
-    }
-
-    public function getSide()
-    {
-        if ($this->flipped) {
-            return $this->side2;
+        //split $type by /
+        $types = explode('/', $this->type);
+        if($flipped) {
+            return $types[1];
         }
-        return $this->side1;
+
+        return $types[0];
     }
 }

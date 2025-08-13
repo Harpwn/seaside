@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 const GAME_STATE_GAME_SETUP = 1;
 
@@ -28,8 +29,8 @@ const CRAB = 'CRAB';
 const ROCK = 'ROCK';
 
 const SEA_LOCATION = "SEA";
-const BAG_LOCATION = "BAG";
-const DISCARD_LOCATION = "DISCARD";
+const BAG_LOCATION = "deck";
+const DISCARD_LOCATION = "discard";
 
 const SANDPIPER_PILE_INIT = 100;
 const ROCK_PILE_INIT = 1;

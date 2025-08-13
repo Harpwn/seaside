@@ -46,10 +46,18 @@ class Seaside extends GameGui<SeasideGamedatas> {
   public onEnteringState(stateName: string, args: any) {
     console.log("Entering state: " + stateName, args);
     switch (stateName) {
-      case "playerTurn":
+      case SeasideGameStates.PlayToken:
+        if (this.isCurrentPlayerActive()) {
+          
+        }
         break;
-
-      case "endGame":
+      case SeasideGameStates.NextPlayer:
+        break;
+      case SeasideGameStates.FlipBeach:
+        break;
+      case SeasideGameStates.StealCrab:
+        break;
+      case SeasideGameStates.SelectIsopods:
         break;
     }
   }
@@ -57,16 +65,32 @@ class Seaside extends GameGui<SeasideGamedatas> {
   public onLeavingState(stateName: string) {
     console.log("Leaving state: " + stateName);
     switch (stateName) {
-      case "playerTurn":
+      case SeasideGameStates.PlayToken:
         break;
-
-      case "endGame":
+      case SeasideGameStates.NextPlayer:
+        break;
+      case SeasideGameStates.FlipBeach:
+        break;
+      case SeasideGameStates.StealCrab:
+        break;
+      case SeasideGameStates.SelectIsopods:
         break;
     }
   }
 
   public onUpdateActionButtons(stateName: string, args: any) {
-
+    switch (stateName) {
+      case SeasideGameStates.PlayToken:
+        break;
+      case SeasideGameStates.NextPlayer:
+        break;
+      case SeasideGameStates.FlipBeach:
+        break;
+      case SeasideGameStates.StealCrab:
+        break;
+      case SeasideGameStates.SelectIsopods:
+        break;
+    }
   }
 
   public setupNotifications() {

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 /**
  * @property \Bga\GameFramework\Components\Deck $tokens
@@ -17,6 +18,7 @@ trait SetupTrait
         $this->reattributeColorsBasedOnPreferences($players, $gameinfos['player_colors']);
         $this->reloadPlayersBasicInfos();
         $this->activeNextPlayer();
+        $this->setupTokens();
     }
 
     protected function getAllDatas(): array
@@ -39,11 +41,13 @@ trait SetupTrait
 
     function setupTokens()
     {
-        $tokens = [];
+        $deck = array();
         foreach (TOKENS as $token) 
         {
-            $tokens[] = ['type' => 1, 'type_arg' => 1, 'side1' => $token[1], 'side2' => $token[2] ];
+            $typeVal = "{$token[1]}/{$token[2]}";
+            $deck[] = array('type' => $typeVal, 'type_arg' => 1, 'nbr' => 1);
         }
-        $this->tokens->createCards($tokens, BAG_LOCATION);
+        $this->tokens->createCards($deck);
+        $this->tokens->shuffle(BAG_LOCATION);
     }
 }

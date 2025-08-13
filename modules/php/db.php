@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 trait DbTrait
 {
@@ -14,10 +15,18 @@ trait DbTrait
         $this->DbQuery($sql);
     }
 
+    private function dbGetTokenFlipped(Token $token) : bool
+    {
+        //get flipped col from cards table by id 
+        return $this->getUniqueValueFromDB("SELECT `flipped` FROM `card` WHERE `card_id` = " . $token->id) == 1;
+    }
+
     private function dbFlipToken(Token $token) {
-        // bool as tinyiny
-        $tinyIntFlipped = $token->flipped ? 1 : 0;
+
+        //Get opposite side value
+        $tinyIntFlipped = $token->flipped ? 0 : 1;
         $tokenId = $token->id;
-        $this->DbQuery("UPDATE token SET `flipped` = $tinyIntFlipped WHERE `card_id` = $tokenId");
+        //Set in DB
+        $this->DbQuery("UPDATE `card` SET `flipped` = $tinyIntFlipped WHERE `card_id` = $tokenId");
     }
 }

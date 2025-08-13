@@ -1,6 +1,10 @@
 <?php
+declare(strict_types=1);
+
+require_once('utils.php');
 
 trait ArgsTrait {
+    use UtilsTrait;
 
     /*
         Here, you can create methods defined as "game state arguments" (see "args" property in states.inc.php).
@@ -20,19 +24,23 @@ trait ArgsTrait {
 
     public function argStealCrab(): array
     {
+
         return [
+            "PlayersWithCrabsIds" => []
         ];
     }
 
     public function argFlipBeach(): array
     {
         return [
+            "FlippableBeachIds" => []
         ];
     }
 
     public function argSelectIsopods(): array
     {
         return [
+            "SelectableIsopodIds" => []
         ];
     }
 }

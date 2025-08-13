@@ -1,18 +1,4 @@
 <?php
-/**
- *------
- * BGA framework: Gregory Isabelli & Emmanuel Colin & BoardGameArena
- * Seaside implementation : © <Your name here> <Your email address here>
- *
- * This code has been produced on the BGA studio platform for use on http://boardgamearena.com.
- * See http://en.boardgamearena.com/#!doc/Studio for more information.
- * -----
- *
- * states.inc.php
- *
- * Seaside game states description
- *
- */
 
 use Bga\GameFramework\GameStateBuilder;
 use Bga\GameFramework\StateType;
@@ -97,7 +83,13 @@ $machinestates = [
         ]) 
         ->build(),
 
-    GAME_STATE_END_GAME => GameStateBuilder::create()->build(),
+    GAME_STATE_END_GAME => GameStateBuilder::create()
+        ->name('gameEnd')
+        ->description(clienttranslate('End of game'))
+        ->type(StateType::GAME)
+        ->action('stGameEnd')
+        ->args('argGameEnd')
+        ->build(),
 ];
 
 
