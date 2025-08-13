@@ -134,8 +134,7 @@ trait LogicTrait
         //If player has any beaches, ask them if they want to flip one.
         $playerBeaches = $this->getAllTokensOfTypeForLocation($player_id, BEACH);
         if (count($playerBeaches) !== 0) {
-            //Prompt player to flip beach
-
+            $this->gamestate->nextState(TRANSITION_FLIP_BEACH);
         }
     }
 
@@ -161,12 +160,9 @@ trait LogicTrait
         }
         //Remove all but the highest pile
         $highestPileSize = max(array_map('count', $piles));
-
         $smallerPiles = array_filter($piles, function ($pile) use ($highestPileSize) {
             return count($pile) < $highestPileSize;
         });
-
-
         foreach ($smallerPiles as $pileTokens) {
             $this->sendTokensToDiscard($pileTokens, $player_id);
         }
