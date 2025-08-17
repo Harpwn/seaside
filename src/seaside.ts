@@ -1,17 +1,10 @@
-// @ts-ignore
-GameGui = (function () {
-  // this hack required so we fake extend GameGui
-  function GameGui() {}
-  return GameGui;
-})();
+import GameGui from "ebg/core/gamegui";
+import { SeasideGameStates } from "./enums";
 
 // Note: it does not really extend it in es6 way, you cannot call super you have to use dojo way
-class Seaside extends GameGui<SeasideGamedatas> {
-  constructor() {
-    super();
-  }
+export const Seaside: GameGui<SeasideGamedatas> = {
 
-  public setup(gamedatas: SeasideGamedatas) {
+  setup(gamedatas: SeasideGamedatas) {
     console.log("Starting game setup");
     console.log("gamedatas", gamedatas);
 
@@ -41,12 +34,13 @@ class Seaside extends GameGui<SeasideGamedatas> {
     this.setupNotifications();
 
     console.log("Ending game setup");
-  }
+  },
 
-  public onEnteringState(stateName: string, args: any) {
+   onEnteringState(stateName: string, args: any) {
     console.log("Entering state: " + stateName, args);
     switch (stateName) {
       case SeasideGameStates.PlayToken:
+        this.drawToken(args.token);
         if (this.isCurrentPlayerActive()) {
           
         }
@@ -60,9 +54,9 @@ class Seaside extends GameGui<SeasideGamedatas> {
       case SeasideGameStates.SelectIsopods:
         break;
     }
-  }
+  },
 
-  public onLeavingState(stateName: string) {
+  onLeavingState(stateName: string) {
     console.log("Leaving state: " + stateName);
     switch (stateName) {
       case SeasideGameStates.PlayToken:
@@ -76,9 +70,9 @@ class Seaside extends GameGui<SeasideGamedatas> {
       case SeasideGameStates.SelectIsopods:
         break;
     }
-  }
+  },
 
-  public onUpdateActionButtons(stateName: string, args: any) {
+  onUpdateActionButtons(stateName: string, args: any) {
     switch (stateName) {
       case SeasideGameStates.PlayToken:
         break;
@@ -91,10 +85,18 @@ class Seaside extends GameGui<SeasideGamedatas> {
       case SeasideGameStates.SelectIsopods:
         break;
     }
-  }
+  },
 
-  public setupNotifications() {
+  setupNotifications() {
     console.log("notifications subscriptions setup");
     this.bgaSetupPromiseNotifications();
+  },
+
+  drawToken(token: SeasideToken) {
+    document.getElementById("seaside-draw-bag")
+      .insertAdjacentHTML("beforeend", `
+        <div class="tile tile-crab" />
+        <div class="tile tile-sandpiper" />
+      `)
   }
 }

@@ -1,6 +1,8 @@
 # Built files
-*.js
-*.css
+seaside.js
+seaside.css.map
+seaside.css
+seaside.js.map
 
 # Node.js
 node_modules/
@@ -17,3 +19,4 @@ yarn.lock
 
 # Typescript build files
 *.tsbuildinfo
+dist

@@ -1,16 +1,13 @@
 {
-    "rootDir": ".", 
-    "compilerOptions": {
-      "target": "es5",
-      "module": "none",
-      "lib": ["dom", "esnext"],  
-      "sourceMap": false,
-      "outFile": "seaside.js",
-    },
-    "files": [
-        "bga-framework.d.ts",
-        "seaside.d.ts",
-        "seaside.ts",
-        "define.ts"
-    ]
+  "rootDir": ".",
+  "compilerOptions": {
+    "target": "es2015",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "noEmit": true,
+    "lib": ["dom", "esnext"],
+    "sourceMap": false,
+    "typeRoots": ["src/types"],
+  },
+  "include": ["bga-framework.d.ts", "src/**/*.ts"]
 }

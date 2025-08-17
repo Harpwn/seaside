@@ -1,0 +1,11 @@
+{
+  "presets": [
+    ["@babel/preset-env", {
+      "targets": {
+        "ie": "11"      // forces ES5 output
+      },
+      "bugfixes": true
+    }],
+    "@babel/preset-typescript"
+  ]
+}
