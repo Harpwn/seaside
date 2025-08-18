@@ -19,6 +19,7 @@ trait ArgsTrait {
 
         return [
             "token" => $token,
+            "test" => "test value",
         ];
     }
 

@@ -19,59 +19,64 @@ trait ActionTrait
     use ArgsTrait;
     use LogicTrait;
 
-    public function actPlayToken()
+    public function actPlayToken(int $token_id, string $token_type)
     {
         $player_id = (int)$this->getActivePlayerId();
 
         // check input values
-        $args = $this->argPlayToken();
-
-        $token_id = $args['token_id'];
-        $flipped = $args['flipped'];
+        $inputArgs = $this->argPlayToken();
 
         $token = $this->getToken($token_id);
 
         //Validation Here
+        if ($token->activeType !== $token_type && $token->inactiveType !== $token_type) {
+            throw new \BgaUserException("Invalid token type: {$token_type}");
+        }
 
-        $this->playToken($token, $player_id, $flipped);
+        if ($inputArgs['token']->id !== $token_id) {
+            throw new \BgaUserException("Token ID mismatch: expected {$token_id}, got {$token->id}");
+        }
+
+        if ($token->activeType !== $token_type) {
+            $this->playToken($token, $player_id, true);
+        } else {
+            $this->playToken($token, $player_id);
+        }
     }
 
-    public function actStealCrab() 
+    public function actStealCrab(int $victim_id) 
     {
         $player_id = (int)$this->getActivePlayerId();
 
         // check input values
-        $args = $this->argStealCrab();
-        $victim_id = $args['victim_id'];
+        $inputArgs = $this->argStealCrab();
 
         //Validation here
 
         $this->handleStealCrab($player_id, $victim_id);
     }
 
-    public function actFlipBeach()
+    public function actFlipBeach(int $beach_id)
     {
         $player_id = (int)$this->getActivePlayerId();
 
         // check input values
-        $args = $this->argFlipBeach();
+        $inputArgs = $this->argFlipBeach();
 
-        $token_id = $args['beach_id'];
-        $beach = $this->getToken($token_id);
+        $beach = $this->getToken($beach_id);
 
         //Validation here
 
         $this->handleFlipBeach($player_id, $beach);
     }
 
-    public function actSelectIsopods()
+    public function actSelectIsopods(array $isopod_ids)
     {
         $player_id = (int)$this->getActivePlayerId();
 
         // check input values
-        $args = $this->argSelectIsopods();
-        $token_id = $args['sandpiper_id'];
-        $isopod_ids = $args['isopod_ids'];
+        $inputArgs = $this->argSelectIsopods();
+        $token_id = $inputArgs['sandpiper_id'];
 
         $sandpiper = $this->getToken($token_id);
 

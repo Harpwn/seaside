@@ -20,12 +20,13 @@ trait LogicTrait
     {
         if($flip)
         {
-            $token = $this->flipToken($token);
+            $this->flipToken($token);
+            $token = $this->getToken($token->id);
         }
 
         $this->nfTokenPlayed($player_id, $token);
 
-        switch ($token->getActiveType($flip)) {
+        switch ($token->activeType) {
             case BEACH:
                 $this->handlePlayBeachToken($player_id, $token);
                 break;

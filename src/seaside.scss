@@ -49,31 +49,31 @@
       background-repeat: no-repeat;
       background-size: 700%;
 
-      &.seaside-tile-wave {
+      &[data-active-type="WAVE"] {
         background-position-x: -0px;
       }
 
-      &.seaside-tile-rocks {
+      &[data-active-type="ROCK"] {
         background-position-x: -74px;
       }
 
-      &.seaside-tile-isopod {
+      &[data-active-type="ISOPOD"] {
         background-position-x: -147px;
       }
 
-      &.seaside-tile-shell {
+      &[data-active-type="SHELL"] {
         background-position-x: -223px;
       }
 
-      &.seaside-tile-crab {
+      &[data-active-type="CRAB"] {
         background-position-x: -298px;
       }
 
-      &.seaside-tile-sandpiper {
+      &[data-active-type="SANDPIPER"] {
         background-position-x: -373px;
       }
 
-      &.seaside-tile-beach {
+      &[data-active-type="BEACH"] {
         background-position-x: -449px;
       }
     }
