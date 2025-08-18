@@ -12,7 +12,7 @@ trait UtilsTrait
 
     function drawRandomToken(): Token
     {
-        return new Token($this->tokens->getCardOnTop(BAG_LOCATION));
+        return new Token($this->tokens->getCardOnTop(BAG_LOCATION), false);
     }
 
     /**
@@ -31,11 +31,17 @@ trait UtilsTrait
         $tokens = $this->tokens->getCardsInLocation($location, $location_args);
         $items = array_filter($tokens, function ($token) use ($type) {
             $flipped = $this->dbGetTokenFlipped($token);
-            $tokenTyped = new Token($token);
-            return $tokenTyped->getActiveType($flipped) === $type;
+            $tokenTyped = $this->getToken($token['id']);
+            return $tokenTyped->activeType === $type;
         });
         return array_map(function ($item) {
-            return new Token($item);
+            return $this->getToken($item['id']);
         }, $items);
+    }
+
+    function getToken(int $token_id): Token
+    {
+        $card = $this->tokens->getCard($token_id);
+        return new Token($card, $this->dbGetTokenFlipped($token_id));
     }
 }

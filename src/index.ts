@@ -1,5 +1,5 @@
-import { Seaside } from "./seaside";
+import { SeasideGameGui } from "./seaside";
 
 export {
-    Seaside
+    SeasideGameGui
 }

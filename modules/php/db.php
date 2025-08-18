@@ -15,10 +15,10 @@ trait DbTrait
         $this->DbQuery($sql);
     }
 
-    private function dbGetTokenFlipped(Token $token) : bool
+    private function dbGetTokenFlipped($token_id) : bool
     {
         //get flipped col from cards table by id 
-        return $this->getUniqueValueFromDB("SELECT `flipped` FROM `card` WHERE `card_id` = " . $token->id) == 1;
+        return $this->getUniqueValueFromDB("SELECT `flipped` FROM `card` WHERE `card_id` = $token_id") == 1;
     }
 
     private function dbFlipToken(Token $token) {

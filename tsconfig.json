@@ -1,6 +1,7 @@
 {
   "rootDir": ".",
   "compilerOptions": {
+    "baseUrl": ".",
     "target": "es2015",
     "module": "esnext",
     "moduleResolution": "node",
@@ -8,6 +9,10 @@
     "lib": ["dom", "esnext"],
     "sourceMap": false,
     "typeRoots": ["src/types"],
+    "paths": {
+      "ebg/*": ["bga-framework.d.ts"],
+      "dojo": ["bga-framework.d.ts"],
+    }
   },
-  "include": ["bga-framework.d.ts", "src/**/*.ts"]
+  "include": ["bga-framework.d.ts", "src"]
 }

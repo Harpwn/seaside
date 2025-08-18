@@ -3,8 +3,6 @@ type SeasideTokenType = 'CRAB' | 'ISOPOD' | 'BEACH' | 'SHELL' | 'SANDPIPER' | 'W
 class SeasideToken {
     constructor($token) {
         this.id = $token.id;
-
-        const tokenSides = $token.type.split("/");
         this.activeSide = $token.activeSide;
         this.inactiveSide = $token.inactiveSide;
         this.location = $token.location;

@@ -1,0 +1,3 @@
+interface SeasidePlayTokenArgs {
+    token: SeasideToken;
+}

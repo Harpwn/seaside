@@ -164,7 +164,7 @@ trait LogicTrait
         // Get other piles
         $playerSandpipers = $this->getAllTokensOfTypeForLocation((string)$player_id, SANDPIPER);
         foreach ($playerSandpipers as $playerSandpiper) {
-            $sandpiperToken = new Token($playerSandpiper);
+            $sandpiperToken = $this->getToken($playerSandpiper->id);
             if ($sandpiperToken->id !== $sandpiper->id) {
                 $sandpiperIsopods = $this->getAllTokensOfTypeForLocation((string)$player_id, ISOPOD, $sandpiper->locationArg);
                 $piles[$playerSandpiper->id] = array_column($sandpiperIsopods, 'id');

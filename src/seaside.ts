@@ -1,8 +1,6 @@
-import GameGui from "ebg/core/gamegui";
 import { SeasideGameStates } from "./enums";
 
-// Note: it does not really extend it in es6 way, you cannot call super you have to use dojo way
-export const Seaside: GameGui<SeasideGamedatas> = {
+export class SeasideGameGui extends GameGui<SeasideGamedatas> {
 
   setup(gamedatas: SeasideGamedatas) {
     console.log("Starting game setup");
@@ -34,12 +32,13 @@ export const Seaside: GameGui<SeasideGamedatas> = {
     this.setupNotifications();
 
     console.log("Ending game setup");
-  },
+  }
 
-   onEnteringState(stateName: string, args: any) {
-    console.log("Entering state: " + stateName, args);
+  onEnteringState(stateName: string, payload: any) {
+    console.log("Entering state: " + stateName, payload);
     switch (stateName) {
       case SeasideGameStates.PlayToken:
+        const args: SeasidePlayTokenArgs = payload.args as SeasidePlayTokenArgs;
         this.drawToken(args.token);
         if (this.isCurrentPlayerActive()) {
           
@@ -54,7 +53,7 @@ export const Seaside: GameGui<SeasideGamedatas> = {
       case SeasideGameStates.SelectIsopods:
         break;
     }
-  },
+  }
 
   onLeavingState(stateName: string) {
     console.log("Leaving state: " + stateName);
@@ -70,7 +69,7 @@ export const Seaside: GameGui<SeasideGamedatas> = {
       case SeasideGameStates.SelectIsopods:
         break;
     }
-  },
+  }
 
   onUpdateActionButtons(stateName: string, args: any) {
     switch (stateName) {
@@ -85,18 +84,19 @@ export const Seaside: GameGui<SeasideGamedatas> = {
       case SeasideGameStates.SelectIsopods:
         break;
     }
-  },
+  }
 
   setupNotifications() {
     console.log("notifications subscriptions setup");
     this.bgaSetupPromiseNotifications();
-  },
+  }
 
   drawToken(token: SeasideToken) {
     document.getElementById("seaside-draw-bag")
       .insertAdjacentHTML("beforeend", `
-        <div class="tile tile-crab" />
-        <div class="tile tile-sandpiper" />
+        <div class="tile tile-${token.activeSide}" />
+        <div class="tile tile-${token.inactiveSide}" />
       `)
   }
+  
 }

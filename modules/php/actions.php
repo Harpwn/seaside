@@ -29,7 +29,7 @@ trait ActionTrait
         $token_id = $args['token_id'];
         $flipped = $args['flipped'];
 
-        $token = new Token($this->token->getCard($token_id));
+        $token = $this->getToken($token_id);
 
         //Validation Here
 
@@ -57,7 +57,7 @@ trait ActionTrait
         $args = $this->argFlipBeach();
 
         $token_id = $args['beach_id'];
-        $beach = new Token($this->token->getCard($token_id));
+        $beach = $this->getToken($token_id);
 
         //Validation here
 
@@ -73,7 +73,7 @@ trait ActionTrait
         $token_id = $args['sandpiper_id'];
         $isopod_ids = $args['isopod_ids'];
 
-        $sandpiper = new Token($this->token->getCard($token_id));
+        $sandpiper = $this->getToken($token_id);
 
         $isopods = $this->tokens->getCards($isopod_ids);
 

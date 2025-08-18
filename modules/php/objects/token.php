@@ -3,9 +3,10 @@
 class Token
 {
     public int $id;
-
-    public string $type;
+    public string $activeType;
+    public string $inactiveType;
     public string $location;
+    public bool $flipped;
 
     /** 
      * 0 - Main, Unpiled
@@ -14,24 +15,24 @@ class Token
      */
     public int $locationArg;
 
-    public bool $flipped;
-
-    public function __construct($dbCard)
-    {
-        $this->id = intval($dbCard['id']);
-        $this->location = $dbCard['location'];
-        $this->locationArg = intval($dbCard['location_arg']);
-        $this->type = (string)$dbCard['type'];
-    }
-
-    public function getActiveType(bool $flipped): string
+    public function __construct($dbCard, $flipped)
     {
         //split $type by /
-        $types = explode('/', $this->type);
+        $types = explode('/', $dbCard['type']);
+        $this->activeType = $types[0];
+        $this->inactiveType = $types[1] ?? '';
         if($flipped) {
-            return $types[1];
+            $this->activeType = $types[1];
+            $this->inactiveType = $types[0];
+        } else {
+            $this->activeType = $types[0];
+            $this->inactiveType = $types[1];
         }
 
         return $types[0];
+
+        $this->id = intval($dbCard['id']);
+        $this->location = $dbCard['location'];
+        $this->locationArg = intval($dbCard['location_arg']);
     }
 }

@@ -18,7 +18,7 @@ trait ArgsTrait {
         $token = $this->drawRandomToken();
 
         return [
-            "Token" => $token
+            "token" => $token,
         ];
     }
 
@@ -26,21 +26,21 @@ trait ArgsTrait {
     {
 
         return [
-            "PlayersWithCrabsIds" => []
+            "playersWithCrabsIds" => []
         ];
     }
 
     public function argFlipBeach(): array
     {
         return [
-            "FlippableBeachIds" => []
+            "flippableBeachIds" => []
         ];
     }
 
     public function argSelectIsopods(): array
     {
         return [
-            "SelectableIsopodIds" => []
+            "selectableIsopodIds" => []
         ];
     }
 }
