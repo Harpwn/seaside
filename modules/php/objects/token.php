@@ -29,6 +29,7 @@ class Token
             $this->inactiveType = $types[1];
         }
 
+        $this->flipped = $flipped;
         $this->id = intval($dbCard['id']);
         $this->location = $dbCard['location'];
         $this->locationArg = intval($dbCard['location_arg']);

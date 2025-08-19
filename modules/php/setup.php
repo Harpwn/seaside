@@ -6,6 +6,7 @@ declare(strict_types=1);
  */
 trait SetupTrait
 {
+    use UtilsTrait;
     /**
      * This method is called only once, when a new game is launched. In this method, you must setup the game
      *  according to the game rules, so that the game is ready to be played.
@@ -34,6 +35,12 @@ trait SetupTrait
             "SELECT `player_id` `id`, `player_score` `score` FROM `player`"
         );
 
+        foreach($result['players'] as $playerId => &$player) {
+            $player['tokens'] = $this->getAllTokensForLocation((string)$playerId);
+        }
+
+        $result['seaTokens'] = $this->getAllTokensForLocation(SEA_LOCATION);
+
         // TODO: Gather all information about current game situation (visible by player $current_player_id).
 
         return $result;
@@ -45,7 +52,7 @@ trait SetupTrait
         foreach (TOKENS as $token) 
         {
             $typeVal = "{$token[1]}/{$token[2]}";
-            $deck[] = array('type' => $typeVal, 'type_arg' => 1, 'nbr' => 1);
+            $deck[] = array('type' => $typeVal, 'type_arg' => 1, 'nbr' => 1 );
         }
         $this->tokens->createCards($deck);
         $this->tokens->shuffle(BAG_LOCATION);

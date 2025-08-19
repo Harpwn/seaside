@@ -39,6 +39,13 @@ trait UtilsTrait
         }, $items);
     }
 
+    function getAllTokensForLocation(string $location) {
+        $tokens = $this->tokens->getCardsInLocation($location);
+        return array_map(function ($item) {
+            return $this->getToken((int)$item['id']);
+        }, $tokens);
+    }
+
     function getToken(int $token_id): Token
     {
         $card = $this->tokens->getCard($token_id);

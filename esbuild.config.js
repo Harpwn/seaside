@@ -50,19 +50,30 @@ const buildOptions = {
   sourcemap: true,
   format: "iife",
   globalName: "seasideModule",
-  external: ["dojo", "dojo/_base/declare", "ebg/core/gamegui", "ebg/counter", "ebg/stock"],
+  external: [
+    "dojo",
+    "dojo/_base/declare",
+    "ebg/core/gamegui",
+    "ebg/counter",
+    "ebg/stock",
+  ],
   banner: {
     js: `define(["dojo","dojo/_base/declare","ebg/core/gamegui","ebg/counter","ebg/stock"],function(dojo,declare,GameGui){`,
   },
   footer: {
     js: `
-      var seasideClass = seasideModule.SeasideGameGui;
-      var seasideProto = {};
-      Object.getOwnPropertyNames(seasideClass.prototype).forEach(function(key){
-        if(key!=="constructor") seasideProto[key] = seasideClass.prototype[key];
+    var seasideProto = {};
+
+    // list all classes you want to merge
+    [seasideModule.SeasideSetup, seasideModule.SeasideActions, seasideModule.SeasideNotifications]
+      .forEach(function(cls) {
+        Object.getOwnPropertyNames(cls.prototype).forEach(function(key) {
+          if (key !== "constructor") seasideProto[key] = cls.prototype[key];
+        });
       });
-      return declare("bgagame.seaside", GameGui, seasideProto);
-    });`,
+
+    return declare("bgagame.seaside", GameGui, seasideProto);
+  });`,
   },
   plugins: [postBuildPlugin],
 };

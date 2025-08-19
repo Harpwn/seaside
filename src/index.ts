@@ -1,5 +1,9 @@
-import { SeasideGameGui } from "./seaside";
+import { SeasideActions } from "./actions";
+import { SeasideNotifications } from "./notifications";
+import { SeasideSetup } from "./setup";
 
 export {
-    SeasideGameGui
+    SeasideActions,
+    SeasideNotifications,
+    SeasideSetup,
 }
