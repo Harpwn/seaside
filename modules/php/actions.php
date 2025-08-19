@@ -78,7 +78,7 @@ trait ActionTrait
         $inputArgs = $this->argSelectIsopods();
         $token_id = $inputArgs['sandpiper_id'];
 
-        $sandpiper = $this->getToken($token_id);
+        $sandpiper = $this->getToken((int)$token_id);
 
         $isopods = $this->tokens->getCards($isopod_ids);
 

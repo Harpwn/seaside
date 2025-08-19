@@ -26,9 +26,9 @@ trait StatesTrait
         // Go to another gamestate
         $gameEnd = false; // Here, we would detect if the game is over to make the appropriate transition
         if ($gameEnd) {
-            $this->gamestate->nextState("endScore");
+            $this->gamestate->nextState(TRANSITION_END_SCORE);
         } else {
-            $this->gamestate->nextState("nextPlayer");
+            $this->gamestate->nextState(TRANSITION_NEXT_PLAYER);
         }
     }
 }

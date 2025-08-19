@@ -1,87 +1,122 @@
-  #seaside-game-area {
-    background-color: rgba(0, 0, 0, 0.5);
+#seaside-game-area {
+  background-color: rgba(0, 0, 0, 0.5);
 
-    #seaside-draw-bag {
-      background-image: url('img/draw-bag.png');
-      background-repeat: no-repeat;
-      position: absolute;
-      top: 44%;
-      margin-left: 10px;
-      width: 20vh;
-      height: 20vh;
-      background-size: contain;
-      align-content: center;
-
-      .seaside-tile {
-        margin:auto;
-      }
-    }
-
-    #seaside-sea {
-      display: flex;
-      flex-direction: column;
-      min-height: 75vh;
-      background-color: darkblue;
-    }
-
-    #seaside-other-players {
-      height: 10vh;
-      display: flex;
-      flex-direction: row;
-      gap: 10px;
-
-      .seaside-other-player {
-        flex-grow: 1;
-        background: sandybrown;
-
-      }
-    }
-
-    #seaside-sea-tokens {
-      display: flex;
-      margin: auto;
-      flex-grow: 1;
-      align-items: center;
-    }
-
-    #seaside-player-area {
-      background-color: sandybrown;
-      height: 20vh;
-    }
+  #seaside-draw-bag {
+    background-image: url("img/draw-bag.png");
+    background-repeat: no-repeat;
+    position: absolute;
+    top: 44%;
+    margin-left: 10px;
+    width: 20vh;
+    height: 20vh;
+    background-size: contain;
 
     .seaside-tile {
-      background-image: url("img/chips.png");
-      height: 75px;
-      width: 75px;
-      background-repeat: no-repeat;
-      background-size: 700%;
+      top: 28%;
+      left: 28%;
+    }
+  }
 
-      &[data-active-type="WAVE"] {
-        background-position-x: -0px;
-      }
-
-      &[data-active-type="ROCK"] {
-        background-position-x: -74px;
-      }
-
-      &[data-active-type="ISOPOD"] {
-        background-position-x: -147px;
-      }
-
-      &[data-active-type="SHELL"] {
-        background-position-x: -223px;
-      }
-
-      &[data-active-type="CRAB"] {
-        background-position-x: -298px;
-      }
-
-      &[data-active-type="SANDPIPER"] {
-        background-position-x: -373px;
-      }
-
-      &[data-active-type="BEACH"] {
-        background-position-x: -449px;
+  .seaside-player {
+    @for $i from 1 through 10 {
+      // adjust max tokens
+      .seaside-tile:nth-child(#{$i}) {
+        left: ($i - 1) * 30px; // 10px horizontal offset per token
       }
     }
   }
+
+  #seaside-sea {
+    display: flex;
+    flex-direction: column;
+    min-height: 75vh;
+    background-color: darkblue;
+  }
+
+  .seaside-player {
+    background: sandybrown;
+    position: relative;
+    height: 100%;
+  }
+
+  #seaside-other-players {
+    height: 10vh;
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+
+    .seaside-other-player {
+      flex-grow: 1;
+
+      @for $i from 1 through 10 {
+      // adjust max tokens
+      .seaside-tile:nth-child(#{$i}) {
+        left: ($i - 1) * 10px; // 10px horizontal offset per token
+      }
+    }
+
+      .seaside-tile {
+        height: 25px;
+        width: 25px;
+      }
+    }
+  }
+
+  #seaside-sea-tokens {
+    margin: auto;
+    height: 300px;
+    width: 300px;
+    position: relative;
+  }
+
+  #seaside-player-area {
+    background-color: sandybrown;
+    height: 20vh;
+
+    @for $i from 1 through 10 {
+      // adjust max tokens
+      .seaside-tile:nth-child(#{$i}) {
+        left: ($i - 1) * 30px;
+      }
+    }
+  }
+
+  .seaside-tile {
+    background-image: url("img/chips.png");
+    height: 75px;
+    width: 75px;
+    background-repeat: no-repeat;
+    background-size: 700%;
+    position: absolute;
+    border: 5px solid black;
+    border-radius: 50%;
+
+    &[data-active-type="WAVE"] {
+      background-position-x: 0%
+    }
+
+    &[data-active-type="ROCK"] {
+      background-position-x: 16.5%;
+    }
+
+    &[data-active-type="ISOPOD"] {
+      background-position-x: 33%;
+    }
+
+    &[data-active-type="SHELL"] {
+      background-position-x: 49.5%;
+    }
+
+    &[data-active-type="CRAB"] {
+      background-position-x: 66%;
+    }
+
+    &[data-active-type="SANDPIPER"] {
+      background-position-x: 82%;
+    }
+
+    &[data-active-type="BEACH"] {
+      background-position-x: 99.5%;
+    }
+  }
+}

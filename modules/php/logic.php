@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 require_once('utils.php');
@@ -18,8 +19,7 @@ trait LogicTrait
 
     function playToken(Token $token, int $player_id, bool $flip = false): void
     {
-        if($flip)
-        {
+        if ($flip) {
             $this->flipToken($token);
             $token = $this->getToken($token->id);
         }
@@ -107,7 +107,7 @@ trait LogicTrait
             $newRockPileId = ROCK_PILE_INIT;
             if (count($playerRocks) !== 0) {
                 //new pile id to place crabs and rocks
-                $newRockPileId = max(array_column($playerRocks, 'location_arg')) + 1;
+                $newRockPileId = max(array_column($playerRocks, 'locationArg')) + 1;
             }
 
             //Find rock to create pair
@@ -121,22 +121,29 @@ trait LogicTrait
             $seaCrabs = $this->getAllTokensOfTypeForLocation(SEA_LOCATION, CRAB);
             $this->sendTokensToPlayerArea($seaCrabs, $player_id);
 
-            //Prompt player to steal crabs
-            $this->gamestate->nextState(TRANSITION_STEAL_CRAB);
+            //for each player
+            foreach ($this->getPlayersIds() as $playerId) {
+                if ($playerId !== $player_id) {
+                    $enemyCrabs = $this->getAllTokensOfTypeForLocation((string)$playerId, CRAB);
+                    if (count($enemyCrabs) > 0) {
+                        //Enemy has crabs to steal!
+                        $this->gamestate->nextState(TRANSITION_STEAL_CRAB);
+                    }
+                }
+            }
         } else {
-            //even number of rocks, crabs not interested
+            //crabs not interested
             $this->sendTokenToPlayerArea($rock, $player_id);
-            $this->gamestate->nextState(TRANSITION_END_TURN);
         }
+
+        //next player
+        $this->gamestate->nextState(TRANSITION_END_TURN);
     }
 
     function handlePlayShellToken(Token $shell)
     {
         $this->sendTokenToSea($shell);
         $this->gamestate->nextState(TRANSITION_PLAY_AGAIN);
-
-        //End turn
-        $this->gamestate->nextState(TRANSITION_END_TURN);
     }
 
     function handlePlayWaveToken(int $player_id, Token $wave)
@@ -196,7 +203,8 @@ trait LogicTrait
         $this->gamestate->nextState(TRANSITION_END_TURN);
     }
 
-    function handleFlipBeach(int $player_id, Token $beach) {
+    function handleFlipBeach(int $player_id, Token $beach)
+    {
         //Play it, flipped
         $this->playToken($beach, $player_id, true);
     }
@@ -215,7 +223,10 @@ trait LogicTrait
 
     function sendTokensToPlayerArea(array $tokens, int $player_id, int $pile_id = 0)
     {
-        $this->tokens->moveCards($tokens, (string)$player_id, $pile_id);
+        $token_ids = array_map(function ($token) {
+            return $token->id;
+        }, $tokens);
+        $this->tokens->moveCards($token_ids, (string)$player_id, $pile_id);
         $this->nfTokensToPlayerArea($player_id, $tokens, $pile_id);
     }
 

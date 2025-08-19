@@ -1,3 +1,5 @@
+import { placeTokenInSea, tokenToNode } from "./utils";
+
 export class SeasideSetup extends GameGui<SeasideGamedatas> {
   setup(gamedatas: SeasideGamedatas) {
     console.log("Starting game setup");
@@ -31,22 +33,22 @@ export class SeasideSetup extends GameGui<SeasideGamedatas> {
   setupPlayerAreas(gamedatas: SeasideGamedatas) {
     Object.values(gamedatas.players).forEach((player) => {
       const tokens = Object.values(player.tokens).map((token) => {
-        return `<div class="seaside-tile" data-id="${token.id}" data-active-type="${token.activeType}" data-inactive-type="${token.inactiveType}"></div>`;
+        return tokenToNode(token);
       });
       if (this.player_id.toString() != player.id) {
         document.getElementById("seaside-other-players").insertAdjacentHTML(
           "beforeend",
-          `<div id="seaside-other-player-${
+          `<div id="seaside-player-${
             player.id
-          }" class="seaside-other-player">
-            ${tokens.join("")}
+          }" class="seaside-player seaside-other-player">
+            ${tokens.map(token => token.outerHTML).join("")}
             </div>`
         );
       } else {
         document.getElementById("seaside-player-area").insertAdjacentHTML(
           "beforeend",
           `<div id="seaside-player-${player.id}" class="seaside-player">
-            ${tokens.join("")}
+            ${tokens.map(token => token.outerHTML).join("")}
             </div>`
         );
       }
@@ -54,12 +56,8 @@ export class SeasideSetup extends GameGui<SeasideGamedatas> {
   }
 
   setupSea(gamedatas: SeasideGamedatas) {
-    const seaEl = document.getElementById("seaside-sea-tokens");
     Object.values(gamedatas.seaTokens).forEach((token) => {
-      seaEl.insertAdjacentHTML(
-        "beforeend",
-        `<div class="seaside-tile" data-id="${token.id}" data-active-type="${token.activeType}" data-inactive-type="${token.inactiveType}"></div>`
-      );
+      placeTokenInSea(token, this);
     });
   }
 

@@ -33,7 +33,7 @@ trait MiscTrait
         if ($state["type"] === "activeplayer") {
             switch ($state_name) {
                 default: {
-                        $this->gamestate->nextState("zombiePass");
+                        $this->gamestate->nextState(TRANSITION_ZOMBIE_PASS);
                         break;
                     }
             }

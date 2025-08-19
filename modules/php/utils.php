@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 require_once('db.php');
@@ -30,20 +31,20 @@ trait UtilsTrait
     {
         $tokens = $this->tokens->getCardsInLocation($location, $location_args);
         $items = array_filter($tokens, function ($token) use ($type) {
-            $flipped = $this->dbGetTokenFlipped($token);
-            $tokenTyped = $this->getToken($token['id']);
+            $tokenTyped = $this->getToken((int)$token['id']);
             return $tokenTyped->activeType === $type;
         });
-        return array_map(function ($item) {
-            return $this->getToken($item['id']);
-        }, $items);
+        return array_values(array_map(function ($item) {
+            return $this->getToken((int)$item['id']);
+        }, $tokens));
     }
 
-    function getAllTokensForLocation(string $location) {
+    function getAllTokensForLocation(string $location)
+    {
         $tokens = $this->tokens->getCardsInLocation($location);
-        return array_map(function ($item) {
+        return array_values(array_map(function ($item) {
             return $this->getToken((int)$item['id']);
-        }, $tokens);
+        }, $tokens));
     }
 
     function getToken(int $token_id): Token
