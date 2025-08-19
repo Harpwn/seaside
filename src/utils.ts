@@ -53,6 +53,22 @@ export const moveTokenToPlayerArea = async (
   await gameGui.bgaPlayDojoAnimation(anim);
 };
 
+export const moveSeaTokenToPlayerArea = async (
+  playerId: string,
+  oldTokenEl: Element,
+  gameGui: GameGui
+) => {
+  const playerAreaEl = document.getElementById(`seaside-player-${playerId}`);
+  const seaEl = document.getElementById("seaside-sea-tokens");
+  const newTokenEl = oldTokenEl.cloneNode(true) as Element; // deep clone
+  playerAreaEl.insertAdjacentElement("beforeend", newTokenEl);
+
+  gameGui.placeOnObject(newTokenEl, oldTokenEl);
+  gameGui.fadeOutAndDestroy(oldTokenEl);
+  const anim = gameGui.slideToObject(newTokenEl, playerAreaEl);
+  await gameGui.bgaPlayDojoAnimation(anim);
+};
+
 export const getRandomPosition = () => {
   const randomX = -100 + Math.random() * 200; // -100 .. 100
   const randomY = -100 + Math.random() * 200; // -100 .. 100

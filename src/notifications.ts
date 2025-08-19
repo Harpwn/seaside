@@ -1,4 +1,4 @@
-import { flipToken, getTokenElById, moveTokenToPlayerArea, moveTokenToSea } from "./utils";
+import { flipToken, getTokenElById, moveSeaTokenToPlayerArea, moveTokenToPlayerArea, moveTokenToSea } from "./utils";
 
 interface TokenPlayedNotificationData {
     player_id: number;
@@ -67,7 +67,7 @@ export class SeasideNotifications extends GameGui<SeasideGamedatas> {
     console.log("Tokens moved to player area", args);
     for (const tokenId of args.token_ids) {
       const tokenEl = getTokenElById(tokenId);
-      await moveTokenToPlayerArea(args.player_id.toString(), tokenEl, this);
+      await moveSeaTokenToPlayerArea(args.player_id.toString(), tokenEl, this);
     }
   }
 }
