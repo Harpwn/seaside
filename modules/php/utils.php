@@ -36,7 +36,7 @@ trait UtilsTrait
         });
         return array_values(array_map(function ($item) {
             return $this->getToken((int)$item['id']);
-        }, $tokens));
+        }, $items));
     }
 
     function getAllTokensForLocation(string $location)

@@ -28,7 +28,8 @@ trait NotificationsTrait
     }
 
     function nfTokensToPlayerArea(int $player_id, array $tokens, int $pile_id) {
-        $ids = array_keys(array_filter(array_column($tokens, "call", "id")));
+        $ids = array_column($tokens, 'id');
+        $this->debug_log("ids", $ids);
         $this->notify->all("tokensToPlayerArea", clienttranslate('${token_side}\'s played into ${player_name}\'s shore'), [
             "token_side" => $tokens[0]->activeType,
             "token_ids" => $ids,

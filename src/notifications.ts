@@ -23,7 +23,6 @@ interface TokenToPlayerAreaNotificationData {
 interface TokensToPlayerAreaNotificationData {
     player_id: number;
     token_ids: number[];
-    token_side: SeasideTokenType;
     pile_id: number;
 }
 
@@ -62,5 +61,13 @@ export class SeasideNotifications extends GameGui<SeasideGamedatas> {
     console.log("Token moved to player area", args);
     const tokenEl = getTokenElById(args.token_id);
     await moveTokenToPlayerArea(args.player_id.toString(), tokenEl, this);
+  }
+
+  async notif_tokensToPlayerArea(args: TokensToPlayerAreaNotificationData) {
+    console.log("Tokens moved to player area", args);
+    for (const tokenId of args.token_ids) {
+      const tokenEl = getTokenElById(tokenId);
+      await moveTokenToPlayerArea(args.player_id.toString(), tokenEl, this);
+    }
   }
 }

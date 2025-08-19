@@ -59,14 +59,17 @@ trait LogicTrait
         //check how many beaches the player has
         $playerBeachesCount = count($this->getAllTokensOfTypeForLocation((string)$player_id, BEACH));
 
+        $this->debug_log("beach count - ", $playerBeachesCount);
         //check how many shells there are in the sea
         $seaShells = $this->getAllTokensOfTypeForLocation(SEA_LOCATION, SHELL);
         $seaShellsCount = count($seaShells);
 
         //move maximum number of shells to player area
         $shellsToMoveCount = min($playerBeachesCount, $seaShellsCount);
-        $shellsToMove = array_slice($seaShells, 0, $shellsToMoveCount);
-        $this->sendTokensToPlayerArea($shellsToMove, $player_id);
+        if($shellsToMoveCount > 0) {
+            $shellsToMove = array_slice($seaShells, 0, $shellsToMoveCount);
+            $this->sendTokensToPlayerArea($shellsToMove, $player_id);
+        }
 
         //End turn
         $this->gamestate->nextState(TRANSITION_END_TURN);

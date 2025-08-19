@@ -43,10 +43,11 @@ export const moveTokenToPlayerArea = async (
   gameGui: GameGui
 ) => {
   const playerAreaEl = document.getElementById(`seaside-player-${playerId}`);
+  const bagEl = document.getElementById("seaside-draw-bag");
   const newTokenEl = oldTokenEl.cloneNode(true) as Element; // deep clone
   playerAreaEl.insertAdjacentElement("beforeend", newTokenEl);
 
-  gameGui.placeOnObject(newTokenEl, playerAreaEl);
+  gameGui.placeOnObject(newTokenEl, bagEl);
   gameGui.fadeOutAndDestroy(oldTokenEl);
   const anim = gameGui.slideToObject(newTokenEl, playerAreaEl);
   await gameGui.bgaPlayDojoAnimation(anim);
