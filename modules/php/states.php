@@ -16,10 +16,10 @@ trait StatesTrait
     public function stNextPlayer(): void
     {
         // Retrieve the active player ID.
-        $player_id = (int)$this->getActivePlayerId();
+        $playerId = (int)$this->getActivePlayerId();
 
         // Give some extra time to the active player when he completed an action
-        $this->giveExtraTime($player_id);
+        $this->giveExtraTime($playerId);
 
         $this->activeNextPlayer();
 

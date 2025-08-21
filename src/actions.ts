@@ -1,4 +1,4 @@
-import { drawToken, flipToken, getTokenElById } from "./utils";
+import { clearMoves, drawToken, flipToken, getTokenElById, selectToken } from "./utils";
 
 enum SeasideGameActions {
     PlayToken = "actPlayToken",
@@ -19,23 +19,23 @@ enum SeasideGameStates {
 
 
 interface PlayTokenActionData {
-    token_id: number;
-    token_type: SeasideTokenType;
+    tokenId: number;
+    tokenType: SeasideTokenType;
 }
 
 interface NextPlayerActionData {
 }
 
 interface FlipBeachActionData {
-    beach_id: number;
+    beachId: number;
 }
 
 interface StealCrabActionData {
-    victim_id: number[];
+    victimId: number[];
 }
 
 interface SelectIsopodsActionData {
-    isopod_ids: number[];
+    isopodIds: string;
 }
 
 interface SeasidePlayTokenArgs {
@@ -60,8 +60,8 @@ export class SeasideActions extends GameGui<SeasideGamedatas> {
 
   actPlayToken(token: SeasideToken, tokenType: SeasideTokenType) {
     const data: PlayTokenActionData = {
-      token_id: token.id,
-      token_type: tokenType,
+      tokenId: token.id,
+      tokenType: tokenType,
     };
 
     const tokenEl = getTokenElById(token.id);
@@ -71,6 +71,22 @@ export class SeasideActions extends GameGui<SeasideGamedatas> {
     }
 
     this.bgaPerformAction(SeasideGameActions.PlayToken, data);
+  }
+
+  actFlipBeach(tokenId: number) {
+    const data: FlipBeachActionData = {
+      beachId: tokenId,
+    };
+
+    this.bgaPerformAction(SeasideGameActions.FlipBeach, data);
+  }
+
+  actSelectIsopods(isopodIds: number[]) {
+    const data: SelectIsopodsActionData = {
+      isopodIds: isopodIds.join(",")
+    };
+
+    this.bgaPerformAction(SeasideGameActions.SelectIsopods, data);
   }
 
   onEnteringState(stateName: string, payload: any) {
@@ -100,11 +116,25 @@ export class SeasideActions extends GameGui<SeasideGamedatas> {
 
   enteringNextPlayerState(args: SeasideNextPlayerArgs) {}
 
-  enteringFlipBeachState(args: SeasideFlipBeachArgs) {}
+  enteringFlipBeachState(args: SeasideFlipBeachArgs) {
+    args.flippableBeachIds.forEach((beachId) => {
+      const beachEl = getTokenElById(beachId);
+      beachEl.classList.add("possible-move");
+      beachEl.addEventListener("click", () => {
+        this.actFlipBeach(beachId);
+      });
+    });
+  }
 
   enteringStealCrabState(args: SeasideStealCrabArgs) {}
 
-  enteringSelectIsopodsState(args: SeasideSelectIsopodsArgs) {}
+  enteringSelectIsopodsState(args: SeasideSelectIsopodsArgs) {
+    args.selectableIsopodIds.forEach((isopodId) => {
+      const isopodEl = getTokenElById(isopodId);
+      isopodEl.classList.add("possible-move");
+      isopodEl.addEventListener("click", () => selectToken(isopodId));
+    });
+  }
 
   onLeavingState(stateName: string) {
     console.log("Leaving state: " + stateName);
@@ -125,6 +155,8 @@ export class SeasideActions extends GameGui<SeasideGamedatas> {
         this.leaveStateSelectIsopods();
         break;
     }
+
+    clearMoves();
   }
 
   leaveStatePlayToken() {}
@@ -176,5 +208,13 @@ export class SeasideActions extends GameGui<SeasideGamedatas> {
 
   updateActionButtonsStealCrab(args: SeasideStealCrabArgs) {}
 
-  updateActionButtonsSelectIsopods(args: SeasideSelectIsopodsArgs) {}
+  updateActionButtonsSelectIsopods(args: SeasideSelectIsopodsArgs) {
+    if (this.isCurrentPlayerActive()) {
+      this.statusBar.addActionButton(`Confirm`, () => {
+        const isopodIds = Array.from(document.querySelectorAll(".selected-move"))
+          .map((el) => parseInt(el.getAttribute("data-id")));
+        this.actSelectIsopods(isopodIds);
+      });
+    }
+  }
 }

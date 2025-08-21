@@ -14,11 +14,8 @@ trait ArgsTrait {
 
     public function argPlayToken(): array
     {
-        // Get some values from the current game situation from the database.
-        $token = $this->drawRandomToken();
-
         return [
-            "token" => $token,
+            "token" => $this->drawRandomToken()
         ];
     }
 
@@ -33,14 +30,15 @@ trait ArgsTrait {
     public function argFlipBeach(): array
     {
         return [
-            "flippableBeachIds" => []
+            "flippableBeachIds" => array_column($this->getAllTokensOfTypeForLocation($this->getActivePlayerId(), BEACH), 'id')
         ];
     }
 
     public function argSelectIsopods(): array
     {
         return [
-            "selectableIsopodIds" => []
+            "sandpiperId" => $this->getAllTokensOfTypeForLocation($this->getActivePlayerId(), SANDPIPER, 0)[0]->id,
+            "selectableIsopodIds" => array_column($this->getAllTokensOfTypeForLocation(SEA_LOCATION, ISOPOD), 'id')
         ];
     }
 }

@@ -3,13 +3,13 @@ declare(strict_types=1);
 
 trait DebugUtilsTrait
 {
-    function debug_stop($debugData) {
+    function debugStop($debugData) {
         if ($this->getBgaEnvironment() != 'studio') { 
             return;
         }die('debug data : '.json_encode($debugData));
     }
 
-    public function debug_log($message, $debugData) {
+    public function debugLog($message, $debugData) {
         if ($this->getBgaEnvironment() != 'studio') { 
             return;
         }

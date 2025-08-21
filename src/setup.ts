@@ -1,4 +1,4 @@
-import { placeTokenInSea, tokenToNode } from "./utils";
+import { createTokenInSea, tokenToNode } from "./utils";
 
 export class SeasideSetup extends GameGui<SeasideGamedatas> {
   setup(gamedatas: SeasideGamedatas) {
@@ -57,7 +57,7 @@ export class SeasideSetup extends GameGui<SeasideGamedatas> {
 
   setupSea(gamedatas: SeasideGamedatas) {
     Object.values(gamedatas.seaTokens).forEach((token) => {
-      placeTokenInSea(token, this);
+      createTokenInSea(token, this);
     });
   }
 

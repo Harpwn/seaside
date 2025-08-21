@@ -15,58 +15,48 @@ export const flipToken = (tokenEl: Element) => {
   tokenEl.setAttribute("data-inactive-type", activeType);
 };
 
-export const moveTokenToSea = async (oldTokenEl: Element, gameGui: GameGui) => {
+export const moveTokenToSea = async (tokenId: number, tokenLocationArgs: number, gameGui: GameGui) => {
+  const oldTokenEl = getTokenElById(tokenId);
+  updateTokenElLocation(oldTokenEl, "SEA", tokenLocationArgs);
   const seaEl = document.getElementById("seaside-sea-tokens");
-  const bagEl = document.getElementById("seaside-draw-bag");
   const newTokenEl = oldTokenEl.cloneNode(true) as Element; // deep clone
+  newTokenEl.removeAttribute("style");
   seaEl.insertAdjacentElement("beforeend", newTokenEl);
-
-  gameGui.placeOnObject(newTokenEl, bagEl);
-  gameGui.fadeOutAndDestroy(oldTokenEl);
   const coords = getRandomPosition();
-  const anim = gameGui.slideToObjectPos(newTokenEl, seaEl, coords.x, coords.y);
+  gameGui.placeOnObjectPos(newTokenEl, seaEl, coords.x, coords.y);
+  const anim = gameGui.slideToObjectAndDestroy(oldTokenEl, newTokenEl);
   await gameGui.bgaPlayDojoAnimation(anim);
 };
 
-export const placeTokenInSea = (token: SeasideToken, gameGui: GameGui) => {
+export const moveTokenToDiscard = async (tokenId: number, gameGui: GameGui) => {
+  const tokenEl = getTokenElById(tokenId);
+  const anim = gameGui.fadeOutAndDestroy(tokenEl);
+  await gameGui.bgaPlayDojoAnimation(anim);
+};
+
+export const moveTokenToPlayerArea = async (
+  playerId: string,
+  tokenId: number,
+  tokenLocationArgs: number,
+  gameGui: GameGui
+) => {
+  const oldTokenEl = getTokenElById(tokenId);
+  updateTokenElLocation(oldTokenEl, playerId, tokenLocationArgs);
+  const playerAreaEl = document.getElementById(`seaside-player-${playerId}`);
+  const newTokenEl = oldTokenEl.cloneNode(true) as Element; // deep clone
+  newTokenEl.removeAttribute("style");
+  playerAreaEl.insertAdjacentElement("beforeend", newTokenEl);
+  const anim = gameGui.slideToObjectAndDestroy(oldTokenEl, newTokenEl);
+  await gameGui.bgaPlayDojoAnimation(anim);
+};
+
+export const createTokenInSea = (token: SeasideToken, gameGui: GameGui) => {
   const seaEl = document.getElementById("seaside-sea-tokens");
   const tokenEl = tokenToNode(token);
 
   seaEl.insertAdjacentElement("beforeend", tokenEl);
   const coords = getRandomPosition();
   gameGui.placeOnObjectPos(tokenEl, seaEl, coords.x, coords.y);
-};
-
-export const moveTokenToPlayerArea = async (
-  playerId: string,
-  oldTokenEl: Element,
-  gameGui: GameGui
-) => {
-  const playerAreaEl = document.getElementById(`seaside-player-${playerId}`);
-  const bagEl = document.getElementById("seaside-draw-bag");
-  const newTokenEl = oldTokenEl.cloneNode(true) as Element; // deep clone
-  playerAreaEl.insertAdjacentElement("beforeend", newTokenEl);
-
-  gameGui.placeOnObject(newTokenEl, bagEl);
-  gameGui.fadeOutAndDestroy(oldTokenEl);
-  const anim = gameGui.slideToObject(newTokenEl, playerAreaEl);
-  await gameGui.bgaPlayDojoAnimation(anim);
-};
-
-export const moveSeaTokenToPlayerArea = async (
-  playerId: string,
-  oldTokenEl: Element,
-  gameGui: GameGui
-) => {
-  const playerAreaEl = document.getElementById(`seaside-player-${playerId}`);
-  const seaEl = document.getElementById("seaside-sea-tokens");
-  const newTokenEl = oldTokenEl.cloneNode(true) as Element; // deep clone
-  playerAreaEl.insertAdjacentElement("beforeend", newTokenEl);
-
-  gameGui.placeOnObject(newTokenEl, oldTokenEl);
-  gameGui.fadeOutAndDestroy(oldTokenEl);
-  const anim = gameGui.slideToObject(newTokenEl, playerAreaEl);
-  await gameGui.bgaPlayDojoAnimation(anim);
 };
 
 export const getRandomPosition = () => {
@@ -85,3 +75,41 @@ export const tokenToNode = (token: SeasideToken): Element => {
   tokenEl.setAttribute("data-location-arg", token.locationArg);
   return tokenEl;
 };
+
+export const clearMoves = () => {
+  const possibleMoveEls = document.querySelectorAll(".possible-move");
+  possibleMoveEls.forEach((el) => {
+    el.classList.remove("possible-move");
+    removeAllClickEvents(el);
+  });
+  const selectedMoveEls = document.querySelectorAll(".selected-move");
+  selectedMoveEls.forEach((el) => {
+    el.classList.remove("selected-move");
+    removeAllClickEvents(el);
+  });
+};
+
+export const selectToken = (tokenId: number) => {
+  const tokenEl = getTokenElById(tokenId);
+  tokenEl.classList.add("selected-move");
+  const newEl = removeAllClickEvents(tokenEl);
+  newEl.addEventListener("click", () => deselectToken(tokenId));
+};
+
+export const deselectToken = (tokenId: number) => {
+  const tokenEl = getTokenElById(tokenId);
+  tokenEl.classList.remove("selected-move");
+  const newEl = removeAllClickEvents(tokenEl);
+  newEl.addEventListener("click", () => selectToken(tokenId));
+};
+
+export const removeAllClickEvents = (element: Element) => {
+  const clone = element.cloneNode(true) as Element; // Deep clone the element
+  element.parentNode.replaceChild(clone, element); // Replace the original with the clone
+  return clone;
+};
+
+export const updateTokenElLocation = (element: Element, location: string, locationArg: number) => {
+  element.setAttribute("data-location", location);
+  element.setAttribute("data-location-arg", locationArg.toString());
+}

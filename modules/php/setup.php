@@ -14,9 +14,9 @@ trait SetupTrait
     protected function setupNewGame($players, $options = [])
     {
         $gameinfos = $this->getGameinfos();
-        $default_colors = $gameinfos['player_colors'];
-        $this->createPlayers($players, $default_colors);
-        $this->reattributeColorsBasedOnPreferences($players, $gameinfos['player_colors']);
+        $defaultColors = $gameinfos['player_colors'];
+        $this->createPlayers($players, $defaultColors);
+        $this->reattributeColorsBasedOnPreferences($players, $defaultColors);
         $this->reloadPlayersBasicInfos();
         $this->activeNextPlayer();
         $this->setupTokens();
@@ -27,7 +27,7 @@ trait SetupTrait
         $result = [];
 
         // WARNING: We must only return information visible by the current player.
-        $current_player_id = (int) $this->getCurrentPlayerId();
+        $currentPlayerId = (int) $this->getCurrentPlayerId();
 
         // Get information about players.
         // NOTE: you can retrieve some extra field you added for "player" table in `dbmodel.sql` if you need it.
@@ -41,7 +41,7 @@ trait SetupTrait
 
         $result['seaTokens'] = $this->getAllTokensForLocation(SEA_LOCATION);
 
-        // TODO: Gather all information about current game situation (visible by player $current_player_id).
+        // TODO: Gather all information about current game situation (visible by player $currentPlayerId).
 
         return $result;
     }

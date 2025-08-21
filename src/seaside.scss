@@ -17,15 +17,6 @@
     }
   }
 
-  .seaside-player {
-    @for $i from 1 through 10 {
-      // adjust max tokens
-      .seaside-tile:nth-child(#{$i}) {
-        left: ($i - 1) * 30px; // 10px horizontal offset per token
-      }
-    }
-  }
-
   #seaside-sea {
     display: flex;
     flex-direction: column;
@@ -37,6 +28,14 @@
     background: sandybrown;
     position: relative;
     height: 100%;
+    display:flex;
+    padding-left: 50px;
+
+    .seaside-tile {
+      flex: 0 0 auto;
+      margin-left: -50px;
+      position: relative;
+    }
   }
 
   #seaside-other-players {
@@ -47,17 +46,13 @@
 
     .seaside-other-player {
       flex-grow: 1;
-
-      @for $i from 1 through 10 {
-      // adjust max tokens
-      .seaside-tile:nth-child(#{$i}) {
-        left: ($i - 1) * 10px; // 10px horizontal offset per token
-      }
-    }
-
+      padding-left: 20px;
+      max-width: 33%;
       .seaside-tile {
         height: 25px;
         width: 25px;
+        margin-left: -20px;
+        border: 2px solid black;
       }
     }
   }
@@ -72,13 +67,6 @@
   #seaside-player-area {
     background-color: sandybrown;
     height: 20vh;
-
-    @for $i from 1 through 10 {
-      // adjust max tokens
-      .seaside-tile:nth-child(#{$i}) {
-        left: ($i - 1) * 30px;
-      }
-    }
   }
 
   .seaside-tile {
@@ -90,6 +78,19 @@
     position: absolute;
     border: 5px solid black;
     border-radius: 50%;
+
+    &.possible-move {
+      border: 5px dashed lightgreen !important;
+
+      &.selected-move {
+        border: 5px solid darkgreen !important;
+      }
+    }
+
+    &:hover {
+      transform: scale(1.1);
+      z-index: 1000;
+    }
 
     &[data-active-type="WAVE"] {
       background-position-x: 0%
@@ -115,7 +116,7 @@
     }
 
     &[data-active-type="SANDPIPER"] {
-      background-position-x: 82%;
+      background-position-x: 83%;
     }
 
     &[data-active-type="BEACH"] {

@@ -1,35 +1,36 @@
-import { flipToken, getTokenElById, moveSeaTokenToPlayerArea, moveTokenToPlayerArea, moveTokenToSea } from "./utils";
+import { flipToken, getTokenElById, moveTokenToDiscard, moveTokenToPlayerArea, moveTokenToSea } from "./utils";
 
 interface TokenPlayedNotificationData {
-    player_id: number;
-    token_id: number;
-    token_side: SeasideTokenType;
-    token_location: string;
-    pile_id: number;
+    playerId: number;
+    tokenId: number;
+    tokenSide: SeasideTokenType;
+    tokenLocation: string;
+    tokenLocationArgs: number;
 }
 
 interface TokenToSeaNotificationData {
-    token_id: number;
-    token_side: SeasideTokenType;
+    tokenId: number;
+    tokenSide: SeasideTokenType;
+    tokenLocationArgs: number;
 }
 
 interface TokenToPlayerAreaNotificationData {
-    player_id: number;
-    token_id: number;
-    token_side: SeasideTokenType;
-    pile_id: number;
+    playerId: number;
+    tokenId: number;
+    tokenSide: SeasideTokenType;
+    tokenLocationArgs: number;
 }
 
 interface TokensToPlayerAreaNotificationData {
-    player_id: number;
-    token_ids: number[];
-    pile_id: number;
+    playerId: number;
+    tokenIds: number[];
+    tokenLocationArgs: number;
 }
 
 interface TokensToDiscardNotificationData {
-    token_ids: number[];
-    player_id: number;
-    token_count: number;
+    tokenIds: number[];
+    playerId: number;
+    tokenCount: number;
 }
 
 enum SeasideGameNotifications {
@@ -44,30 +45,34 @@ export class SeasideNotifications extends GameGui<SeasideGamedatas> {
 
   async notif_tokenPlayed(args: TokenPlayedNotificationData) {
     console.log("Token played", args);
-    const tokenEl = getTokenElById(args.token_id);
+    const tokenEl = getTokenElById(args.tokenId);
     //flip is needed
-    if (tokenEl.getAttribute("data-active-type") !== args.token_side) {
+    if (tokenEl.getAttribute("data-active-type") !== args.tokenSide) {
       flipToken(tokenEl);
     }
   }
 
   async notif_tokenToSea(args: TokenToSeaNotificationData) {
     console.log("Token moved to sea", args);
-    const tokenEl = getTokenElById(args.token_id);
-    await moveTokenToSea(tokenEl, this);
+    await moveTokenToSea(args.tokenId, args.tokenLocationArgs, this);
   }
 
   async notif_tokenToPlayerArea(args: TokenToPlayerAreaNotificationData) {
     console.log("Token moved to player area", args);
-    const tokenEl = getTokenElById(args.token_id);
-    await moveTokenToPlayerArea(args.player_id.toString(), tokenEl, this);
+    await moveTokenToPlayerArea(args.playerId.toString(), args.tokenId, args.tokenLocationArgs, this);
   }
 
   async notif_tokensToPlayerArea(args: TokensToPlayerAreaNotificationData) {
     console.log("Tokens moved to player area", args);
-    for (const tokenId of args.token_ids) {
-      const tokenEl = getTokenElById(tokenId);
-      await moveSeaTokenToPlayerArea(args.player_id.toString(), tokenEl, this);
+    for (const tokenId of args.tokenIds) {
+      await moveTokenToPlayerArea(args.playerId.toString(), tokenId, args.tokenLocationArgs, this);
+    }
+  }
+
+  async notif_tokensToDiscard(args: TokensToDiscardNotificationData) {
+    console.log("Tokens discarded", args);
+    for (const tokenId of args.tokenIds) {
+      await moveTokenToDiscard(tokenId, this);
     }
   }
 }

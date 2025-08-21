@@ -5,5 +5,5 @@ import { SeasideSetup } from "./setup";
 export {
     SeasideActions,
     SeasideNotifications,
-    SeasideSetup,
+    SeasideSetup
 }

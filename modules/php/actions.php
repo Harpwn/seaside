@@ -19,71 +19,77 @@ trait ActionTrait
     use ArgsTrait;
     use LogicTrait;
 
-    public function actPlayToken(int $token_id, string $token_type)
+    public function actPlayToken(int $tokenId, string $tokenType)
     {
-        $player_id = (int)$this->getActivePlayerId();
+        $playerId = (int)$this->getActivePlayerId();
 
         // check input values
         $inputArgs = $this->argPlayToken();
 
-        $token = $this->getToken($token_id);
+        $token = $this->getToken($tokenId);
 
         //Validation Here
-        if ($token->activeType !== $token_type && $token->inactiveType !== $token_type) {
-            throw new \BgaUserException("Invalid token type: {$token_type}");
+        if ($token->activeType !== $tokenType && $token->inactiveType !== $tokenType) {
+            throw new \BgaUserException("Invalid token type: {$tokenType}");
         }
 
-        if ($inputArgs['token']->id !== $token_id) {
-            throw new \BgaUserException("Token ID mismatch: expected {$token_id}, got {$token->id}");
+        if ($inputArgs['token']->id != $tokenId) {
+            throw new \BgaUserException("Token ID mismatch: expected {$tokenId}, got {$token->id}");
         }
 
-        if ($token->activeType !== $token_type) {
-            $this->playToken($token, $player_id, true);
+        if ($token->activeType !== $tokenType) {
+            $this->playToken($token, $playerId, true);
         } else {
-            $this->playToken($token, $player_id);
+            $this->playToken($token, $playerId);
         }
     }
 
-    public function actStealCrab(int $victim_id) 
+    public function actStealCrab(int $victimId) 
     {
-        $player_id = (int)$this->getActivePlayerId();
+        $playerId = (int)$this->getActivePlayerId();
 
         // check input values
         $inputArgs = $this->argStealCrab();
 
         //Validation here
 
-        $this->handleStealCrab($player_id, $victim_id);
+        $this->handleStealCrab($playerId, $victimId);
     }
 
-    public function actFlipBeach(int $beach_id)
+    public function actFlipBeach(int $beachId)
     {
-        $player_id = (int)$this->getActivePlayerId();
+        $playerId = (int)$this->getActivePlayerId();
 
         // check input values
         $inputArgs = $this->argFlipBeach();
 
-        $beach = $this->getToken($beach_id);
+        $beach = $this->getToken($beachId);
 
         //Validation here
 
-        $this->handleFlipBeach($player_id, $beach);
+        $this->handleFlipBeach($playerId, $beach);
     }
 
-    public function actSelectIsopods(array $isopod_ids)
+    public function actSelectIsopods(string $isopodIds)
     {
-        $player_id = (int)$this->getActivePlayerId();
+        $isopodIds = explode(',', $isopodIds);
+        $playerId = (int)$this->getActivePlayerId();
 
         // check input values
         $inputArgs = $this->argSelectIsopods();
-        $token_id = $inputArgs['sandpiper_id'];
+        $tokenId = $inputArgs['sandpiperId'];
+        $selectableIsopodIds = $inputArgs['selectableIsopodIds'];
 
-        $sandpiper = $this->getToken((int)$token_id);
-
-        $isopods = $this->tokens->getCards($isopod_ids);
+        $sandpiper = $this->getToken((int)$tokenId);
+        $isopods = $this->getTokens($isopodIds);
 
         //Validation here
+        foreach ($isopodIds as $isopodId) {
+            if (!in_array($isopodId, $selectableIsopodIds)) {
+                throw new \BgaUserException("Invalid isopod ID: {$isopodId}");
+            }
+        }
 
-        $this->handleSelectIsopods($player_id, $sandpiper, $isopods);
+        $this->handleSelectIsopods($playerId, $sandpiper, $isopods);
     }
 }

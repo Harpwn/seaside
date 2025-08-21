@@ -27,9 +27,9 @@ trait UtilsTrait
     /**
      * @return Token[]
      */
-    function getAllTokensOfTypeForLocation(string $location, string $type, int $location_args = NULL): array
+    function getAllTokensOfTypeForLocation(string $location, string $type, int $locationArgs = NULL): array
     {
-        $tokens = $this->tokens->getCardsInLocation($location, $location_args);
+        $tokens = $this->tokens->getCardsInLocation($location, $locationArgs);
         $items = array_filter($tokens, function ($token) use ($type) {
             $tokenTyped = $this->getToken((int)$token['id']);
             return $tokenTyped->activeType === $type;
@@ -47,9 +47,17 @@ trait UtilsTrait
         }, $tokens));
     }
 
-    function getToken(int $token_id): Token
+    function getToken(int $tokenId): Token
     {
-        $card = $this->tokens->getCard($token_id);
-        return new Token($card, $this->dbGetTokenFlipped($token_id));
+        $card = $this->tokens->getCard($tokenId);
+        return new Token($card, $this->dbGetTokenFlipped($tokenId));
+    }
+
+    function getTokens(array $tokenIds): array
+    {
+        $cards = $this->tokens->getCards($tokenIds);
+        return array_values(array_map(function ($item) {
+            return new Token($item, $this->dbGetTokenFlipped($item['id']));
+        }, $cards));
     }
 }

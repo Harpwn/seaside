@@ -3,55 +3,55 @@ declare(strict_types=1);
 
 trait NotificationsTrait
 {
-    function nfTokenPlayed (int $player_id, Token $token) {
-        $this->notify->all("tokenPlayed", clienttranslate('${player_name} plays ${token_side}'), [
-            "player_id" => $player_id,
-            "token_side" => $token->activeType,
-            "token_id" => $token->id,
+    function nfTokenPlayed (int $playerId, Token $token) {
+        $this->notify->all("tokenPlayed", clienttranslate('${playerName} plays ${tokenSide}'), [
+            "playerId" => $playerId,
+            "tokenSide" => $token->activeType,
+            "tokenId" => $token->id,
         ]);
     }
 
-    function nfTokenToSea (Token $token) {
-        $this->notify->all("tokenToSea", clienttranslate('${token_side} played into the sea'), [
-            "token_side" => $token->activeType,
-            "token_id" => $token->id,
+    function nfTokenToSea (Token $token, int $tokenLocationArgs) {
+        $this->notify->all("tokenToSea", clienttranslate('${tokenSide} played into the sea'), [
+            "tokenSide" => $token->activeType,
+            "tokenId" => $token->id,
+            "tokenLocationArgs" => $tokenLocationArgs
         ]);
     }
 
-    function nfTokenToPlayerArea(int $player_id, Token $token, int $pile_id) {
-        $this->notify->all("tokenToPlayerArea", clienttranslate('${token_side} played into ${player_name}\'s shore'), [
-            "token_side" => $token->activeType,
-            "token_id" => $token->id,
-            "player_id" => $player_id,
-            "pile_id" => $pile_id
+    function nfTokenToPlayerArea(int $playerId, Token $token, int $tokenLocationArgs) {
+        $this->notify->all("tokenToPlayerArea", clienttranslate('${tokenSide} played into ${playerName}\'s shore'), [
+            "tokenSide" => $token->activeType,
+            "tokenId" => $token->id,
+            "playerId" => $playerId,
+            "tokenLocationArgs" => $tokenLocationArgs
         ]);
     }
 
-    function nfTokensToPlayerArea(int $player_id, array $tokens, int $pile_id) {
+    function nfTokensToPlayerArea(int $playerId, array $tokens, int $tokenLocationArgs) {
         $ids = array_column($tokens, 'id');
-        $this->debug_log("ids", $ids);
-        $this->notify->all("tokensToPlayerArea", clienttranslate('${token_side}\'s played into ${player_name}\'s shore'), [
-            "token_side" => $tokens[0]->activeType,
-            "token_ids" => $ids,
-            "player_id" => $player_id,
-            "pile_id" => $pile_id
+        $this->notify->all("tokensToPlayerArea", clienttranslate('${tokenSide}\'s played into ${playerName}\'s shore'), [
+            "tokenSide" => $tokens[0]->activeType,
+            "tokenIds" => $ids,
+            "playerId" => $playerId,
+            "tokenLocationArgs" => $tokenLocationArgs
         ]);
     }
 
-    function nfTokensToDiscard(int $player_id, array $tokens) {
+    function nfTokensToDiscard(int $playerId, array $tokens) {
         $ids = array_keys(array_filter(array_column($tokens, "call", "id")));
-        $this->notify->all("tokensToDiscard", clienttranslate('${player_name} discards ${token_count} tokens'), [
-            "token_ids" => $ids,
-            "player_id" => $player_id,
-            "token_count" => count($ids)
+        $this->notify->all("tokensToDiscard", clienttranslate('${playerName} discards ${tokenCount} tokens'), [
+            "tokenIds" => $ids,
+            "playerId" => $playerId,
+            "tokenCount" => count($ids)
         ]);
     }
 
     function addPlayerNameDecorator() 
     {
         $this->notify->addDecorator(function (string $message, array $args) {
-            if (isset($args['player_id']) && !isset($args['player_name']) && str_contains($message, '${player_name}')) {
-                $args['player_name'] = $this->getPlayerNameById($args['player_id']);
+            if (isset($args['playerId']) && !isset($args['playerName']) && str_contains($message, '${playerName}')) {
+                $args['playerName'] = $this->getPlayerNameById($args['playerId']);
             }
             return $args;
         });

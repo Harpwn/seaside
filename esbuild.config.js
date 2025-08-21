@@ -91,7 +91,11 @@ async function runBuild() {
     // Watch SCSS separately
     chokidar.watch(scssFile).on("change", () => {
       console.log("SCSS changed, recompiling...");
-      compileSCSS();
+      try {
+        compileSCSS();
+      } catch (err) {
+        console.error("❌ Failed to compile SCSS on change:", err.message);
+      }
     });
   } else {
     await esbuild.build(buildOptions);

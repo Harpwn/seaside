@@ -28,10 +28,10 @@ trait MiscTrait
      */
     protected function zombieTurn(array $state, int $active_player): void
     {
-        $state_name = $state["name"];
+        $stateName = $state["name"];
 
         if ($state["type"] === "activeplayer") {
-            switch ($state_name) {
+            switch ($stateName) {
                 default: {
                         $this->gamestate->nextState(TRANSITION_ZOMBIE_PASS);
                         break;
@@ -47,7 +47,7 @@ trait MiscTrait
             return;
         }
 
-        throw new \feException("Zombie mode not supported at this game state: \"{$state_name}\".");
+        throw new \feException("Zombie mode not supported at this game state: \"{$stateName}\".");
     }
 
     /**
