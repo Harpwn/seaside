@@ -31,7 +31,7 @@ interface FlipBeachActionData {
 }
 
 interface StealCrabActionData {
-    victimId: number[];
+    victimId: number;
 }
 
 interface SelectIsopodsActionData {
@@ -81,6 +81,14 @@ export class SeasideActions extends GameGui<SeasideGamedatas> {
     this.bgaPerformAction(SeasideGameActions.FlipBeach, data);
   }
 
+  actStealCrab(victimId: number) {
+    const data: StealCrabActionData = {
+      victimId
+    };
+
+    this.bgaPerformAction(SeasideGameActions.StealCrab, data);
+  }
+
   actSelectIsopods(isopodIds: number[]) {
     const data: SelectIsopodsActionData = {
       isopodIds: isopodIds.join(",")
@@ -126,7 +134,15 @@ export class SeasideActions extends GameGui<SeasideGamedatas> {
     });
   }
 
-  enteringStealCrabState(args: SeasideStealCrabArgs) {}
+  enteringStealCrabState(args: SeasideStealCrabArgs) {
+    args.playersWithCrabsIds.forEach((playerId) => {
+      const playerPanel = document.getElementById(`seaside-player-${playerId}`);
+      playerPanel.classList.add("possible-move");
+      playerPanel.addEventListener("click", () => {
+        this.actStealCrab(playerId);
+      });
+    });
+  }
 
   enteringSelectIsopodsState(args: SeasideSelectIsopodsArgs) {
     args.selectableIsopodIds.forEach((isopodId) => {

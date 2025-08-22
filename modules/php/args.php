@@ -21,9 +21,17 @@ trait ArgsTrait {
 
     public function argStealCrab(): array
     {
-
+        $playersWithCrabIds = [];
+        foreach ($this->getPlayersIds() as $playerId) {
+            if ($this->getCurrentPlayerId() != $playerId) {
+                $crabs = $this->getAllTokensOfTypeForLocation((string)$playerId, CRAB);
+                if (count($crabs) > 0) {
+                    $playersWithCrabIds[] = (int)$playerId;
+                }
+            }
+        }
         return [
-            "playersWithCrabsIds" => []
+            "playersWithCrabsIds" => $playersWithCrabIds
         ];
     }
 
