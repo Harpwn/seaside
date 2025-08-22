@@ -9,11 +9,11 @@ trait DebugUtilsTrait
         }die('debug data : '.json_encode($debugData));
     }
 
-    public function debugLog($message, $debugData) {
+    public function debugLog($debugData) {
         if ($this->getBgaEnvironment() != 'studio') { 
             return;
         }
-        self::notifyAllPlayers('logdummy', clienttranslate('${message} - ${value}'),  ['message' => $message, 'value' => json_encode($debugData)] );
+        self::notifyAllPlayers('logdummy', clienttranslate('${message} - ${value}'),  ['message' => "debug data: ", 'value' => json_encode($debugData)] );
     }
 
     function debug_playToEndGame() {

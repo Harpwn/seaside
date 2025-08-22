@@ -187,22 +187,24 @@ trait LogicTrait
         $piles = [];
         $piles[$sandpiper->id] = array_column($isopods, 'id');
 
+
         // Get other piles
         $playerSandpipers = $this->getAllTokensOfTypeForLocation((string)$playerId, SANDPIPER);
         foreach ($playerSandpipers as $playerSandpiper) {
-            $sandpiperToken = $this->getToken($playerSandpiper->id);
-            if ($sandpiperToken->id !== $sandpiper->id) {
-                $sandpiperIsopods = $this->getAllTokensOfTypeForLocation((string)$playerId, ISOPOD, $sandpiper->locationArg);
+            if ($playerSandpiper->id !== $sandpiper->id) {
+                $sandpiperIsopods = $this->getAllTokensOfTypeForLocation((string)$playerId, ISOPOD, $playerSandpiper->locationArg);
                 $piles[$playerSandpiper->id] = array_column($sandpiperIsopods, 'id');
             }
         }
+
         //Remove all but the highest pile
         $highestPileSize = max(array_map('count', $piles));
         $smallerPiles = array_filter($piles, function ($pile) use ($highestPileSize) {
             return count($pile) < $highestPileSize;
         });
 
-        foreach ($smallerPiles as $pileTokens) {
+        foreach ($smallerPiles as $sandpiperId => $pileTokens) {
+            $this->sendTokensToDiscard([$sandpiperId], $playerId);
             $this->sendTokensToDiscard($pileTokens, $playerId);
         }
 
@@ -249,10 +251,10 @@ trait LogicTrait
         $this->nfTokensToPlayerArea($playerId, $tokens, $tokenLocationArgs);
     }
 
-    function sendTokensToDiscard(array $tokens, int $playerId)
+    function sendTokensToDiscard(array $tokenIds, int $playerId)
     {
-        $this->tokens->moveCards($tokens, DISCARD_LOCATION);
-        $this->nfTokensToDiscard($playerId, $tokens);
+        $this->tokens->moveCards($tokenIds, DISCARD_LOCATION);
+        $this->nfTokensToDiscard($playerId, $tokenIds);
     }
 
     function flipToken(Token $token)
