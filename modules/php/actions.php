@@ -73,12 +73,14 @@ trait ActionTrait
     public function actSelectIsopods(string $isopodIds)
     {
         $isopodIds = explode(',', $isopodIds);
+        $isopodIds = array_filter($isopodIds, 'strlen');
         $playerId = (int)$this->getActivePlayerId();
 
         // check input values
         $inputArgs = $this->argSelectIsopods();
         $tokenId = $inputArgs['sandpiperId'];
         $selectableIsopodIds = $inputArgs['selectableIsopodIds'];
+
 
         $sandpiper = $this->getToken((int)$tokenId);
         $isopods = $this->getTokens($isopodIds);
