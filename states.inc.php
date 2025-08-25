@@ -78,9 +78,20 @@ $machinestates = [
         ->action('stNextPlayer')
         ->updateGameProgression(true)
         ->transitions([
-            TRANSITION_END_SCORE => GAME_STATE_END_GAME,
+            TRANSITION_END_SCORE => GAME_STATE_PRE_END_GAME,
             TRANSITION_NEXT_PLAYER => GAME_STATE_PLAYER_PLAY_TOKEN
         ]) 
+        ->build(),
+
+    GAME_STATE_PRE_END_GAME => GameStateBuilder::create()
+        ->name('preEndGame')
+        ->description(clienttranslate('Prepare for end of game'))
+        ->type(StateType::GAME)
+        ->action('stPreEndGame')
+        ->updateGameProgression(true)
+        ->transitions([
+            TRANSITION_SCORING_FINISHED => GAME_STATE_END_GAME,
+        ])
         ->build(),
 
     GAME_STATE_END_GAME => GameStateBuilder::create()

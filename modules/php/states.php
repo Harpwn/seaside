@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 trait StatesTrait
@@ -9,9 +10,20 @@ trait StatesTrait
         The action method of state X is called everytime the current game state is set to X.
     */
 
-    function stPlayTokenSide() {}
+    function stPreEndGame() 
+    {
+        $seaTokens = $this->getAllTokensForLocation(SEA_LOCATION);
+        if(count($seaTokens) > 0) 
+        {
+            $this->handleEndGameWaveBonus($seaTokens);
+        }
 
-    function stEndTurn() {}
+        //Move all sea tokens to that players play area
+
+        //Notify all players
+
+        $this->gamestate->nextState(TRANSITION_SCORING_FINISHED);
+    }
 
     public function stNextPlayer(): void
     {
@@ -24,8 +36,8 @@ trait StatesTrait
         $this->activeNextPlayer();
 
         // Go to another gamestate
-        $gameEnd = false; // Here, we would detect if the game is over to make the appropriate transition
-        if ($gameEnd) {
+        $remainingTokens = $this->tokens->countCardsInLocation(BAG_LOCATION);
+        if ($remainingTokens == 0) {
             $this->gamestate->nextState(TRANSITION_END_SCORE);
         } else {
             $this->gamestate->nextState(TRANSITION_NEXT_PLAYER);

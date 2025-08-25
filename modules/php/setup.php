@@ -20,6 +20,14 @@ trait SetupTrait
         $this->reloadPlayersBasicInfos();
         $this->activeNextPlayer();
         $this->setupTokens();
+
+        $this->initStat('player', 'no_crab', 0);
+        $this->initStat('player', 'no_rock', 0);
+        $this->initStat('player', 'no_wave', 0);
+        $this->initStat('player', 'no_beach', 0);
+        $this->initStat('player', 'no_shell', 0);
+        $this->initStat('player', 'no_isopod', 0);
+        $this->initStat('player', 'no_sandpiper', 0);
     }
 
     protected function getAllDatas(): array
@@ -41,6 +49,8 @@ trait SetupTrait
 
         $result['seaTokens'] = $this->getAllTokensForLocation(SEA_LOCATION);
 
+        $result['deckRemainingCount'] = $this->tokens->countCardsInLocation(BAG_LOCATION);
+
         // TODO: Gather all information about current game situation (visible by player $currentPlayerId).
 
         return $result;
@@ -56,5 +66,24 @@ trait SetupTrait
         }
         $this->tokens->createCards($deck);
         $this->tokens->shuffle(BAG_LOCATION);
+
+        // get number of players
+        $numPlayers = count($this->getPlayersIds());
+        switch ($numPlayers) {
+            case 2:
+                // Remove 30-40 tokens
+                $this->removeNoTokens(rand(30, 40));
+                break;
+            case 3:
+                // Remove 15-20 tokens
+                $this->removeNoTokens(rand(15, 20));
+                break;
+            case 4:
+            case 5:
+                //All Tokens Used
+                break;
+            default:
+                throw new \feException("Invalid number of players: {$numPlayers}");
+        }
     }
 }

@@ -29,4 +29,12 @@ trait DbTrait
         //Set in DB
         $this->DbQuery("UPDATE `card` SET `flipped` = $tinyIntFlipped WHERE `card_id` = $tokenId");
     }
+
+    private function dbSetNewScore(int $playerId, int $newScore) {
+        $this->DbQuery("UPDATE `player` SET `player_score` = $newScore WHERE `player_id` = $playerId");
+    }
+
+    private function dbGetPlayerNames() {
+        return $this->getCollectionFromDB("SELECT `player_id`, `player_name` FROM `player`");
+    }
 }

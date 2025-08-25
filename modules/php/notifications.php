@@ -19,7 +19,7 @@ trait NotificationsTrait
         ]);
     }
 
-    function nfTokenToPlayerArea(int $playerId, Token $token, int $tokenLocationArgs) {
+    function nfTokenToPlayerArea(int $playerId, Token $token, int $tokenLocationArgs = 0) {
         $this->notify->all("tokenToPlayerArea", clienttranslate('${tokenSide} played into ${playerName}\'s shore'), [
             "tokenSide" => $token->activeType,
             "tokenId" => $token->id,
@@ -28,22 +28,82 @@ trait NotificationsTrait
         ]);
     }
 
-    function nfTokensToPlayerArea(int $playerId, array $tokens, int $tokenLocationArgs) {
-
-        $ids = array_column($tokens, 'id');
-        $this->notify->all("tokensToPlayerArea", clienttranslate('${tokenSide}\'s played into ${playerName}\'s shore'), [
-            "tokenSide" => $tokens[0]->activeType,
-            "tokenIds" => $ids,
+    function nfTokenMovesWithinPlayerArea(int $playerId, Token $token, int $fromLocationArgs, int $toLocationArgs) {
+        $this->notify->all("tokenMovesWithinPlayerArea", clienttranslate('${tokenSide} moves within ${playerName}\'s shore'), [
+            "tokenSide" => $token->activeType,
+            "tokenId" => $token->id,
             "playerId" => $playerId,
-            "tokenLocationArgs" => $tokenLocationArgs
+            "fromLocationArgs" => $fromLocationArgs,
+            "toLocationArgs" => $toLocationArgs
         ]);
     }
 
-    function nfTokensToDiscard(int $playerId, array $tokenIds) {
-        $this->notify->all("tokensToDiscard", clienttranslate('${playerName} discards ${tokenCount} tokens'), [
-            "tokenIds" => $tokenIds,
+    function nfCrabStolen(int $playerId, int $thiefId, Token $token) {
+        $this->notify->all("crabStolen", clienttranslate('One of ${playerName}\'s CRAB tokens is stolen'), [
             "playerId" => $playerId,
-            "tokenCount" => count($tokenIds)
+            "tokenId" => $token->id,
+            "thiefId" => $thiefId
+        ]);
+    }
+
+    function nfRockGetsCrabs(int $playerId, array $crabs) {
+        $this->notify->all("rockGetsCrabs", clienttranslate('${playerName}\'s ROCK pair attracts ${crabCount} CRAB tokens'), [
+            "playerId" => $playerId,
+            "crabCount" => count($crabs),
+            "tokenIds" => array_column($crabs, 'id'),
+        ]);
+    }
+
+    function nfBeachGetsShells(int $playerId, array $seaShells) {
+        $this->notify->all("beachGetsShells", clienttranslate('${playerName}\'s Beaches find ${shellCount} buried SHELL tokens'), [
+            "playerId" => $playerId,
+            "shellCount" => count($seaShells),
+            "tokenIds" => array_column($seaShells, 'id'),
+        ]);
+    }
+
+    function nfSandpiperGetsIsopods(int $playerId, array $isopods, int $newSandpiperPileId) {
+        $this->notify->all("sandpiperGetsIsopods", clienttranslate('${playerName}\'s SANDPIPER grabs a pile of ${isopodCount} ISOPOD tokens'), [
+            "playerId" => $playerId,
+            "isopodCount" => count($isopods),
+            "tokenIds" => array_column($isopods, 'id'),
+            "newSandpiperPileId" => $newSandpiperPileId
+        ]);
+    }
+
+    function nfSandpiperIsopodsLost(int $playerId, int $sandpiperId, array $isopods) {
+        $this->notify->all("sandpiperIsopodsLost", clienttranslate('${playerName} loses SANDPIPER with a pile of ${isopodCount} ISOPOD tokens'), [
+            "playerId" => $playerId,
+            "isopodCount" => count($isopods),
+            "tokenIds" => array_column($isopods, 'id'),
+            "sandpiperId" => $sandpiperId
+        ]);
+    }
+
+    function nfBeachFlip(int $playerId, Token $beach) {
+        $this->notify->all("beachFlip", clienttranslate('${playerName}\'s WAVE washes away a BEACH to reveal a ${otherSideType} token'), [
+            "playerId" => $playerId,
+            "tokenId" => $beach->id,
+            "otherSideType" => $beach->inactiveType
+        ]);
+    }
+
+    function nfEndGameWaveBonus(int $playerId, array $seaTokens) {
+        $this->notify->all("endGameWaveBonus", clienttranslate('${playerName} has the most waves, so they get the ${tokenCount} leftover sea tokens'), [
+            "playerId" => $playerId,
+            "tokenCount" => count($seaTokens),
+            "tokenIds" => array_column($seaTokens, 'id'),
+        ]);
+    }
+
+    function nfEndGameWaveBonusTie(array $playerIdsAndTokenIds) 
+    {
+        $playerIds = array_keys($playerIdsAndTokenIds);
+        $allPlayerNames = $this->dbGetPlayerNames();
+        $playerNames = array_map(fn($id) => $allPlayerNames[$id] ?? '', $playerIds);
+        $this->notify->all("endGameWaveBonusTie", clienttranslate('${playerNames} have tied for the most waves, so they each get ${tokenCount} leftover sea tokens'), [
+            "playerIdsAndTokenIds" => $playerIdsAndTokenIds,
+            "playerNames" => explode(',', (string)$playerNames)
         ]);
     }
 

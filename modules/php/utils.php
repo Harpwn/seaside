@@ -16,6 +16,14 @@ trait UtilsTrait
         return new Token($this->tokens->getCardOnTop(BAG_LOCATION), false);
     }
 
+    function removeNoTokens(int $n): void
+    {
+        for ($i = 0; $i < $n; $i++) {
+            $token = $this->drawRandomToken();
+            $this->tokens->moveCard($token->id, DISCARD_LOCATION);
+        }
+    }
+
     /**
      * @return int[]
      */
@@ -55,9 +63,18 @@ trait UtilsTrait
 
     function getTokens(array $tokenIds): array
     {
+        if (count($tokenIds) == 0) {
+            return [];
+        }
         $cards = $this->tokens->getCards($tokenIds);
         return array_values(array_map(function ($item) {
             return new Token($item, $this->dbGetTokenFlipped($item['id']));
         }, $cards));
+    }
+
+    function updatePlayerScore(int $playerId): void
+    {
+        $totalPlayerTokens = count($this->tokens->getCardsInLocation((string)$playerId));
+        $this->dbSetNewScore($playerId, $totalPlayerTokens);
     }
 }

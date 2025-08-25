@@ -1,2 +1,39 @@
 {
+  "player": {
+    "no_crab": {
+      "id": 10,
+      "name": "Number of crabs",
+      "type": "int"
+    },
+    "no_rock": {
+      "id": 11,
+      "name": "Number of rocks",
+      "type": "int"
+    },
+    "no_beach": {
+      "id": 12,
+      "name": "Number of beaches",
+      "type": "int"
+    },
+    "no_shell": {
+      "id": 13,
+      "name": "Number of shells",
+      "type": "int"
+    },
+    "no_sandpiper": {
+      "id": 14,
+      "name": "Number of sandpipers",
+      "type": "int"
+    },
+    "no_isopod": {
+      "id": 15,
+      "name": "Number of isopods",
+      "type": "int"
+    },
+    "no_wave": {
+      "id": 16,
+      "name": "Number of waves",
+      "type": "int"
+    }
+  }
 }
