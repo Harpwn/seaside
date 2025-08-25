@@ -1,13 +1,19 @@
 <?php
 declare(strict_types=1);
 
+/**
+ * @property \Bga\GameFramework\Components\Deck $tokens
+ */
 trait MiscTrait
 {
     public function getGameProgression()
     {
-        // TODO: compute and return the game progression
+        // get tokens left in deck
+        $tokens_locations = $this->tokens->countCardsInLocations();
+        $deck_tokens_count = $tokens_locations[BAG_LOCATION] ?? 0;
+        $total_tokens_count = array_sum($tokens_locations);
 
-        return 0;
+        return ($total_tokens_count - $deck_tokens_count) / $total_tokens_count * 100;
     }
 
     /**
