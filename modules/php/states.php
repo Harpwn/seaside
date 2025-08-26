@@ -9,6 +9,16 @@ trait StatesTrait
         Here, you can create methods defined as "game state actions" (see "action" property in states.inc.php).
         The action method of state X is called everytime the current game state is set to X.
     */
+    function stPlayAgain()
+    {
+        $remainingTokens = $this->tokens->countCardsInLocation(BAG_LOCATION);
+        if ($remainingTokens == 0) {
+            $this->gamestate->nextState(TRANSITION_END_SCORE);
+        } else {
+            $this->nfPlayAgain((int)$this->getActivePlayerId());
+            $this->gamestate->nextState(TRANSITION_PLAY_TOKEN);
+        }
+    }
 
     function stPreEndGame() 
     {
@@ -17,10 +27,6 @@ trait StatesTrait
         {
             $this->handleEndGameWaveBonus($seaTokens);
         }
-
-        //Move all sea tokens to that players play area
-
-        //Notify all players
 
         $this->gamestate->nextState(TRANSITION_SCORING_FINISHED);
     }
@@ -34,6 +40,8 @@ trait StatesTrait
         $this->giveExtraTime($playerId);
 
         $this->activeNextPlayer();
+
+        
 
         // Go to another gamestate
         $remainingTokens = $this->tokens->countCardsInLocation(BAG_LOCATION);

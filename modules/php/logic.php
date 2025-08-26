@@ -124,9 +124,8 @@ trait LogicTrait
             //Send main rock to player area
             $this->sendTokenToPlayerArea($rock, $playerId, $newRockPileId);
             $this->nfTokenToPlayerArea($playerId, $rock);
-            $this->moveTokenWithinPlayerArea($playerId, $unPiledRockToken, 0, $newRockPileId);
+            $this->moveTokenWithinPlayerArea($playerId, $unPiledRockToken, $newRockPileId);
             $this->nfTokenMovesWithinPlayerArea($playerId, $unPiledRockToken, 0, $newRockPileId);
-
 
             //Send all crabs in sea to player area
             $seaCrabs = $this->getAllTokensOfTypeForLocation(SEA_LOCATION, CRAB);
@@ -190,7 +189,7 @@ trait LogicTrait
             $newSandpiperPileId = max(array_column($playerSandpipers, 'locationArg')) + 1;
         }
 
-        $this->moveTokenWithinPlayerArea($playerId, $sandpiper, 0, $newSandpiperPileId);
+        $this->moveTokenWithinPlayerArea($playerId, $sandpiper, $newSandpiperPileId);
         $this->nfTokenMovesWithinPlayerArea($playerId, $sandpiper, 0, $newSandpiperPileId);
 
         if(count($isopods) > 0) {
@@ -307,7 +306,7 @@ trait LogicTrait
         $this->tokens->moveCards($tokenIds, (string)$playerId, $tokenLocationArgs);
     }
 
-    function moveTokenWithinPlayerArea(int $playerId, Token $token, int $fromLocationArgs, int $toLocationArgs)
+    function moveTokenWithinPlayerArea(int $playerId, Token $token, int $toLocationArgs)
     {
         $this->tokens->moveCard($token->id, (string)$playerId, $toLocationArgs);
     }

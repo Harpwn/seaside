@@ -10,6 +10,7 @@ enum SeasideGameActions {
 
 enum SeasideGameStates {
   PlayToken = "playToken",
+  PlayAgain = "playAgain",
   StealCrab = "stealCrab",
   FlipBeach = "flipBeach",
   SelectIsopods = "selectIsopods",
@@ -47,6 +48,8 @@ interface SeasideNextPlayerArgs {}
 interface SeasideFlipBeachArgs {
   flippableBeachIds: number[];
 }
+
+interface SeasidePlayAgainArgs { }
 
 interface SeasideStealCrabArgs {
   playersWithCrabsIds: number[];
@@ -103,6 +106,9 @@ export class SeasideActions extends GameGui<SeasideGamedatas> {
       case SeasideGameStates.PlayToken:
         this.enteringPlayTokenState(payload.args);
         break;
+      case SeasideGameStates.PlayAgain:
+        this.enteringPlayAgainState(payload.args);
+        break;
       case SeasideGameStates.NextPlayer:
         this.enteringNextPlayerState(payload.args);
         break;
@@ -121,6 +127,8 @@ export class SeasideActions extends GameGui<SeasideGamedatas> {
   enteringPlayTokenState(args: SeasidePlayTokenArgs) {
     drawToken(args.token);
   }
+
+  enteringPlayAgainState(args: SeasidePlayAgainArgs) {}
 
   enteringNextPlayerState(args: SeasideNextPlayerArgs) {}
 
@@ -158,6 +166,9 @@ export class SeasideActions extends GameGui<SeasideGamedatas> {
       case SeasideGameStates.PlayToken:
         this.leaveStatePlayToken();
         break;
+      case SeasideGameStates.PlayAgain:
+        this.leaveStatePlayAgain();
+        break;
       case SeasideGameStates.NextPlayer:
         this.leaveStateNextPlayer();
         break;
@@ -177,6 +188,8 @@ export class SeasideActions extends GameGui<SeasideGamedatas> {
 
   leaveStatePlayToken() {}
 
+  leaveStatePlayAgain() {}
+
   leaveStateNextPlayer() {}
 
   leaveStateFlipBeach() {}
@@ -190,6 +203,9 @@ export class SeasideActions extends GameGui<SeasideGamedatas> {
     switch (stateName) {
       case SeasideGameStates.PlayToken:
         this.updateActionButtonsPlayToken(args);
+        break;
+      case SeasideGameStates.PlayAgain:
+        this.updateActionButtonsPlayAgain(args);
         break;
       case SeasideGameStates.NextPlayer:
         this.updateActionButtonsNextPlayer(args);
@@ -217,6 +233,8 @@ export class SeasideActions extends GameGui<SeasideGamedatas> {
       );
     }
   }
+
+  updateActionButtonsPlayAgain(args: SeasidePlayAgainArgs) {}
 
   updateActionButtonsNextPlayer(args: SeasideNextPlayerArgs) {}
 

@@ -13,7 +13,8 @@ trait UtilsTrait
 
     function drawRandomToken(): Token
     {
-        return new Token($this->tokens->getCardOnTop(BAG_LOCATION), false);
+        $topToken = $this->tokens->getCardOnTop(BAG_LOCATION);
+        return new Token($topToken, false);
     }
 
     function removeNoTokens(int $n): void

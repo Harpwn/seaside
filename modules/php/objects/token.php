@@ -17,7 +17,6 @@ class Token
 
     public function __construct($dbCard, $flipped)
     {
-        //split $type by /
         $types = explode('/', $dbCard['type']);
         $this->activeType = $types[0];
         $this->inactiveType = $types[1] ?? '';

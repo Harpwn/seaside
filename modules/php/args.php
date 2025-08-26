@@ -38,14 +38,14 @@ trait ArgsTrait {
     public function argFlipBeach(): array
     {
         return [
-            "flippableBeachIds" => array_column($this->getAllTokensOfTypeForLocation($this->getActivePlayerId(), BEACH), 'id')
+            "flippableBeachIds" => array_column($this->getAllTokensOfTypeForLocation((string)$this->getActivePlayerId(), BEACH), 'id')
         ];
     }
 
     public function argSelectIsopods(): array
     {
         return [
-            "sandpiperId" => $this->getAllTokensOfTypeForLocation($this->getActivePlayerId(), SANDPIPER, 0)[0]->id,
+            "sandpiperId" => $this->getAllTokensOfTypeForLocation((string)$this->getActivePlayerId(), SANDPIPER, 0)[0]->id,
             "selectableIsopodIds" => array_column($this->getAllTokensOfTypeForLocation(SEA_LOCATION, ISOPOD), 'id')
         ];
     }

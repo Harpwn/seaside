@@ -18,7 +18,7 @@ $machinestates = [
         ])
         ->transitions([
             TRANSITION_END_TURN => GAME_STATE_NEXT_PLAYER,
-            TRANSITION_PLAY_AGAIN => GAME_STATE_PLAYER_PLAY_TOKEN,
+            TRANSITION_PLAY_AGAIN => GAME_STATE_PLAYER_PLAY_AGAIN,
             TRANSITION_STEAL_CRAB => GAME_STATE_PLAYER_ROCK_STEAL_CRAB,
             TRANSITION_FLIP_BEACH => GAME_STATE_PLAYER_WAVE_FLIP_BEACH,
             TRANSITION_SELECT_ISOPODS => GAME_STATE_PLAYER_SANDPIPER_SELECT_ISOPODS
@@ -50,10 +50,10 @@ $machinestates = [
         ])
         ->transitions([
             TRANSITION_END_TURN => GAME_STATE_NEXT_PLAYER,
-            TRANSITION_PLAY_AGAIN => GAME_STATE_PLAYER_PLAY_TOKEN,
+            TRANSITION_PLAY_AGAIN => GAME_STATE_PLAYER_PLAY_AGAIN,
             TRANSITION_STEAL_CRAB => GAME_STATE_PLAYER_ROCK_STEAL_CRAB,
             TRANSITION_FLIP_BEACH => GAME_STATE_PLAYER_WAVE_FLIP_BEACH,
-            TRANSITION_SELECT_ISOPODS => GAME_STATE_PLAYER_SANDPIPER_SELECT_ISOPODS
+            TRANSITION_SELECT_ISOPODS => GAME_STATE_PLAYER_SANDPIPER_SELECT_ISOPODS,
         ]) 
         ->build(),
 
@@ -83,6 +83,18 @@ $machinestates = [
         ]) 
         ->build(),
 
+    GAME_STATE_PLAYER_PLAY_AGAIN => GameStateBuilder::create()
+        ->name('playAgain')
+        ->description(clienttranslate('${actplayer} must play again'))
+        ->descriptionmyturn(clienttranslate('${you} must play again'))
+        ->type(StateType::ACTIVE_PLAYER)
+        ->action('stPlayAgain')
+        ->transitions([
+            TRANSITION_PLAY_TOKEN => GAME_STATE_PLAYER_PLAY_TOKEN,
+            TRANSITION_END_SCORE => GAME_STATE_PRE_END_GAME,
+        ])
+        ->build(),
+
     GAME_STATE_PRE_END_GAME => GameStateBuilder::create()
         ->name('preEndGame')
         ->description(clienttranslate('Prepare for end of game'))
@@ -92,14 +104,6 @@ $machinestates = [
         ->transitions([
             TRANSITION_SCORING_FINISHED => GAME_STATE_END_GAME,
         ])
-        ->build(),
-
-    GAME_STATE_END_GAME => GameStateBuilder::create()
-        ->name('gameEnd')
-        ->description(clienttranslate('End of game'))
-        ->type(StateType::GAME)
-        ->action('stGameEnd')
-        ->args('argGameEnd')
         ->build(),
 ];
 
