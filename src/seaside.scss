@@ -28,7 +28,7 @@
     background: sandybrown;
     position: relative;
     height: 100%;
-    display:flex;
+    display: flex;
     padding-left: 50px;
 
     .seaside-tile {
@@ -51,6 +51,10 @@
 
       &.possible-move {
         border: 5px dashed lightgreen !important;
+
+        &.selected-move {
+          border: 5px solid darkgreen !important;
+        }
       }
 
       .seaside-tile {

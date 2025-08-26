@@ -89,6 +89,31 @@ export const clearMoves = () => {
   });
 };
 
+export const selectVictimPlayer = (victimId: number) => {
+  const playerPanel = document.getElementById(`seaside-player-${victimId}`);
+  playerPanel.classList.add("selected-move");
+  const newEl = removeAllClickEvents(playerPanel);
+  newEl.addEventListener("click", () => deselectVictimPlayer(victimId));
+  const otherSelectedPlayerPanels = document.querySelectorAll(".selected-move");
+  otherSelectedPlayerPanels.forEach((panel) => {
+    if (panel !== newEl) {
+      panel.classList.remove("selected-move");
+      const newOtherPlanel = removeAllClickEvents(panel);
+      const otherPlayerId = newOtherPlanel.getAttribute("data-player-id")
+      newOtherPlanel.addEventListener("click", () => selectVictimPlayer(parseInt(otherPlayerId)));
+    }
+  });
+  updateConfirmDisabled(false);
+};
+
+export const deselectVictimPlayer = (victimId: number) => {
+  const playerPanel = document.getElementById(`seaside-player-${victimId}`);
+  playerPanel.classList.remove("selected-move");
+  const newEl = removeAllClickEvents(playerPanel);
+  newEl.addEventListener("click", () => selectVictimPlayer(victimId));
+  updateConfirmDisabled(true);
+};
+
 export const selectToken = (tokenId: number) => {
   const tokenEl = getTokenElById(tokenId);
   tokenEl.classList.add("selected-move");
@@ -107,6 +132,15 @@ export const removeAllClickEvents = (element: Element) => {
   const clone = element.cloneNode(true) as Element; // Deep clone the element
   element.parentNode.replaceChild(clone, element); // Replace the original with the clone
   return clone;
+};
+
+export const updateConfirmDisabled = (disabled: boolean) => {
+  const confirmButton = document.getElementById("seaside-confirm");
+  if (confirmButton) {
+    confirmButton.classList.toggle("disabled", disabled);
+    confirmButton.removeAttribute("disabled");
+    confirmButton.setAttribute("aria-disabled", String(disabled));
+  }
 };
 
 export const updateTokenElLocation = (element: Element, location: string, locationArg: number) => {

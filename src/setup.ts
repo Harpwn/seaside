@@ -38,9 +38,7 @@ export class SeasideSetup extends GameGui<SeasideGamedatas> {
       if (this.player_id.toString() != player.id) {
         document.getElementById("seaside-other-players").insertAdjacentHTML(
           "beforeend",
-          `<div id="seaside-player-${
-            player.id
-          }" class="seaside-player seaside-other-player">
+          `<div id="seaside-player-${player.id}" class="seaside-player seaside-other-player" data-player-id="${player.id}">
             ${tokens.map(token => token.outerHTML).join("")}
             </div>`
         );
