@@ -33,6 +33,7 @@ trait DebugUtilsTrait
                     $args = $this->argStealCrab();
                     $playersWithCrabsIds = $args['playersWithCrabsIds'];
                     $rand = rand(0, count($playersWithCrabsIds) - 1);
+                    $this->dump('crabs', (int)$playersWithCrabsIds[$rand]);
                     $this->actStealCrab((int)$playersWithCrabsIds[$rand]);
                     break;
                 case GAME_STATE_PLAYER_WAVE_FLIP_BEACH:

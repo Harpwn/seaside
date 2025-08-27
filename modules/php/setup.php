@@ -58,8 +58,14 @@ trait SetupTrait
 
     function setupTokens()
     {
+        //$TokenDeck = DECK;
+        $TokenDeck = TEST_DECK_ROCKS;
+        //$TokenDeck = TEST_DECK_PIPERS;
+        //$TokenDeck = TEST_DECK_BEACHES;
+        //$TokenDeck = TEST_DECK_WAVES;
+
         $deck = array();
-        foreach (TOKENS as $token) 
+        foreach ($TokenDeck as $token) 
         {
             $typeVal = "{$token[1]}/{$token[2]}";
             $deck[] = array('type' => $typeVal, 'type_arg' => 1, 'nbr' => 1 );
