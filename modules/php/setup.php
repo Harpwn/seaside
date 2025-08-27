@@ -21,13 +21,14 @@ trait SetupTrait
         $this->activeNextPlayer();
         $this->setupTokens();
 
-        $this->initStat('player', 'no_crab', 0);
-        $this->initStat('player', 'no_rock', 0);
-        $this->initStat('player', 'no_wave', 0);
-        $this->initStat('player', 'no_beach', 0);
-        $this->initStat('player', 'no_shell', 0);
-        $this->initStat('player', 'no_isopod', 0);
-        $this->initStat('player', 'no_sandpiper', 0);
+        $this->initStat('player', STAT_NO_CRAB, 0);
+        $this->initStat('player', STAT_NO_ROCK, 0);
+        $this->initStat('player', STAT_NO_WAVE, 0);
+        $this->initStat('player', STAT_NO_BEACH, 0);
+        $this->initStat('player', STAT_NO_SHELL, 0);
+        $this->initStat('player', STAT_NO_ISOPOD, 0);
+        $this->initStat('player', STAT_NO_SANDPIPER, 0);
+        $this->initStat('player', STAT_NO_SEATOKENS, 0);
     }
 
     protected function getAllDatas(): array
@@ -58,8 +59,8 @@ trait SetupTrait
 
     function setupTokens()
     {
-        //$TokenDeck = DECK;
-        $TokenDeck = TEST_DECK_ROCKS;
+        $TokenDeck = DECK;
+        //$TokenDeck = TEST_DECK_ROCKS;
         //$TokenDeck = TEST_DECK_PIPERS;
         //$TokenDeck = TEST_DECK_BEACHES;
         //$TokenDeck = TEST_DECK_WAVES;

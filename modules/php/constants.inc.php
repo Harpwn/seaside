@@ -24,6 +24,14 @@ const TRANSITION_END_SCORE = 'ENDSCORE';
 const TRANSITION_SCORING_FINISHED = 'SCORINGFINISHED';
 const TRANSITION_ZOMBIE_PASS = 'ZOMBIEPASS';
 
+const STAT_NO_SANDPIPER = 'no_sandpiper';
+const STAT_NO_BEACH = 'no_beach';
+const STAT_NO_SHELL = 'no_shell';
+const STAT_NO_WAVE = 'no_wave';
+const STAT_NO_ISOPOD = 'no_isopod';
+const STAT_NO_CRAB = 'no_crab';
+const STAT_NO_ROCK = 'no_rock';
+const STAT_NO_SEATOKENS = 'no_seatokens';
 
 const SANDPIPER = 'SANDPIPER';
 const BEACH = 'BEACH';
