@@ -89,43 +89,68 @@ export const clearMoves = () => {
   });
 };
 
-export const selectVictimPlayer = (victimId: number) => {
-  const playerPanel = document.getElementById(`seaside-player-${victimId}`);
+export const selectSinglePlayer = (playerId: number) => {
+  const playerPanel = document.getElementById(`seaside-player-${playerId}`);
   playerPanel.classList.add("selected-move");
   const newEl = removeAllClickEvents(playerPanel);
-  newEl.addEventListener("click", () => deselectVictimPlayer(victimId));
+  newEl.addEventListener("click", () => deselectSinglePlayer(playerId));
   const otherSelectedPlayerPanels = document.querySelectorAll(".selected-move");
   otherSelectedPlayerPanels.forEach((panel) => {
     if (panel !== newEl) {
       panel.classList.remove("selected-move");
       const newOtherPlanel = removeAllClickEvents(panel);
       const otherPlayerId = newOtherPlanel.getAttribute("data-player-id")
-      newOtherPlanel.addEventListener("click", () => selectVictimPlayer(parseInt(otherPlayerId)));
+      newOtherPlanel.addEventListener("click", () => selectSinglePlayer(parseInt(otherPlayerId)));
     }
   });
   updateConfirmDisabled(false);
 };
 
-export const deselectVictimPlayer = (victimId: number) => {
-  const playerPanel = document.getElementById(`seaside-player-${victimId}`);
+export const deselectSinglePlayer = (playerId: number) => {
+  const playerPanel = document.getElementById(`seaside-player-${playerId}`);
   playerPanel.classList.remove("selected-move");
   const newEl = removeAllClickEvents(playerPanel);
-  newEl.addEventListener("click", () => selectVictimPlayer(victimId));
+  newEl.addEventListener("click", () => selectSinglePlayer(playerId));
   updateConfirmDisabled(true);
 };
 
-export const selectToken = (tokenId: number) => {
+export const selectMultipleToken = (tokenId: number) => {
   const tokenEl = getTokenElById(tokenId);
   tokenEl.classList.add("selected-move");
   const newEl = removeAllClickEvents(tokenEl);
-  newEl.addEventListener("click", () => deselectToken(tokenId));
+  newEl.addEventListener("click", () => deselectMultipleToken(tokenId));
 };
 
-export const deselectToken = (tokenId: number) => {
+export const deselectMultipleToken = (tokenId: number) => {
   const tokenEl = getTokenElById(tokenId);
   tokenEl.classList.remove("selected-move");
   const newEl = removeAllClickEvents(tokenEl);
-  newEl.addEventListener("click", () => selectToken(tokenId));
+  newEl.addEventListener("click", () => selectMultipleToken(tokenId));
+};
+
+export const selectSingleToken = (tokenId: number) => {
+  const tokenEl = getTokenElById(tokenId);
+  tokenEl.classList.add("selected-move");
+  const newEl = removeAllClickEvents(tokenEl);
+  newEl.addEventListener("click", () => deselectSingleToken(tokenId));
+  const otherSelectedTokens = document.querySelectorAll(".selected-move");
+  otherSelectedTokens.forEach((token) => {
+    if (token !== newEl) {
+      token.classList.remove("selected-move");
+      const newOtherToken = removeAllClickEvents(token);
+      const otherTokenId = newOtherToken.getAttribute("data-id")
+      newOtherToken.addEventListener("click", () => selectSingleToken(parseInt(otherTokenId)));
+    }
+  });
+  updateConfirmDisabled(false);
+};
+
+export const deselectSingleToken = (tokenId: number) => {
+  const tokenEl = getTokenElById(tokenId);
+  tokenEl.classList.remove("selected-move");
+  const newEl = removeAllClickEvents(tokenEl);
+  newEl.addEventListener("click", () => selectSingleToken(tokenId));
+  updateConfirmDisabled(true);
 };
 
 export const removeAllClickEvents = (element: Element) => {

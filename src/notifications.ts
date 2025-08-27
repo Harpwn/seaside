@@ -153,7 +153,7 @@ export class SeasideNotifications extends GameGui<SeasideGamedatas> {
   }
 
   async notif_beachFlip(args: BeachFlipNotificationData) {
-    await flipToken(getTokenElById(args.tokenId));
+    //await flipToken(getTokenElById(args.tokenId));
   }
 
   async notif_endGameWaveBonusTie(args: EndGameWaveBonusTieNotificationData) {

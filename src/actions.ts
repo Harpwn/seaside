@@ -3,8 +3,9 @@ import {
   drawToken,
   flipToken,
   getTokenElById,
-  selectVictimPlayer,
-  selectToken,
+  selectSinglePlayer,
+  selectMultipleToken,
+  selectSingleToken
 } from "./utils";
 
 enum SeasideGameActions {
@@ -144,7 +145,7 @@ export class SeasideActions extends GameGui<SeasideGamedatas> {
         const beachEl = getTokenElById(beachId);
         beachEl.classList.add("possible-move");
         beachEl.addEventListener("click", () => {
-          this.actFlipBeach(beachId);
+          selectSingleToken(beachId);
         });
       });
     }
@@ -158,7 +159,7 @@ export class SeasideActions extends GameGui<SeasideGamedatas> {
         );
         playerPanel.classList.add("possible-move");
         playerPanel.addEventListener("click", () => {
-          selectVictimPlayer(playerId);
+          selectSinglePlayer(playerId);
         });
       });
     }
@@ -168,7 +169,7 @@ export class SeasideActions extends GameGui<SeasideGamedatas> {
     args.selectableIsopodIds.forEach((isopodId) => {
       const isopodEl = getTokenElById(isopodId);
       isopodEl.classList.add("possible-move");
-      isopodEl.addEventListener("click", () => selectToken(isopodId));
+      isopodEl.addEventListener("click", () => selectMultipleToken(isopodId));
     });
   }
 
@@ -253,7 +254,7 @@ export class SeasideActions extends GameGui<SeasideGamedatas> {
   updateActionButtonsFlipBeach(args: SeasideFlipBeachArgs) {
     if (this.isCurrentPlayerActive()) {
       this.statusBar.addActionButton(`Confirm`, () => {
-        const beachId = document.querySelector(".selected-move").getAttribute('id');
+        const beachId = document.querySelector(".selected-move").getAttribute('data-id');
         this.actFlipBeach(parseInt(beachId));
       }, {
         id: `seaside-confirm`,
