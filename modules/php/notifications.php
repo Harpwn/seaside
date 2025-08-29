@@ -71,11 +71,11 @@ trait NotificationsTrait
         ]);
     }
 
-    function nfSandpiperIsopodsLost(int $playerId, int $sandpiperId, array $isopods) {
+    function nfSandpiperIsopodsLost(int $playerId, int $sandpiperId, array $isopodIds) {
         $this->notify->all("sandpiperIsopodsLost", clienttranslate('${playerName} loses SANDPIPER with a pile of ${isopodCount} ISOPOD tokens'), [
             "playerId" => $playerId,
-            "isopodCount" => count($isopods),
-            "tokenIds" => array_column($isopods, 'id'),
+            "isopodCount" => count($isopodIds),
+            "tokenIds" => $isopodIds,
             "sandpiperId" => $sandpiperId
         ]);
     }

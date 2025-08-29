@@ -5,7 +5,7 @@ import {
   getTokenElById,
   selectSinglePlayer,
   selectMultipleToken,
-  selectSingleToken
+  selectSingleToken,
 } from "./utils";
 
 enum SeasideGameActions {
@@ -30,8 +30,6 @@ interface PlayTokenActionData {
   tokenId: number;
   tokenType: SeasideTokenType;
 }
-
-interface NextPlayerActionData {}
 
 interface FlipBeachActionData {
   beachId: number;
@@ -63,48 +61,11 @@ interface SeasideStealCrabArgs {
 
 interface SeasideSelectIsopodsArgs {
   selectableIsopodIds: number[];
+  sandpiperId: number;
+  currentPileSizes: number[];
 }
 
 export class SeasideActions extends GameGui<SeasideGamedatas> {
-  actPlayToken(token: SeasideToken, tokenType: SeasideTokenType) {
-    const data: PlayTokenActionData = {
-      tokenId: token.id,
-      tokenType: tokenType,
-    };
-
-    const tokenEl = getTokenElById(token.id);
-
-    if (token.activeType !== tokenType) {
-      flipToken(tokenEl);
-    }
-
-    this.bgaPerformAction(SeasideGameActions.PlayToken, data);
-  }
-
-  actFlipBeach(tokenId: number) {
-    const data: FlipBeachActionData = {
-      beachId: tokenId,
-    };
-
-    this.bgaPerformAction(SeasideGameActions.FlipBeach, data);
-  }
-
-  actStealCrab(victimId: number) {
-    const data: StealCrabActionData = {
-      victimId,
-    };
-
-    this.bgaPerformAction(SeasideGameActions.StealCrab, data);
-  }
-
-  actSelectIsopods(isopodIds: number[]) {
-    const data: SelectIsopodsActionData = {
-      isopodIds: isopodIds.join(","),
-    };
-
-    this.bgaPerformAction(SeasideGameActions.SelectIsopods, data);
-  }
-
   onEnteringState(stateName: string, payload: any) {
     console.log("Entering state: " + stateName, payload);
     switch (stateName) {
@@ -127,50 +88,6 @@ export class SeasideActions extends GameGui<SeasideGamedatas> {
         this.enteringSelectIsopodsState(payload.args);
         break;
     }
-  }
-
-  enteringPlayTokenState(args: SeasidePlayTokenArgs) {
-    drawToken(args.token);
-  }
-
-  enteringPlayAgainState(args: SeasidePlayAgainArgs) {
-    //Play some kind of animation
-  }
-
-  enteringNextPlayerState(args: SeasideNextPlayerArgs) {}
-
-  enteringFlipBeachState(args: SeasideFlipBeachArgs) {
-    if (this.isCurrentPlayerActive()) {
-      args.flippableBeachIds.forEach((beachId) => {
-        const beachEl = getTokenElById(beachId);
-        beachEl.classList.add("possible-move");
-        beachEl.addEventListener("click", () => {
-          selectSingleToken(beachId);
-        });
-      });
-    }
-  }
-
-  enteringStealCrabState(args: SeasideStealCrabArgs) {
-    if (this.isCurrentPlayerActive()) {
-      args.playersWithCrabsIds.forEach((playerId) => {
-        const playerPanel = document.getElementById(
-          `seaside-player-${playerId}`
-        );
-        playerPanel.classList.add("possible-move");
-        playerPanel.addEventListener("click", () => {
-          selectSinglePlayer(playerId);
-        });
-      });
-    }
-  }
-
-  enteringSelectIsopodsState(args: SeasideSelectIsopodsArgs) {
-    args.selectableIsopodIds.forEach((isopodId) => {
-      const isopodEl = getTokenElById(isopodId);
-      isopodEl.classList.add("possible-move");
-      isopodEl.addEventListener("click", () => selectMultipleToken(isopodId));
-    });
   }
 
   onLeavingState(stateName: string) {
@@ -199,18 +116,6 @@ export class SeasideActions extends GameGui<SeasideGamedatas> {
     clearMoves();
   }
 
-  leaveStatePlayToken() {}
-
-  leaveStatePlayAgain() {}
-
-  leaveStateNextPlayer() {}
-
-  leaveStateFlipBeach() {}
-
-  leaveStateStealCrab() {}
-
-  leaveStateSelectIsopods() {}
-
   onUpdateActionButtons(stateName: string, args: any) {
     console.log("Update Action Buttons: " + stateName, args);
     switch (stateName) {
@@ -235,6 +140,29 @@ export class SeasideActions extends GameGui<SeasideGamedatas> {
     }
   }
 
+  //playToken
+
+  actPlayToken(token: SeasideToken, tokenType: SeasideTokenType) {
+    const data: PlayTokenActionData = {
+      tokenId: token.id,
+      tokenType: tokenType,
+    };
+
+    const tokenEl = getTokenElById(token.id);
+
+    if (token.activeType !== tokenType) {
+      flipToken(tokenEl);
+    }
+
+    this.bgaPerformAction(SeasideGameActions.PlayToken, data);
+  }
+
+  enteringPlayTokenState(args: SeasidePlayTokenArgs) {
+    drawToken(args.token);
+  }
+
+  leaveStatePlayToken() {}
+
   updateActionButtonsPlayToken(args: SeasidePlayTokenArgs) {
     if (this.isCurrentPlayerActive()) {
       this.statusBar.addActionButton(`Play ${args.token.activeType} Side`, () =>
@@ -247,45 +175,162 @@ export class SeasideActions extends GameGui<SeasideGamedatas> {
     }
   }
 
+  //playAgain
+
+  enteringPlayAgainState(args: SeasidePlayAgainArgs) {
+    //Play some kind of animation
+  }
+
+  leaveStatePlayAgain() {}
+
   updateActionButtonsPlayAgain(args: SeasidePlayAgainArgs) {}
+
+  //nextPlayer
+
+  enteringNextPlayerState(args: SeasideNextPlayerArgs) {}
+
+  leaveStateNextPlayer() {}
 
   updateActionButtonsNextPlayer(args: SeasideNextPlayerArgs) {}
 
-  updateActionButtonsFlipBeach(args: SeasideFlipBeachArgs) {
+  //flipBeach
+
+  actFlipBeach(tokenId: number) {
+    const data: FlipBeachActionData = {
+      beachId: tokenId,
+    };
+
+    this.bgaPerformAction(SeasideGameActions.FlipBeach, data);
+  }
+
+  enteringFlipBeachState(args: SeasideFlipBeachArgs) {
     if (this.isCurrentPlayerActive()) {
-      this.statusBar.addActionButton(`Confirm`, () => {
-        const beachId = document.querySelector(".selected-move").getAttribute('data-id');
-        this.actFlipBeach(parseInt(beachId));
-      }, {
-        id: `seaside-confirm`,
-        disabled: true
+      args.flippableBeachIds.forEach((beachId) => {
+        const beachEl = getTokenElById(beachId);
+        beachEl.classList.add("possible-move");
+        beachEl.addEventListener("click", () => {
+          selectSingleToken(beachId);
+        });
       });
     }
   }
+
+  leaveStateFlipBeach() {}
+
+  updateActionButtonsFlipBeach(args: SeasideFlipBeachArgs) {
+    if (this.isCurrentPlayerActive()) {
+      this.statusBar.addActionButton(
+        `Confirm`,
+        () => {
+          const beachId = document
+            .querySelector(".selected-move")
+            .getAttribute("data-id");
+          this.actFlipBeach(parseInt(beachId));
+        },
+        {
+          id: `seaside-confirm`,
+          disabled: true,
+        }
+      );
+    }
+  }
+
+  //stealCrab
+
+  actStealCrab(victimId: number) {
+    const data: StealCrabActionData = {
+      victimId,
+    };
+
+    this.bgaPerformAction(SeasideGameActions.StealCrab, data);
+  }
+
+  enteringStealCrabState(args: SeasideStealCrabArgs) {
+    if (this.isCurrentPlayerActive()) {
+      args.playersWithCrabsIds.forEach((playerId) => {
+        const playerPanel = document.getElementById(
+          `seaside-player-${playerId}`
+        );
+        playerPanel.classList.add("possible-move");
+        playerPanel.addEventListener("click", () => {
+          selectSinglePlayer(playerId);
+        });
+      });
+    }
+  }
+
+  leaveStateStealCrab() {}
 
   updateActionButtonsStealCrab(args: SeasideStealCrabArgs) {
     if (this.isCurrentPlayerActive()) {
-      this.statusBar.addActionButton(`Confirm`, () => {
-        const victimId = document.querySelector(".selected-move").getAttribute('data-player-id');
-        this.actStealCrab(parseInt(victimId));
-      }, {
-        id: `seaside-confirm`,
-        disabled: true
-      });
+      this.statusBar.addActionButton(
+        `Confirm`,
+        () => {
+          const victimId = document
+            .querySelector(".selected-move")
+            .getAttribute("data-player-id");
+          this.actStealCrab(parseInt(victimId));
+        },
+        {
+          id: `seaside-confirm`,
+          disabled: true,
+        }
+      );
     }
   }
 
+  //selectIsopods
+
+  actSelectIsopods(isopodIds: number[]) {
+    const data: SelectIsopodsActionData = {
+      isopodIds: isopodIds.join(","),
+    };
+
+    this.bgaPerformAction(SeasideGameActions.SelectIsopods, data);
+  }
+
+  enteringSelectIsopodsState(args: SeasideSelectIsopodsArgs) {
+    args.selectableIsopodIds.forEach((isopodId) => {
+      const isopodEl = getTokenElById(isopodId);
+      isopodEl.classList.add("possible-move");
+      isopodEl.addEventListener("click", () => selectMultipleToken(isopodId));
+    });
+  }
+
+  leaveStateSelectIsopods() {}
+
   updateActionButtonsSelectIsopods(args: SeasideSelectIsopodsArgs) {
     if (this.isCurrentPlayerActive()) {
-      this.statusBar.addActionButton(`Confirm`, () => {
-        const isopodIds = Array.from(
-          document.querySelectorAll(".selected-move")
-        ).map((el) => parseInt(el.getAttribute("data-id")));
-        this.actSelectIsopods(isopodIds);
-      }, {
-        id: `seaside-confirm`,
-        disabled: false
-      });
+      this.statusBar.addActionButton(
+        `Confirm`,
+        () => {
+          const isopodIds = Array.from(
+            document.querySelectorAll(".selected-move")
+          ).map((el) => parseInt(el.getAttribute("data-id")));
+          const newPileSize = isopodIds.length + 1;
+          if(args.currentPileSizes.length > 0) {
+            const largerPiles = args.currentPileSizes.filter((size) => size > newPileSize);
+            const smallerPiles = args.currentPileSizes.filter((size) => size < newPileSize);
+            if(largerPiles.length > 0) {
+              this.confirmationDialog(`${newPileSize} tokens is less than your current largest pile (${Math.max(...args.currentPileSizes)}), so this pile will be discarded.`, () => {
+                this.actSelectIsopods(isopodIds);
+              });
+            } else if(smallerPiles.length > 0) {
+              this.confirmationDialog(`${newPileSize} tokens is your largest pile, all smaller piles will be discarded losing you ${smallerPiles.reduce((a, b) => a + b, 0)} tokens.`, () => {
+                this.actSelectIsopods(isopodIds);
+              });
+            } else {
+              this.actSelectIsopods(isopodIds);
+            }
+          } else {
+            this.actSelectIsopods(isopodIds);
+          }
+        },
+        {
+          id: `seaside-confirm`,
+          disabled: false,
+        }
+      );
     }
   }
 }

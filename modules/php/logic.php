@@ -227,12 +227,12 @@ trait LogicTrait
             return count($pile) < $highestPileSize;
         });
 
-        foreach ($smallerPiles as $sandpiperId => $pileTokens) {
+        foreach ($smallerPiles as $sandpiperId => $pileTokenIds) {
             $this->sendTokensToDiscard([$sandpiperId]);
-            $this->sendTokensToDiscard($pileTokens);
-            $this->nfSandpiperIsopodsLost($playerId, $sandpiperId, $pileTokens);
+            $this->sendTokensToDiscard($pileTokenIds);
+            $this->nfSandpiperIsopodsLost($playerId, $sandpiperId, $pileTokenIds);
             $this->incStat(-1, STAT_NO_SANDPIPER, $playerId);
-            $this->incStat(count($pileTokens), STAT_NO_ISOPOD, $playerId);
+            $this->incStat(count($pileTokenIds), STAT_NO_ISOPOD, $playerId);
         }
 
         //End turn
