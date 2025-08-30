@@ -122,7 +122,13 @@ trait LogicTrait
             }
 
             //Find rock to create pair
+            //BUG HERE
             $unPiledRockToken = $this->getAllTokensOfTypeForLocation((string)$playerId, ROCK, 0)[0];
+
+            if(!$unPiledRockToken) {
+                $this->debugLog($this->getAllTokensOfTypeForLocation((string)$playerId, ROCK, 0));
+                $this->debugLog($this->getAllTokensOfTypeForLocation((string)$playerId, ROCK));
+            }
 
             //Send main rock to player area
             $this->sendTokenToPlayerArea($rock, $playerId, $newRockPileId);

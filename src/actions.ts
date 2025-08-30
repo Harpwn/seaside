@@ -158,7 +158,7 @@ export class SeasideActions extends GameGui<SeasideGamedatas> {
   }
 
   enteringPlayTokenState(args: SeasidePlayTokenArgs) {
-    drawToken(args.token);
+    drawToken(args.token, this);
   }
 
   leaveStatePlayToken() {}
@@ -224,7 +224,7 @@ export class SeasideActions extends GameGui<SeasideGamedatas> {
         () => {
           const beachId = document
             .querySelector(".selected-move")
-            .getAttribute("data-id");
+            .id;
           this.actFlipBeach(parseInt(beachId));
         },
         {
@@ -306,7 +306,7 @@ export class SeasideActions extends GameGui<SeasideGamedatas> {
         () => {
           const isopodIds = Array.from(
             document.querySelectorAll(".selected-move")
-          ).map((el) => parseInt(el.getAttribute("data-id")));
+          ).map((el) => parseInt(el.id));
           const newPileSize = isopodIds.length + 1;
           if(args.currentPileSizes.length > 0) {
             const largerPiles = args.currentPileSizes.filter((size) => size > newPileSize);

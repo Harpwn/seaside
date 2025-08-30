@@ -1,4 +1,4 @@
-import { createTokenInSea, tokenToNode } from "./utils";
+import { addTokenTooltip, createTokenInSea, tokenToNode } from "./utils";
 
 export class SeasideSetup extends GameGui<SeasideGamedatas> {
   setup(gamedatas: SeasideGamedatas) {
@@ -8,6 +8,7 @@ export class SeasideSetup extends GameGui<SeasideGamedatas> {
     this.setupBaseGameArea(gamedatas);
     this.setupPlayerAreas(gamedatas);
     this.setupSea(gamedatas);
+    this.setupTooltips();
 
     //Setup game notifications to handle (see "setupNotifications" method below)
     this.setupNotifications();
@@ -50,6 +51,14 @@ export class SeasideSetup extends GameGui<SeasideGamedatas> {
             </div>`
         );
       }
+    });
+  }
+
+  setupTooltips() {
+    console.log("tooltips setup");
+    const tokens = document.querySelectorAll(".seaside-token");
+    tokens.forEach((token) => {
+      addTokenTooltip(token, this);
     });
   }
 

@@ -1,11 +1,12 @@
-export const drawToken = (token: SeasideToken) => {
-  document
+export const drawToken = (token: SeasideToken, gameGui: GameGui) => {
+  const tokenEl = document
     .getElementById("seaside-draw-bag")
     .insertAdjacentElement("beforeend", tokenToNode(token));
+  addTokenTooltip(tokenEl, gameGui);
 };
 
 export const getTokenElById = (tokenId: number): Element => {
-  return document.querySelector(`.seaside-tile[data-id="${tokenId}"]`);
+  return document.getElementById(`seaside-token-${tokenId}`);
 };
 
 export const flipToken = (tokenEl: Element) => {
@@ -67,8 +68,8 @@ export const getRandomPosition = () => {
 
 export const tokenToNode = (token: SeasideToken): Element => {
   const tokenEl = document.createElement("div");
-  tokenEl.className = "seaside-tile";
-  tokenEl.setAttribute("data-id", token.id.toString());
+  tokenEl.id = `seaside-token-${token.id}`;
+  tokenEl.className = "seaside-token";
   tokenEl.setAttribute("data-active-type", token.activeType);
   tokenEl.setAttribute("data-inactive-type", token.inactiveType);
   tokenEl.setAttribute("data-location", token.location);
@@ -138,7 +139,7 @@ export const selectSingleToken = (tokenId: number) => {
     if (token !== newEl) {
       token.classList.remove("selected-move");
       const newOtherToken = removeAllClickEvents(token);
-      const otherTokenId = newOtherToken.getAttribute("data-id")
+      const otherTokenId = newOtherToken.id;
       newOtherToken.addEventListener("click", () => selectSingleToken(parseInt(otherTokenId)));
     }
   });
@@ -172,3 +173,9 @@ export const updateTokenElLocation = (element: Element, location: string, locati
   element.setAttribute("data-location", location);
   element.setAttribute("data-location-arg", locationArg.toString());
 }
+
+export const addTokenTooltip = (tokenEl: Element, gameGui: GameGui) => {
+  const activeType = tokenEl.getAttribute("data-active-type");
+  const inactiveType = tokenEl.getAttribute("data-inactive-type");
+  gameGui.addTooltip(tokenEl.id, "Sides - " + activeType + " / " + inactiveType, "");
+};

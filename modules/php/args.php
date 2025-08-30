@@ -23,7 +23,7 @@ trait ArgsTrait {
     {
         $playersWithCrabIds = [];
         foreach ($this->getPlayersIds() as $playerId) {
-            if ($this->getCurrentPlayerId() != $playerId) {
+            if (!$this->gamestate->isPlayerActive($playerId)) {
                 $crabs = $this->getAllTokensOfTypeForLocation((string)$playerId, CRAB);
                 if (count($crabs) > 0) {
                     $playersWithCrabIds[] = (int)$playerId;

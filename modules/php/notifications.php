@@ -103,7 +103,7 @@ trait NotificationsTrait
         $playerNames = array_map(fn($id) => $allPlayerNames[$id] ?? '', $playerIds);
         $this->notify->all("endGameWaveBonusTie", clienttranslate('${playerNames} have tied for the most waves, so they each get ${tokenCount} leftover sea tokens'), [
             "playerIdsAndTokenIds" => $playerIdsAndTokenIds,
-            "playerNames" => implode(',', array_keys($playerNames)),
+            "playerNames" => implode(',', $playerNames),
             "tokenCount" => count($playerIdsAndTokenIds[array_key_first($playerIdsAndTokenIds)]),
         ]);
     }

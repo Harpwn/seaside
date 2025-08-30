@@ -59,8 +59,8 @@ trait SetupTrait
 
     function setupTokens()
     {
-        $TokenDeck = DECK;
-        //$TokenDeck = TEST_DECK_ROCKS;
+        //$TokenDeck = DECK;
+        $TokenDeck = TEST_DECK_ROCKS;
         //$TokenDeck = TEST_DECK_PIPERS;
         //$TokenDeck = TEST_DECK_BEACHES;
         //$TokenDeck = TEST_DECK_WAVES;
