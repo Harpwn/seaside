@@ -418,4 +418,18 @@ const TEST_DECK_WAVES = [
     70 => [ 1 => WAVE, 2 => ROCK ],
 ];
 
+const TEST_DECK_END_GAME_BONUS = [
+    1 => [ 1 => ISOPOD, 2 => CRAB ],
+    2 => [ 1 => ISOPOD, 2 => CRAB ],
+    3 => [ 1 => ISOPOD, 2 => CRAB ],
+    4 => [ 1 => BEACH, 2 => SHELL ],
+    5 => [ 1 => BEACH, 2 => SHELL ],
+    6 => [ 1 => BEACH, 2 => SHELL ],
+    7 => [ 1 => BEACH, 2 => SHELL ],
+    8 => [ 1 => BEACH, 2 => SHELL ],
+    9 => [ 1 => BEACH, 2 => SHELL ],
+    10 => [ 1=> WAVE, 2 => WAVE ],
+    11 => [ 1=> WAVE, 2 => WAVE ]
+];
+
 ?>

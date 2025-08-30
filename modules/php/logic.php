@@ -289,6 +289,7 @@ trait LogicTrait
             $this->sendTokensToPlayerArea($seaTokens, $playersWithMostWaves[0]);
             $this->nfEndGameWaveBonus($playersWithMostWaves[0], $seaTokens);
             $this->incStat(count($seaTokens), STAT_NO_SEATOKENS, $playersWithMostWaves[0]);
+            $this->updatePlayerScore($playersWithMostWaves[0]);
         } 
         else if (count($playersWithMostWaves) > 1) 
         {
@@ -301,6 +302,7 @@ trait LogicTrait
                 $this->sendTokensToPlayerArea($tokensForPlayer, (int)$playerId);
                 $playerIdsAndTokenIds[$playerId] = array_column($tokensForPlayer, 'id');
                 $this->incStat(count($tokensForPlayer), STAT_NO_SEATOKENS, $playerId);
+                $this->updatePlayerScore($playerId);
             }
             $this->nfEndGameWaveBonusTie($playerIdsAndTokenIds);
         }
