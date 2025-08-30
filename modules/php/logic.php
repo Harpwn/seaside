@@ -152,7 +152,6 @@ trait LogicTrait
                 if ($otherPlayerId != $playerId) {
                     $enemyCrabs = $this->getAllTokensOfTypeForLocation((string)$otherPlayerId, CRAB);
                     if (count($enemyCrabs) > 0) {
-                        //Enemy has crabs to steal!
                         $this->gamestate->nextState(TRANSITION_STEAL_CRAB);
                         return;
                     }

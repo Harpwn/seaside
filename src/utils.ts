@@ -22,11 +22,9 @@ export const moveTokenToSea = async (tokenId: number, tokenLocationArgs: number,
   const seaEl = document.getElementById("seaside-sea-tokens");
   const newTokenEl = oldTokenEl.cloneNode(true) as Element; // deep clone
   newTokenEl.removeAttribute("style");
+  await gameGui.bgaPlayDojoAnimation(gameGui.slideToObjectAndDestroy(oldTokenEl, seaEl));
   seaEl.insertAdjacentElement("beforeend", newTokenEl);
-  const coords = getRandomPosition();
-  gameGui.placeOnObjectPos(newTokenEl, seaEl, coords.x, coords.y);
-  const anim = gameGui.slideToObjectAndDestroy(oldTokenEl, newTokenEl);
-  await gameGui.bgaPlayDojoAnimation(anim);
+  await gameGui.bgaPlayDojoAnimation(dojo.fadeIn({ node: newTokenEl }));
 };
 
 export const moveTokenToDiscard = async (tokenId: number, gameGui: GameGui) => {
@@ -46,9 +44,10 @@ export const moveTokenToPlayerArea = async (
   const playerAreaEl = document.getElementById(`seaside-player-${playerId}`);
   const newTokenEl = oldTokenEl.cloneNode(true) as Element; // deep clone
   newTokenEl.removeAttribute("style");
+  await gameGui.bgaPlayDojoAnimation(gameGui.slideToObjectAndDestroy(oldTokenEl, playerAreaEl));
+  //add to new player area and then fade in
   playerAreaEl.insertAdjacentElement("beforeend", newTokenEl);
-  const anim = gameGui.slideToObjectAndDestroy(oldTokenEl, newTokenEl);
-  await gameGui.bgaPlayDojoAnimation(anim);
+  await gameGui.bgaPlayDojoAnimation(dojo.fadeIn({ node: newTokenEl }));
 };
 
 export const createTokenInSea = (token: SeasideToken, gameGui: GameGui) => {
@@ -56,14 +55,7 @@ export const createTokenInSea = (token: SeasideToken, gameGui: GameGui) => {
   const tokenEl = tokenToNode(token);
 
   seaEl.insertAdjacentElement("beforeend", tokenEl);
-  const coords = getRandomPosition();
-  gameGui.placeOnObjectPos(tokenEl, seaEl, coords.x, coords.y);
-};
-
-export const getRandomPosition = () => {
-  const randomX = -100 + Math.random() * 200; // -100 .. 100
-  const randomY = -100 + Math.random() * 200; // -100 .. 100
-  return { x: randomX, y: randomY };
+  gameGui.placeOnObject(tokenEl, seaEl);
 };
 
 export const tokenToNode = (token: SeasideToken): Element => {

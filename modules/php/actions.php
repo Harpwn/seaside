@@ -52,6 +52,9 @@ trait ActionTrait
         $inputArgs = $this->argStealCrab();
 
         //Validation here
+        if (!in_array($victimId, $inputArgs['playersWithCrabsIds'])) {
+            throw new \BgaUserException("Invalid Victim ID: {$victimId}");
+        }
 
         $this->handleStealCrab($playerId, $victimId);
     }
@@ -66,6 +69,9 @@ trait ActionTrait
         $beach = $this->getToken($beachId);
 
         //Validation here
+        if (!in_array($beachId, $inputArgs['flippableBeachIds'])) {
+            throw new \BgaUserException("Invalid Beach ID: {$beachId}");
+        }
 
         $this->handleFlipBeach($playerId, $beach);
     }
