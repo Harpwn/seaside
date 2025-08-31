@@ -19,7 +19,7 @@ export const flipToken = (tokenEl: Element) => {
 export const moveTokenToSea = async (tokenId: number, tokenLocationArgs: number, gameGui: GameGui) => {
   const oldTokenEl = getTokenElById(tokenId);
   updateTokenElLocation(oldTokenEl, "SEA", tokenLocationArgs);
-  const seaEl = document.getElementById("seaside-sea-area");
+  const seaEl = document.getElementById(`seaside-sea-area-${getTokenActiveType(oldTokenEl)}`);
   const newTokenEl = oldTokenEl.cloneNode(true) as Element; // deep clone
   newTokenEl.removeAttribute("style");
   newTokenEl.classList.add("seaside-token-hidden");
@@ -52,7 +52,7 @@ export const moveTokenToPlayerArea = async (
 };
 
 export const createTokenInSea = (token: SeasideToken, gameGui: GameGui) => {
-  const seaEl = document.getElementById("seaside-sea-area");
+  const seaEl = document.getElementById(`seaside-sea-area-${token.activeType}`);
   const tokenEl = tokenToNode(token);
 
   seaEl.insertAdjacentElement("beforeend", tokenEl);
@@ -175,4 +175,8 @@ export const addTokenTooltip = (tokenEl: Element, gameGui: GameGui) => {
 
 export const getTokenId = (tokenEl: Element): number => {
   return parseInt(tokenEl.getAttribute("data-id"));
+};
+
+export const getTokenActiveType = (tokenEl: Element): string => {
+  return tokenEl.getAttribute("data-active-type");
 };

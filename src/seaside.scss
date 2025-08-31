@@ -72,6 +72,14 @@
     width: 300px;
     position: relative;
     display: flex;
+    flex-direction: column;
+
+    .seaside-sea-area-row {
+      display: flex;
+      height: 100px;
+      width: 100%;
+      padding-left: 50px;
+    }
   }
 
   #seaside-player-area {
@@ -95,7 +103,6 @@
     &.seaside-token-hidden {
       opacity: 0;
     }
-    
 
     &.possible-move {
       border: 5px dashed lightgreen !important;

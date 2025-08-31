@@ -46,6 +46,8 @@ interface SelectIsopodsActionData {
 
 interface SeasidePlayTokenArgs {
   token: SeasideToken;
+  currentPileSizes: number[];
+  selectableIsopodIds: number[];
 }
 
 interface SeasideNextPlayerArgs {}
@@ -143,19 +145,53 @@ export class SeasideActions extends GameGui<SeasideGamedatas> {
 
   //playToken
 
-  actPlayToken(token: SeasideToken, tokenType: SeasideTokenType) {
+  actPlayToken(args: SeasidePlayTokenArgs, tokenType: SeasideTokenType) {
     const data: PlayTokenActionData = {
-      tokenId: token.id,
+      tokenId: args.token.id,
       tokenType: tokenType,
     };
 
-    const tokenEl = getTokenElById(token.id);
+    if (tokenType == "SANDPIPER") {
+      this.handlePlaySandpiper(args);
+    } else {
+      const tokenEl = getTokenElById(args.token.id);
 
-    if (token.activeType !== tokenType) {
-      flipToken(tokenEl);
+      if (args.token.activeType !== tokenType) {
+        flipToken(tokenEl);
+      }
+
+      this.bgaPerformAction(SeasideGameActions.PlayToken, data);
     }
+  }
 
-    this.bgaPerformAction(SeasideGameActions.PlayToken, data);
+  handlePlaySandpiper(args: SeasidePlayTokenArgs) {
+    const data: PlayTokenActionData = {
+      tokenId: args.token.id,
+      tokenType: "SANDPIPER",
+    };
+    const tokenEl = getTokenElById(args.token.id);
+
+    if (
+      args.selectableIsopodIds.length == 0 &&
+      args.currentPileSizes.some((size) => size > 1)
+    ) {
+      this.confirmationDialog(
+        "There are no Isopods in the sea and you have an existing pile bigger than one, playing this will cause it to be discarded.",
+        () => {
+          if (args.token.activeType !== "SANDPIPER") {
+            flipToken(tokenEl);
+          }
+
+          this.bgaPerformAction(SeasideGameActions.PlayToken, data);
+        }
+      );
+    } else {
+      if (args.token.activeType !== "SANDPIPER") {
+        flipToken(tokenEl);
+      }
+
+      this.bgaPerformAction(SeasideGameActions.PlayToken, data);
+    }
   }
 
   enteringPlayTokenState(args: SeasidePlayTokenArgs) {
@@ -167,11 +203,11 @@ export class SeasideActions extends GameGui<SeasideGamedatas> {
   updateActionButtonsPlayToken(args: SeasidePlayTokenArgs) {
     if (this.isCurrentPlayerActive()) {
       this.statusBar.addActionButton(`Play ${args.token.activeType} Side`, () =>
-        this.actPlayToken(args.token, args.token.activeType)
+        this.actPlayToken(args, args.token.activeType)
       );
       this.statusBar.addActionButton(
         `Play ${args.token.inactiveType} Side`,
-        () => this.actPlayToken(args.token, args.token.inactiveType)
+        () => this.actPlayToken(args, args.token.inactiveType)
       );
     }
   }
@@ -307,22 +343,37 @@ export class SeasideActions extends GameGui<SeasideGamedatas> {
             document.querySelectorAll(".selected-move")
           ).map((el) => getTokenId(el));
           const newPileSize = isopodIds.length + 1;
-          if(args.currentPileSizes.length > 0) {
-            const largerPiles = args.currentPileSizes.filter((size) => size > newPileSize);
-            const smallerPiles = args.currentPileSizes.filter((size) => size < newPileSize);
-            if(largerPiles.length > 0) {
-              this.confirmationDialog(`${newPileSize} tokens is less than your current largest pile (${Math.max(...args.currentPileSizes)}), so this pile will be discarded.`, () => {
-                this.actSelectIsopods(isopodIds);
-              });
-            } else if(smallerPiles.length > 0) {
-              this.confirmationDialog(`${newPileSize} tokens is your largest pile, all smaller piles will be discarded losing you ${smallerPiles.reduce((a, b) => a + b, 0)} tokens.`, () => {
-                this.actSelectIsopods(isopodIds);
-              });
+          if (args.currentPileSizes.length > 0) {
+            const largerPiles = args.currentPileSizes.filter(
+              (size) => size > newPileSize
+            );
+            const smallerPiles = args.currentPileSizes.filter(
+              (size) => size < newPileSize
+            );
+            if (largerPiles.length > 0) {
+              this.confirmationDialog(
+                `${newPileSize} tokens is less than your current largest pile (${Math.max(
+                  ...args.currentPileSizes
+                )}), so this pile will be discarded.`,
+                () => {
+                  this.actSelectIsopods(isopodIds);
+                }
+              );
+            } else if (smallerPiles.length > 0) {
+              this.confirmationDialog(
+                `${newPileSize} tokens is your largest pile, all smaller piles will be discarded losing you ${smallerPiles.reduce(
+                  (a, b) => a + b,
+                  0
+                )} tokens.`,
+                () => {
+                  this.actSelectIsopods(isopodIds);
+                }
+              );
             } else {
               this.actSelectIsopods(isopodIds);
             }
           } else {
-            console.log(isopodIds)
+            console.log(isopodIds);
             this.actSelectIsopods(isopodIds);
           }
         },

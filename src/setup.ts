@@ -24,6 +24,9 @@ export class SeasideSetup extends GameGui<SeasideGamedatas> {
           <div id="seaside-draw-bag"></div>
           <div id="seaside-other-players"></div>
           <div id="seaside-sea-area">
+            <div class="seaside-sea-area-row" id="seaside-sea-area-ISOPOD"></div>
+            <div class="seaside-sea-area-row" id="seaside-sea-area-CRAB"></div>
+            <div class="seaside-sea-area-row" id="seaside-sea-area-SHELL"></div>
           </div>
           <div id="seaside-player-area"></div>
         </div>

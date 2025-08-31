@@ -15,7 +15,9 @@ trait ArgsTrait {
     public function argPlayToken(): array
     {
         return [
-            "token" => $this->drawRandomToken()
+            "token" => $this->drawRandomToken(),
+            "currentPileSizes" => $this->getCurrentPileSizes(),
+            "selectableIsopodIds" => $this->getSelectableIsopodIds()
         ];
     }
 
@@ -44,8 +46,17 @@ trait ArgsTrait {
 
     public function argSelectIsopods(): array
     {
+
+        return [
+            "sandpiperId" => $this->getAllTokensOfTypeForLocation((string)$this->getActivePlayerId(), SANDPIPER, 0)[0]->id,
+            "selectableIsopodIds" => $this->getSelectableIsopodIds(),
+            "currentPileSizes" => $this->getCurrentPileSizes()
+        ];
+    }
+
+    private function getCurrentPileSizes(): array 
+    {
         $tokens = $this->getAllTokensOfTypeForLocation((string)$this->getActivePlayerId(), ISOPOD);
-        //group by locationAArgs
         $currentPileSizes = [];
         foreach ($tokens as $token) {
             $locationArg = $token->locationArg;
@@ -54,11 +65,11 @@ trait ArgsTrait {
             }
             $currentPileSizes[$locationArg]++;
         }
+        return array_values($currentPileSizes);
+    }
 
-        return [
-            "sandpiperId" => $this->getAllTokensOfTypeForLocation((string)$this->getActivePlayerId(), SANDPIPER, 0)[0]->id,
-            "selectableIsopodIds" => array_column($this->getAllTokensOfTypeForLocation(SEA_LOCATION, ISOPOD), 'id'),
-            "currentPileSizes" => array_values($currentPileSizes)
-        ];
+    private function getSelectableIsopodIds(): array
+    {
+        return array_column($this->getAllTokensOfTypeForLocation(SEA_LOCATION, ISOPOD), 'id');
     }
 }
