@@ -23,7 +23,7 @@ export class SeasideSetup extends GameGui<SeasideGamedatas> {
         <div id="seaside-sea">
           <div id="seaside-draw-bag"></div>
           <div id="seaside-other-players"></div>
-          <div id="seaside-sea-tokens">
+          <div id="seaside-sea-area">
           </div>
           <div id="seaside-player-area"></div>
         </div>

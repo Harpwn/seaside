@@ -6,6 +6,7 @@ import {
   selectSinglePlayer,
   selectMultipleToken,
   selectSingleToken,
+  getTokenId,
 } from "./utils";
 
 enum SeasideGameActions {
@@ -222,10 +223,8 @@ export class SeasideActions extends GameGui<SeasideGamedatas> {
       this.statusBar.addActionButton(
         `Confirm`,
         () => {
-          const beachId = document
-            .querySelector(".selected-move")
-            .id;
-          this.actFlipBeach(parseInt(beachId));
+          const beachEl = document.querySelector(".selected-move");
+          this.actFlipBeach(getTokenId(beachEl));
         },
         {
           id: `seaside-confirm`,
@@ -306,7 +305,7 @@ export class SeasideActions extends GameGui<SeasideGamedatas> {
         () => {
           const isopodIds = Array.from(
             document.querySelectorAll(".selected-move")
-          ).map((el) => parseInt(el.id));
+          ).map((el) => getTokenId(el));
           const newPileSize = isopodIds.length + 1;
           if(args.currentPileSizes.length > 0) {
             const largerPiles = args.currentPileSizes.filter((size) => size > newPileSize);
@@ -323,6 +322,7 @@ export class SeasideActions extends GameGui<SeasideGamedatas> {
               this.actSelectIsopods(isopodIds);
             }
           } else {
+            console.log(isopodIds)
             this.actSelectIsopods(isopodIds);
           }
         },

@@ -66,11 +66,12 @@
     }
   }
 
-  #seaside-sea-tokens {
+  #seaside-sea-area {
     margin: auto;
     height: 300px;
     width: 300px;
     position: relative;
+    display: flex;
   }
 
   #seaside-player-area {
@@ -87,6 +88,14 @@
     position: absolute;
     border: 5px solid black;
     border-radius: 50%;
+    flex: 0 0 auto;
+    margin-left: -50px;
+    position: relative;
+
+    &.seaside-token-hidden {
+      opacity: 0;
+    }
+    
 
     &.possible-move {
       border: 5px dashed lightgreen !important;

@@ -87,7 +87,6 @@ trait ActionTrait
         $tokenId = $inputArgs['sandpiperId'];
         $selectableIsopodIds = $inputArgs['selectableIsopodIds'];
 
-
         $sandpiper = $this->getToken((int)$tokenId);
         $isopods = $this->getTokens($isopodIds);
 

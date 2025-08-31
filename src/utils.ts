@@ -19,12 +19,13 @@ export const flipToken = (tokenEl: Element) => {
 export const moveTokenToSea = async (tokenId: number, tokenLocationArgs: number, gameGui: GameGui) => {
   const oldTokenEl = getTokenElById(tokenId);
   updateTokenElLocation(oldTokenEl, "SEA", tokenLocationArgs);
-  const seaEl = document.getElementById("seaside-sea-tokens");
+  const seaEl = document.getElementById("seaside-sea-area");
   const newTokenEl = oldTokenEl.cloneNode(true) as Element; // deep clone
   newTokenEl.removeAttribute("style");
-  await gameGui.bgaPlayDojoAnimation(gameGui.slideToObjectAndDestroy(oldTokenEl, seaEl));
+  newTokenEl.classList.add("seaside-token-hidden");
   seaEl.insertAdjacentElement("beforeend", newTokenEl);
-  await gameGui.bgaPlayDojoAnimation(dojo.fadeIn({ node: newTokenEl }));
+  await gameGui.bgaPlayDojoAnimation(gameGui.slideToObjectAndDestroy(oldTokenEl, newTokenEl));
+  newTokenEl.classList.remove("seaside-token-hidden");
 };
 
 export const moveTokenToDiscard = async (tokenId: number, gameGui: GameGui) => {
@@ -44,24 +45,24 @@ export const moveTokenToPlayerArea = async (
   const playerAreaEl = document.getElementById(`seaside-player-${playerId}`);
   const newTokenEl = oldTokenEl.cloneNode(true) as Element; // deep clone
   newTokenEl.removeAttribute("style");
-  await gameGui.bgaPlayDojoAnimation(gameGui.slideToObjectAndDestroy(oldTokenEl, playerAreaEl));
-  //add to new player area and then fade in
+  newTokenEl.classList.add("seaside-token-hidden");
   playerAreaEl.insertAdjacentElement("beforeend", newTokenEl);
-  await gameGui.bgaPlayDojoAnimation(dojo.fadeIn({ node: newTokenEl }));
+  await gameGui.bgaPlayDojoAnimation(gameGui.slideToObjectAndDestroy(oldTokenEl, newTokenEl));
+  newTokenEl.classList.remove("seaside-token-hidden");
 };
 
 export const createTokenInSea = (token: SeasideToken, gameGui: GameGui) => {
-  const seaEl = document.getElementById("seaside-sea-tokens");
+  const seaEl = document.getElementById("seaside-sea-area");
   const tokenEl = tokenToNode(token);
 
   seaEl.insertAdjacentElement("beforeend", tokenEl);
-  gameGui.placeOnObject(tokenEl, seaEl);
 };
 
 export const tokenToNode = (token: SeasideToken): Element => {
   const tokenEl = document.createElement("div");
   tokenEl.id = `seaside-token-${token.id}`;
   tokenEl.className = "seaside-token";
+  tokenEl.setAttribute("data-id", token.id.toString());
   tokenEl.setAttribute("data-active-type", token.activeType);
   tokenEl.setAttribute("data-inactive-type", token.inactiveType);
   tokenEl.setAttribute("data-location", token.location);
@@ -131,8 +132,8 @@ export const selectSingleToken = (tokenId: number) => {
     if (token !== newEl) {
       token.classList.remove("selected-move");
       const newOtherToken = removeAllClickEvents(token);
-      const otherTokenId = newOtherToken.id;
-      newOtherToken.addEventListener("click", () => selectSingleToken(parseInt(otherTokenId)));
+      const otherTokenId = getTokenId(newOtherToken);
+      newOtherToken.addEventListener("click", () => selectSingleToken(otherTokenId));
     }
   });
   updateConfirmDisabled(false);
@@ -170,4 +171,8 @@ export const addTokenTooltip = (tokenEl: Element, gameGui: GameGui) => {
   const activeType = tokenEl.getAttribute("data-active-type");
   const inactiveType = tokenEl.getAttribute("data-inactive-type");
   gameGui.addTooltip(tokenEl.id, "Sides - " + activeType + " / " + inactiveType, "");
+};
+
+export const getTokenId = (tokenEl: Element): number => {
+  return parseInt(tokenEl.getAttribute("data-id"));
 };
