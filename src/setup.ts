@@ -36,25 +36,57 @@ export class SeasideSetup extends GameGui<SeasideGamedatas> {
 
   setupPlayerAreas(gamedatas: SeasideGamedatas) {
     Object.values(gamedatas.players).forEach((player) => {
-      const tokens = Object.values(player.tokens).map((token) => {
-        return tokenToNode(token);
-      });
       if (this.player_id.toString() != player.id) {
         document.getElementById("seaside-other-players").insertAdjacentHTML(
           "beforeend",
-          `<div id="seaside-player-${player.id}" class="seaside-player seaside-other-player" data-player-id="${player.id}">
-            ${tokens.map(token => token.outerHTML).join("")}
-            </div>`
+          `<div id="seaside-player-${
+            player.id
+          }" class="seaside-player seaside-other-player" data-player-id="${
+            player.id
+          }">
+            ${this.setupTokenRows(Object.values(player.tokens))}
+          </div>`
         );
       } else {
         document.getElementById("seaside-player-area").insertAdjacentHTML(
           "beforeend",
           `<div id="seaside-player-${player.id}" class="seaside-player">
-            ${tokens.map(token => token.outerHTML).join("")}
+            ${this.setupTokenRows(Object.values(player.tokens))}
             </div>`
         );
       }
     });
+  }
+
+  setupTokenRows(tokens: SeasideToken[]) {
+    const rowTypes = ["SANDPIPER", "BEACH", "SHELL", "WAVE", "CRAB", "ROCK"];
+    const rowEls: Element[] = [];
+    rowTypes.forEach((rowType) => {
+      const tokensForRow: SeasideToken[] = [];
+      switch (rowType) {
+        case "SANDPIPER-ISOPOD":
+          tokensForRow.push(
+            ...tokens.filter(
+              (t) => t.activeType === "SANDPIPER" || t.activeType === "ISOPOD"
+            )
+          );
+          break;
+        default:
+          tokensForRow.push(...tokens.filter((t) => t.activeType === rowType));
+          break;
+      }
+      const row = document.createElement("div");
+      row.classList.add("seaside-player-row", `seaside-player-row-${rowType}`);
+
+      if(rowType == "SANDPIPER") {
+        row.classList.add(`seaside-player-row-ISOPOD`);
+      }
+      tokensForRow.forEach((token) => {
+        row.appendChild(tokenToNode(token));
+      });
+      rowEls.push(row);
+    });
+    return rowEls.map((el) => el.outerHTML).join("");
   }
 
   setupTooltips() {

@@ -13,7 +13,7 @@
 
     .seaside-token {
       top: 28%;
-      left: 28%;
+      left: 50%;
     }
   }
 
@@ -29,12 +29,43 @@
     position: relative;
     height: 100%;
     display: flex;
-    padding-left: 50px;
+    flex-direction: row;
+    padding: 10px;
 
-    .seaside-token {
-      flex: 0 0 auto;
-      margin-left: -50px;
-      position: relative;
+    .seaside-player-row {
+      display: flex;
+      flex-direction: column;
+      padding-top: 50px;
+
+      .seaside-token {
+        margin: 0;
+        margin-top: -50px;
+        margin-right: 10px;
+      }
+
+      &.seaside-player-row-BEACH {
+        color: black;
+      }
+
+      &.seaside-player-row-ISOPOD {
+        color: black;
+      }
+
+      &.seaside-player-row-SANDPIPER {
+        color: black;
+      }
+
+      &.seaside-player-row-ROCK {
+        color: black;
+      }
+
+      &.seaside-player-row-WAVE {
+        color: black;
+      }
+
+      &.seaside-player-row-CRAB {
+        color: black;
+      }
     }
   }
 
@@ -46,8 +77,12 @@
 
     .seaside-other-player {
       flex-grow: 1;
-      padding-left: 20px;
       max-width: 33%;
+
+      .seaside-player-row {
+        flex-direction: column-reverse;
+        padding-top: 0px;
+      }
 
       &.possible-move {
         border: 5px dashed lightgreen !important;
@@ -60,7 +95,8 @@
       .seaside-token {
         height: 25px;
         width: 25px;
-        margin-left: -20px;
+        margin-top: -20px;
+        margin-right: 10px;
         border: 2px solid black;
       }
     }

@@ -41,12 +41,13 @@ export const moveTokenToPlayerArea = async (
   gameGui: GameGui
 ) => {
   const oldTokenEl = getTokenElById(tokenId);
+  const type = getTokenActiveType(oldTokenEl);
   updateTokenElLocation(oldTokenEl, playerId, tokenLocationArgs);
-  const playerAreaEl = document.getElementById(`seaside-player-${playerId}`);
+  const playerAreaRowEl = document.getElementById(`seaside-player-${playerId}`).getElementsByClassName(`seaside-player-row-${type}`)[0];
   const newTokenEl = oldTokenEl.cloneNode(true) as Element; // deep clone
   newTokenEl.removeAttribute("style");
   newTokenEl.classList.add("seaside-token-hidden");
-  playerAreaEl.insertAdjacentElement("beforeend", newTokenEl);
+  playerAreaRowEl.insertAdjacentElement("beforeend", newTokenEl);
   await gameGui.bgaPlayDojoAnimation(gameGui.slideToObjectAndDestroy(oldTokenEl, newTokenEl));
   newTokenEl.classList.remove("seaside-token-hidden");
 };
