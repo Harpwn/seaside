@@ -1,6 +1,6 @@
 export const drawToken = (token: SeasideToken, gameGui: GameGui) => {
   const tokenEl = document
-    .getElementById("seaside-draw-bag")
+    .getElementById("seaside-game-area")
     .insertAdjacentElement("beforeend", tokenToNode(token));
   addTokenTooltip(tokenEl, gameGui);
 };

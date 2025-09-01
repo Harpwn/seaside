@@ -22,7 +22,35 @@ trait DebugUtilsTrait
     function debug_playToEndGame() 
     {
         while (intval($this->gamestate->state_id()) < GAME_STATE_END_GAME) {
-            $state = intval($this->gamestate->state_id());
+            $this->autoplay_state();
+        }
+    }
+
+    function debug_playUntilCrabSteal() {
+        while (intval($this->gamestate->state_id()) != GAME_STATE_PLAYER_ROCK_STEAL_CRAB && intval($this->gamestate->state_id()) < GAME_STATE_END_GAME) {
+            $this->autoplay_state();
+        }
+    }
+
+    function debug_playUntilSelectIsopods() {
+        while (intval($this->gamestate->state_id()) != GAME_STATE_PLAYER_SANDPIPER_SELECT_ISOPODS && intval($this->gamestate->state_id()) < GAME_STATE_END_GAME) {
+            $this->autoplay_state();
+        }
+    }
+
+    function debug_playUntilFlipBeach() {
+        while (intval($this->gamestate->state_id()) != GAME_STATE_PLAYER_WAVE_FLIP_BEACH && intval($this->gamestate->state_id()) < GAME_STATE_END_GAME) {
+            $this->autoplay_state();
+        }
+    }
+
+    public function debug_goToState(int $state = 3) {
+        $this->gamestate->jumpToState($state);
+    }
+
+    private function autoplay_state() 
+    {
+        $state = intval($this->gamestate->state_id());
             switch ($state) {
                 case GAME_STATE_PLAYER_PLAY_TOKEN:
                     $args = $this->argPlayToken();
@@ -49,10 +77,5 @@ trait DebugUtilsTrait
                     $this->actSelectIsopods(implode(',', $selectedIsopodIds));
                     break;
             }
-        }
-    }
-
-    public function debug_goToState(int $state = 3) {
-        $this->gamestate->jumpToState($state);
     }
 }

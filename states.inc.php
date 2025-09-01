@@ -27,8 +27,8 @@ $machinestates = [
 
     GAME_STATE_PLAYER_ROCK_STEAL_CRAB => GameStateBuilder::create()
         ->name('stealCrab')
-        ->description(clienttranslate('${actplayer} may steal a crab from another player'))
-        ->descriptionmyturn(clienttranslate('${you} may steal a crab from another player'))
+        ->description(clienttranslate('${actplayer} must steal a crab from another player'))
+        ->descriptionmyturn(clienttranslate('${you} must steal a crab from another player'))
         ->type(StateType::ACTIVE_PLAYER)
         ->args('argStealCrab')
         ->possibleactions([
@@ -41,8 +41,8 @@ $machinestates = [
 
     GAME_STATE_PLAYER_WAVE_FLIP_BEACH => GameStateBuilder::create()
         ->name('flipBeach')
-        ->description(clienttranslate('${actplayer} may flip a beach'))
-        ->descriptionmyturn(clienttranslate('${you} may flip a beach'))
+        ->description(clienttranslate('${actplayer} must flip a beach'))
+        ->descriptionmyturn(clienttranslate('${you} must flip a beach'))
         ->type(StateType::ACTIVE_PLAYER)
         ->args('argFlipBeach')
         ->possibleactions([
@@ -106,6 +106,3 @@ $machinestates = [
         ])
         ->build(),
 ];
-
-
-
