@@ -325,11 +325,13 @@ export class SeasideActions extends GameGui<SeasideGamedatas> {
   }
 
   enteringSelectIsopodsState(args: SeasideSelectIsopodsArgs) {
-    args.selectableIsopodIds.forEach((isopodId) => {
-      const isopodEl = getTokenElById(isopodId);
-      isopodEl.classList.add("possible-move");
-      isopodEl.addEventListener("click", () => selectMultipleToken(isopodId));
-    });
+    if (this.isCurrentPlayerActive()) {
+      args.selectableIsopodIds.forEach((isopodId) => {
+        const isopodEl = getTokenElById(isopodId);
+        isopodEl.classList.add("possible-move");
+        isopodEl.addEventListener("click", () => selectMultipleToken(isopodId));
+      });
+    }
   }
 
   leaveStateSelectIsopods() {}
