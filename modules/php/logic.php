@@ -112,7 +112,7 @@ trait LogicTrait
     function handlePlayRockToken(int $playerId, Token $rock)
     {
         $playerRocks = $this->getAllTokensOfTypeForLocation((string)$playerId, ROCK);
-        if (count($playerRocks) % 2 === 1) {
+        if (is_array($playerRocks) && count($playerRocks) % 2 === 1) {
             //Odd number of rocks, attract crabs
 
             $newRockPileId = ROCK_PILE_INIT;
@@ -125,10 +125,6 @@ trait LogicTrait
             //BUG HERE
             $unPiledRockToken = $this->getAllTokensOfTypeForLocation((string)$playerId, ROCK, 0)[0];
 
-            if(!$unPiledRockToken) {
-                $this->debugLog($this->getAllTokensOfTypeForLocation((string)$playerId, ROCK, 0));
-                $this->debugLog($this->getAllTokensOfTypeForLocation((string)$playerId, ROCK));
-            }
 
             //Send main rock to player area
             $this->sendTokenToPlayerArea($rock, $playerId, $newRockPileId);
