@@ -74,11 +74,16 @@ const buildOptions = {
     js: `
     var seasideProto = {};
     // list all classes you want to merge
+    
     Object.getOwnPropertyNames(seasideModule.SeasideGame.prototype).forEach(function(key) {
       if (key !== "constructor") seasideProto[key] = seasideModule.SeasideGame.prototype[key];
     });
 
-    return declare("bgagame.seaside", GameGui, seasideProto);
+    seasideProto.BgaCards = BgaCards;
+    seasideProto.BgaAnimations = BgaAnimations;
+
+    var declaration = declare("bgagame.seaside", GameGui, seasideProto);
+    return declaration;
   });`,
   },
   plugins: [postBuildPlugin],

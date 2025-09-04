@@ -12,7 +12,7 @@
     "paths": {
       "ebg/*": ["bga-framework.d.ts"],
       "dojo": ["bga-framework.d.ts"],
-    }
+    },
   },
-  "include": ["bga-framework.d.ts", "src"]
+  "include": ["bga-framework.d.ts", "src/**/*.ts", "src/**/*.d.ts"]
 }

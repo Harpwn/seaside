@@ -1,3 +1,8 @@
+import { SeasideActions } from "./seaside-actions";
+import { SeasideSetup } from "./seaside-setup";
+import { SeasideStateManager } from "./seaside-state";
+import { TokenManager } from "./tokens";
+
 enum SeasideGameNotifications {
   TokenPlayed = "tokenPlayed",
   TokenToSea = "tokenToSea",
@@ -13,13 +18,6 @@ enum SeasideGameNotifications {
   EndGameWaveBonusTie = "endGameWaveBonusTie",
 }
 
-enum SeasideGameActions {
-  PlayToken = "actPlayToken",
-  NextPlayer = "actNextPlayer",
-  FlipBeach = "actFlipBeach",
-  StealCrab = "actStealCrab",
-  SelectIsopods = "actSelectIsopods",
-}
 
 enum SeasideGameStates {
   PlayToken = "playToken",
@@ -32,6 +30,29 @@ enum SeasideGameStates {
 }
 
 export class SeasideGame extends GameGui<SeasideGamedatas> {
+  public animationManager: AnimationManager;
+  public cardsManager: TokenManager;
+  public setupManager: SeasideSetup;
+  public stateManager: SeasideStateManager;
+  public actions: SeasideActions;
+
+  setup(gamedatas: SeasideGamedatas) {
+    console.log("Starting game setup");
+    console.log("gamedatas", gamedatas);
+
+    this.animationManager = new BgaAnimations.Manager({
+      animationsActive: this.bgaAnimationsActive(),
+    });
+    this.cardsManager = new TokenManager(this, gamedatas);
+    this.setupManager = new SeasideSetup(this);
+    this.stateManager = new SeasideStateManager(this);
+    this.actions = new SeasideActions(this);
+
+    this.setupManager.doSetup(gamedatas);
+
+    console.log("Ending game setup");
+  }
+
   async notif_tokenPlayed(args: TokenPlayedNotificationData) {
     const tokenEl = this.getTokenElById(args.tokenId);
     //flip is needed
@@ -119,168 +140,31 @@ export class SeasideGame extends GameGui<SeasideGamedatas> {
 
   async notif_endGameWaveBonus(args: EndGameWaveBonusNotificationData) {
     args.tokenIds.forEach(async (seaTokenId) => {
-      await this.moveTokenToPlayerArea(
-        args.playerId.toString(),
-        seaTokenId,
-        0
-      );
+      await this.moveTokenToPlayerArea(args.playerId.toString(), seaTokenId, 0);
     });
     this.scoreCtrl[args.playerId].incValue(args.tokenCount);
-  }
-
-  setup(gamedatas: SeasideGamedatas) {
-    console.log("Starting game setup");
-    console.log("gamedatas", gamedatas);
-
-    this.setupBaseGameArea(gamedatas);
-    this.setupPlayerAreas(gamedatas);
-    this.setupSea(gamedatas);
-    this.setupTooltips();
-
-    //Setup game notifications to handle (see "setupNotifications" method below)
-    this.setupNotifications();
-
-    console.log("Ending game setup");
-  }
-
-  setupBaseGameArea(gamedatas: SeasideGamedatas) {
-    this.getGameAreaElement().insertAdjacentHTML(
-      "beforeend",
-      `<div id="seaside-game-area">
-        <div id="seaside-sea">
-          <div id="seaside-other-players"></div>
-          <div id="seaside-sea-area">
-            <div class="seaside-sea-area-row" id="seaside-sea-area-ISOPOD"></div>
-            <div class="seaside-sea-area-row" id="seaside-sea-area-CRAB"></div>
-            <div class="seaside-sea-area-row" id="seaside-sea-area-SHELL"></div>
-          </div>
-          <div id="seaside-player-area"></div>
-        </div>
-      </div>`
-    );
-  }
-
-  setupPlayerAreas(gamedatas: SeasideGamedatas) {
-    Object.values(gamedatas.players).forEach((player) => {
-      if (this.player_id.toString() != player.id) {
-        document.getElementById("seaside-other-players").insertAdjacentHTML(
-          "beforeend",
-          `<div id="seaside-player-${
-            player.id
-          }" class="seaside-player seaside-other-player" data-player-id="${
-            player.id
-          }">
-            ${this.setupTokenRows(Object.values(player.tokens))}
-          </div>`
-        );
-      } else {
-        document.getElementById("seaside-player-area").insertAdjacentHTML(
-          "beforeend",
-          `<div id="seaside-player-${player.id}" class="seaside-player">
-            ${this.setupTokenRows(Object.values(player.tokens))}
-            </div>`
-        );
-      }
-    });
-  }
-
-  setupTokenRows(tokens: SeasideToken[]) {
-    const rowTypes = ["SANDPIPER", "BEACH", "SHELL", "WAVE", "CRAB", "ROCK"];
-    const rowEls: Element[] = [];
-    rowTypes.forEach((rowType) => {
-      const tokensForRow: SeasideToken[] = [];
-      switch (rowType) {
-        case "SANDPIPER-ISOPOD":
-          tokensForRow.push(
-            ...tokens.filter(
-              (t) => t.activeType === "SANDPIPER" || t.activeType === "ISOPOD"
-            )
-          );
-          break;
-        default:
-          tokensForRow.push(...tokens.filter((t) => t.activeType === rowType));
-          break;
-      }
-      const row = document.createElement("div");
-      row.classList.add("seaside-player-row", `seaside-player-row-${rowType}`);
-
-      if (rowType == "SANDPIPER") {
-        row.classList.add(`seaside-player-row-ISOPOD`);
-      }
-      tokensForRow.forEach((token) => {
-        row.appendChild(this.tokenToNode(token));
-      });
-      rowEls.push(row);
-    });
-    return rowEls.map((el) => el.outerHTML).join("");
-  }
-
-  setupTooltips() {
-    console.log("tooltips setup");
-    const tokens = document.querySelectorAll(".seaside-token");
-    tokens.forEach((token) => {
-      this.addTokenTooltip(token);
-    });
-  }
-
-  setupSea(gamedatas: SeasideGamedatas) {
-    Object.values(gamedatas.seaTokens).forEach((token) => {
-      this.createTokenInSea(token);
-    });
-  }
-
-  setupNotifications() {
-    console.log("notifications subscriptions setup");
-    this.bgaSetupPromiseNotifications();
-  }
-
-  setupHelpButton() {
-    // Setting up player boards
-    // example of setting up players boards
-    let helpButton = $("seaside-help-button");
-    helpButton.insertAdjacentHTML(
-      "beforeend",
-      `<div class="seaside-help-container">
-        <div class="seaside-help-help-button w-12 h-12 text-3xl" onmouseover="this.nextElementSibling.style.display = 'block'" onmouseout="this.nextElementSibling.style.display = 'none'">?</div>        
-        <div class="seaside-help-help-tooltip">
-            <div class="seaside-help-help-tooltip-text">
-              <p class="text-white text-5xl">${_("Player Aid")}</p>
-              <span class="text-sm">${_(
-                "From the strongest to the weakest"
-              )}</span>
-              <div class="flex flex-col seaside-help-tooltip-combinations">
-                <div><div>${_("Color-Run")}</div></div>
-                <div><div>${_("Three of a Kind")}</div></div>
-                <div><div>${_("Color")}</div></div>
-                <div><div>${_("Run")}</div></div>
-                <div><div>${_("Sum")}</div></div>
-              </div>
-            </div>
-        </div>
-      </div>`
-    );
   }
 
   onEnteringState(stateName: string, payload: any) {
     console.log("Entering state: " + stateName, payload);
     switch (stateName) {
       case SeasideGameStates.PlayToken:
-        this.enteringPlayTokenState(payload.args);
+        this.stateManager.enteringPlayTokenState(payload.args);
         break;
       case SeasideGameStates.PlayAgain:
-        this.enteringPlayAgainState(payload.args);
+        this.stateManager.enteringPlayAgainState(payload.args);
         break;
       case SeasideGameStates.NextPlayer:
-        this.enteringNextPlayerState(payload.args);
+        this.stateManager.enteringNextPlayerState(payload.args);
         break;
       case SeasideGameStates.FlipBeach:
-        this.enteringFlipBeachState(payload.args);
+        this.stateManager.enteringFlipBeachState(payload.args);
         break;
       case SeasideGameStates.StealCrab:
-        this.enteringStealCrabState(payload.args);
+        this.stateManager.enteringStealCrabState(payload.args);
         break;
       case SeasideGameStates.SelectIsopods:
-        this.enteringSelectIsopodsState(payload.args);
+        this.stateManager.enteringSelectIsopodsState(payload.args);
         break;
     }
   }
@@ -289,22 +173,22 @@ export class SeasideGame extends GameGui<SeasideGamedatas> {
     console.log("Leaving state: " + stateName);
     switch (stateName) {
       case SeasideGameStates.PlayToken:
-        this.leaveStatePlayToken();
+        this.stateManager.leaveStatePlayToken();
         break;
       case SeasideGameStates.PlayAgain:
-        this.leaveStatePlayAgain();
+        this.stateManager.leaveStatePlayAgain();
         break;
       case SeasideGameStates.NextPlayer:
-        this.leaveStateNextPlayer();
+        this.stateManager.leaveStateNextPlayer();
         break;
       case SeasideGameStates.FlipBeach:
-        this.leaveStateFlipBeach();
+        this.stateManager.leaveStateFlipBeach();
         break;
       case SeasideGameStates.StealCrab:
-        this.leaveStateStealCrab();
+        this.stateManager.leaveStateStealCrab();
         break;
       case SeasideGameStates.SelectIsopods:
-        this.leaveStateSelectIsopods();
+        this.stateManager.leaveStateSelectIsopods();
         break;
     }
 
@@ -315,267 +199,23 @@ export class SeasideGame extends GameGui<SeasideGamedatas> {
     console.log("Update Action Buttons: " + stateName, args);
     switch (stateName) {
       case SeasideGameStates.PlayToken:
-        this.updateActionButtonsPlayToken(args);
+        this.actions.updateActionButtonsPlayToken(args);
         break;
       case SeasideGameStates.PlayAgain:
-        this.updateActionButtonsPlayAgain(args);
+        this.actions.updateActionButtonsPlayAgain(args);
         break;
       case SeasideGameStates.NextPlayer:
-        this.updateActionButtonsNextPlayer(args);
+        this.actions.updateActionButtonsNextPlayer(args);
         break;
       case SeasideGameStates.FlipBeach:
-        this.updateActionButtonsFlipBeach(args);
+        this.actions.updateActionButtonsFlipBeach(args);
         break;
       case SeasideGameStates.StealCrab:
-        this.updateActionButtonsStealCrab(args);
+        this.actions.updateActionButtonsStealCrab(args);
         break;
       case SeasideGameStates.SelectIsopods:
-        this.updateActionButtonsSelectIsopods(args);
+        this.actions.updateActionButtonsSelectIsopods(args);
         break;
-    }
-  }
-
-  //playToken
-
-  actPlayToken(args: SeasidePlayTokenArgs, tokenType: SeasideTokenType) {
-    const data: PlayTokenActionData = {
-      tokenId: args.token.id,
-      tokenType: tokenType,
-    };
-
-    if (tokenType == "SANDPIPER") {
-      this.handlePlaySandpiper(args);
-    } else {
-      const tokenEl = this.getTokenElById(args.token.id);
-
-      if (args.token.activeType !== tokenType) {
-        this.flipToken(tokenEl);
-      }
-
-      this.bgaPerformAction(SeasideGameActions.PlayToken, data);
-    }
-  }
-
-  handlePlaySandpiper(args: SeasidePlayTokenArgs) {
-    const data: PlayTokenActionData = {
-      tokenId: args.token.id,
-      tokenType: "SANDPIPER",
-    };
-    const tokenEl = this.getTokenElById(args.token.id);
-
-    if (
-      args.selectableIsopodIds.length == 0 &&
-      args.currentPileSizes.some((size) => size > 1)
-    ) {
-      this.confirmationDialog(
-        "There are no Isopods in the sea and you have an existing pile bigger than one, playing this will cause it to be discarded.",
-        () => {
-          if (args.token.activeType !== "SANDPIPER") {
-            this.flipToken(tokenEl);
-          }
-
-          this.bgaPerformAction(SeasideGameActions.PlayToken, data);
-        }
-      );
-    } else {
-      if (args.token.activeType !== "SANDPIPER") {
-        this.flipToken(tokenEl);
-      }
-
-      this.bgaPerformAction(SeasideGameActions.PlayToken, data);
-    }
-  }
-
-  enteringPlayTokenState(args: SeasidePlayTokenArgs) {
-    this.drawToken(args.token);
-  }
-
-  leaveStatePlayToken() {}
-
-  updateActionButtonsPlayToken(args: SeasidePlayTokenArgs) {
-    if (this.isCurrentPlayerActive()) {
-      this.statusBar.addActionButton(`Play ${args.token.activeType} Side`, () =>
-        this.actPlayToken(args, args.token.activeType)
-      );
-      this.statusBar.addActionButton(
-        `Play ${args.token.inactiveType} Side`,
-        () => this.actPlayToken(args, args.token.inactiveType)
-      );
-    }
-  }
-
-  //playAgain
-
-  enteringPlayAgainState(args: SeasidePlayAgainArgs) {
-    //Play some kind of animation
-  }
-
-  leaveStatePlayAgain() {}
-
-  updateActionButtonsPlayAgain(args: SeasidePlayAgainArgs) {}
-
-  //nextPlayer
-
-  enteringNextPlayerState(args: SeasideNextPlayerArgs) {}
-
-  leaveStateNextPlayer() {}
-
-  updateActionButtonsNextPlayer(args: SeasideNextPlayerArgs) {}
-
-  //flipBeach
-
-  actFlipBeach(tokenId: number) {
-    const data: FlipBeachActionData = {
-      beachId: tokenId,
-    };
-
-    this.bgaPerformAction(SeasideGameActions.FlipBeach, data);
-  }
-
-  enteringFlipBeachState(args: SeasideFlipBeachArgs) {
-    if (this.isCurrentPlayerActive()) {
-      args.flippableBeachIds.forEach((beachId) => {
-        const beachEl = this.getTokenElById(beachId);
-        beachEl.classList.add("possible-move");
-        beachEl.addEventListener("click", () => {
-          this.selectSingleToken(beachId);
-        });
-      });
-    }
-  }
-
-  leaveStateFlipBeach() {}
-
-  updateActionButtonsFlipBeach(args: SeasideFlipBeachArgs) {
-    if (this.isCurrentPlayerActive()) {
-      this.statusBar.addActionButton(
-        `Confirm`,
-        () => {
-          const beachEl = document.querySelector(".selected-move");
-          this.actFlipBeach(this.getTokenId(beachEl));
-        },
-        {
-          id: `seaside-confirm`,
-          disabled: true,
-        }
-      );
-    }
-  }
-
-  //stealCrab
-
-  actStealCrab(victimId: number) {
-    const data: StealCrabActionData = {
-      victimId,
-    };
-
-    this.bgaPerformAction(SeasideGameActions.StealCrab, data);
-  }
-
-  enteringStealCrabState(args: SeasideStealCrabArgs) {
-    if (this.isCurrentPlayerActive()) {
-      args.playersWithCrabsIds.forEach((playerId) => {
-        const playerPanel = document.getElementById(
-          `seaside-player-${playerId}`
-        );
-        playerPanel.classList.add("possible-move");
-        playerPanel.addEventListener("click", () => {
-          this.selectSinglePlayer(playerId);
-        });
-      });
-    }
-  }
-
-  leaveStateStealCrab() {}
-
-  updateActionButtonsStealCrab(args: SeasideStealCrabArgs) {
-    if (this.isCurrentPlayerActive()) {
-      this.statusBar.addActionButton(
-        `Confirm`,
-        () => {
-          const victimId = document
-            .querySelector(".selected-move")
-            .getAttribute("data-player-id");
-          this.actStealCrab(parseInt(victimId));
-        },
-        {
-          id: `seaside-confirm`,
-          disabled: true,
-        }
-      );
-    }
-  }
-
-  //selectIsopods
-
-  actSelectIsopods(isopodIds: number[]) {
-    const data: SelectIsopodsActionData = {
-      isopodIds: isopodIds.join(","),
-    };
-
-    this.bgaPerformAction(SeasideGameActions.SelectIsopods, data);
-  }
-
-  enteringSelectIsopodsState(args: SeasideSelectIsopodsArgs) {
-    if (this.isCurrentPlayerActive()) {
-      args.selectableIsopodIds.forEach((isopodId) => {
-        const isopodEl = this.getTokenElById(isopodId);
-        isopodEl.classList.add("possible-move");
-        isopodEl.addEventListener("click", () => this.selectMultipleToken(isopodId));
-      });
-    }
-  }
-
-  leaveStateSelectIsopods() {}
-
-  updateActionButtonsSelectIsopods(args: SeasideSelectIsopodsArgs) {
-    if (this.isCurrentPlayerActive()) {
-      this.statusBar.addActionButton(
-        `Confirm`,
-        () => {
-          const isopodIds = Array.from(
-            document.querySelectorAll(".selected-move")
-          ).map((el) => this.getTokenId(el));
-          const newPileSize = isopodIds.length + 1;
-          if (args.currentPileSizes.length > 0) {
-            const largerPiles = args.currentPileSizes.filter(
-              (size) => size > newPileSize
-            );
-            const smallerPiles = args.currentPileSizes.filter(
-              (size) => size < newPileSize
-            );
-            if (largerPiles.length > 0) {
-              this.confirmationDialog(
-                `${newPileSize} tokens is less than your current largest pile (${Math.max(
-                  ...args.currentPileSizes
-                )}), so this pile will be discarded.`,
-                () => {
-                  this.actSelectIsopods(isopodIds);
-                }
-              );
-            } else if (smallerPiles.length > 0) {
-              this.confirmationDialog(
-                `${newPileSize} tokens is your largest pile, all smaller piles will be discarded losing you ${smallerPiles.reduce(
-                  (a, b) => a + b,
-                  0
-                )} tokens.`,
-                () => {
-                  this.actSelectIsopods(isopodIds);
-                }
-              );
-            } else {
-              this.actSelectIsopods(isopodIds);
-            }
-          } else {
-            console.log(isopodIds);
-            this.actSelectIsopods(isopodIds);
-          }
-        },
-        {
-          id: `seaside-confirm`,
-          disabled: false,
-        }
-      );
     }
   }
 
@@ -584,20 +224,20 @@ export class SeasideGame extends GameGui<SeasideGamedatas> {
       .getElementById("seaside-game-area")
       .insertAdjacentElement("beforeend", this.tokenToNode(token));
     this.addTokenTooltip(tokenEl);
-  };
+  }
 
   getTokenElById(tokenId: number): Element {
     return document.getElementById(`seaside-token-${tokenId}`);
-  };
+  }
 
   flipToken(tokenEl: Element) {
     const activeType = tokenEl.getAttribute("data-active-type");
     const inactiveType = tokenEl.getAttribute("data-inactive-type");
     tokenEl.setAttribute("data-active-type", inactiveType);
     tokenEl.setAttribute("data-inactive-type", activeType);
-  };
+  }
 
-  async moveTokenToSea (tokenId: number, tokenLocationArgs: number) {
+  async moveTokenToSea(tokenId: number, tokenLocationArgs: number) {
     const oldTokenEl = this.getTokenElById(tokenId);
     this.updateTokenElLocation(oldTokenEl, "SEA", tokenLocationArgs);
     const seaEl = document.getElementById(
@@ -611,18 +251,18 @@ export class SeasideGame extends GameGui<SeasideGamedatas> {
       this.slideToObjectAndDestroy(oldTokenEl, newTokenEl)
     );
     newTokenEl.classList.remove("seaside-token-hidden");
-  };
+  }
 
   async moveTokenToDiscard(tokenId: number) {
     const tokenEl = this.getTokenElById(tokenId);
     const anim = this.fadeOutAndDestroy(tokenEl);
     await this.bgaPlayDojoAnimation(anim);
-  };
+  }
 
   async moveTokenToPlayerArea(
     playerId: string,
     tokenId: number,
-    tokenLocationArgs: number,
+    tokenLocationArgs: number
   ) {
     const oldTokenEl = this.getTokenElById(tokenId);
     const type = this.getTokenActiveType(oldTokenEl);
@@ -638,7 +278,7 @@ export class SeasideGame extends GameGui<SeasideGamedatas> {
       this.slideToObjectAndDestroy(oldTokenEl, newTokenEl)
     );
     newTokenEl.classList.remove("seaside-token-hidden");
-  };
+  }
 
   createTokenInSea(token: SeasideToken) {
     const seaEl = document.getElementById(
@@ -647,7 +287,7 @@ export class SeasideGame extends GameGui<SeasideGamedatas> {
     const tokenEl = this.tokenToNode(token);
 
     seaEl.insertAdjacentElement("beforeend", tokenEl);
-  };
+  }
 
   tokenToNode(token: SeasideToken): Element {
     const tokenEl = document.createElement("div");
@@ -659,7 +299,7 @@ export class SeasideGame extends GameGui<SeasideGamedatas> {
     tokenEl.setAttribute("data-location", token.location);
     tokenEl.setAttribute("data-location-arg", token.locationArg);
     return tokenEl;
-  };
+  }
 
   clearMoves() {
     const possibleMoveEls = document.querySelectorAll(".possible-move");
@@ -672,7 +312,7 @@ export class SeasideGame extends GameGui<SeasideGamedatas> {
       el.classList.remove("selected-move");
       this.removeAllClickEvents(el);
     });
-  };
+  }
 
   selectSinglePlayer(playerId: number) {
     const playerPanel = document.getElementById(`seaside-player-${playerId}`);
@@ -692,7 +332,7 @@ export class SeasideGame extends GameGui<SeasideGamedatas> {
       }
     });
     this.updateConfirmDisabled(false);
-  };
+  }
 
   deselectSinglePlayer(playerId: number) {
     const playerPanel = document.getElementById(`seaside-player-${playerId}`);
@@ -700,21 +340,21 @@ export class SeasideGame extends GameGui<SeasideGamedatas> {
     const newEl = this.removeAllClickEvents(playerPanel);
     newEl.addEventListener("click", () => this.selectSinglePlayer(playerId));
     this.updateConfirmDisabled(true);
-  };
+  }
 
   selectMultipleToken(tokenId: number) {
     const tokenEl = this.getTokenElById(tokenId);
     tokenEl.classList.add("selected-move");
     const newEl = this.removeAllClickEvents(tokenEl);
     newEl.addEventListener("click", () => this.deselectMultipleToken(tokenId));
-  };
+  }
 
   deselectMultipleToken(tokenId: number) {
     const tokenEl = this.getTokenElById(tokenId);
     tokenEl.classList.remove("selected-move");
     const newEl = this.removeAllClickEvents(tokenEl);
     newEl.addEventListener("click", () => this.selectMultipleToken(tokenId));
-  };
+  }
 
   selectSingleToken(tokenId: number) {
     const tokenEl = this.getTokenElById(tokenId);
@@ -733,7 +373,7 @@ export class SeasideGame extends GameGui<SeasideGamedatas> {
       }
     });
     this.updateConfirmDisabled(false);
-  };
+  }
 
   deselectSingleToken(tokenId: number) {
     const tokenEl = this.getTokenElById(tokenId);
@@ -741,13 +381,13 @@ export class SeasideGame extends GameGui<SeasideGamedatas> {
     const newEl = this.removeAllClickEvents(tokenEl);
     newEl.addEventListener("click", () => this.selectSingleToken(tokenId));
     this.updateConfirmDisabled(true);
-  };
+  }
 
   removeAllClickEvents(element: Element) {
     const clone = element.cloneNode(true) as Element; // Deep clone the element
     element.parentNode.replaceChild(clone, element); // Replace the original with the clone
     return clone;
-  };
+  }
 
   updateConfirmDisabled(disabled: boolean) {
     const confirmButton = document.getElementById("seaside-confirm");
@@ -756,12 +396,16 @@ export class SeasideGame extends GameGui<SeasideGamedatas> {
       confirmButton.removeAttribute("disabled");
       confirmButton.setAttribute("aria-disabled", String(disabled));
     }
-  };
+  }
 
-  updateTokenElLocation(element: Element, location: string, locationArg: number) {
+  updateTokenElLocation(
+    element: Element,
+    location: string,
+    locationArg: number
+  ) {
     element.setAttribute("data-location", location);
     element.setAttribute("data-location-arg", locationArg.toString());
-  };
+  }
 
   addTokenTooltip(tokenEl: Element) {
     const activeType = tokenEl.getAttribute("data-active-type");
@@ -771,13 +415,17 @@ export class SeasideGame extends GameGui<SeasideGamedatas> {
       "Sides - " + activeType + " / " + inactiveType,
       ""
     );
-  };
+  }
 
   getTokenId(tokenEl: Element): number {
     return parseInt(tokenEl.getAttribute("data-id"));
-  };
+  }
 
   getTokenActiveType(tokenEl: Element): string {
     return tokenEl.getAttribute("data-active-type");
-  };
+  }
+
+  setTooltip(id: string, html: string) {
+    this.addTooltipHtml(id, html);
+  }
 }

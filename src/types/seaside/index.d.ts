@@ -124,3 +124,5 @@ declare interface SeasideSelectIsopodsArgs {
   sandpiperId: number;
   currentPileSizes: number[];
 }
+
+type SeasideTokenType = 'CRAB' | 'ISOPOD' | 'BEACH' | 'SHELL' | 'SANDPIPER' | 'WAVE' | 'ROCK';

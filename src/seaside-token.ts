@@ -1,4 +1,3 @@
-type SeasideTokenType = 'CRAB' | 'ISOPOD' | 'BEACH' | 'SHELL' | 'SANDPIPER' | 'WAVE' | 'ROCK';
 
 class SeasideToken {
     constructor($token) {
