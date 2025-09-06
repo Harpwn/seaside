@@ -9,6 +9,7 @@ export class SeasideGameGui extends GameGui<SeasideGamedatas> {
   public setups: SeasideSetup;
   public states: SeasideStateManager;
   public actions: SeasideActions;
+  public zoom: ZoomManager
 
   public clearMoves() {
     const possibleMoveEls = document.querySelectorAll(".possible-move");

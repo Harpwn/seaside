@@ -1,33 +1,22 @@
-import { SeasideGameGui } from "./seaside-gui";
+import { SeasideGame } from "src";
 
-export interface Token {
-  id: number;
-  activeType: SeasideTokenType;
-  inactiveType: SeasideTokenType;
-  location: string;
-  locationArg: string;
-}
-
-export class TokenManager extends BgaCards.Manager<Token> {
-  constructor(public game: SeasideGameGui, private gameData: SeasideGamedatas) {
-    super({
-      animationManager: game.animations,
-      type: "seaside-token",
+export class TokenManager extends CardManager<SeasideToken> {
+  constructor(public game: SeasideGame, private gameData: SeasideGamedatas) {
+    super(game, {
       getId: (token) => `seaside-token-${token.id}`,
       cardWidth: 75,
       cardHeight: 75,
-      cardBorderRadius: "50%",
-      setupBackDiv: (token: Token, div: HTMLElement) => {
+      setupBackDiv: (token: SeasideToken, div: HTMLElement) => {
         div.setAttribute("data-inactive-type", token.inactiveType);
       },
-      setupFrontDiv: (token: Token, div: HTMLElement) => {
+      setupFrontDiv: (token: SeasideToken, div: HTMLElement) => {
         div.setAttribute("data-inactive-type", token.inactiveType);
         this.game.setTooltip(div.id, this.getTooltip(token));
       },
     });
   }
 
-  private getTooltip(token: Token): string {
+  private getTooltip(token: SeasideToken): string {
     return `
         <p><strong>${_("Active Side:")}</strong> ${token.activeType}</p>
         <p><strong>${_("Inactive Side:")}</strong> ${token.inactiveType}</p>
@@ -38,7 +27,7 @@ export class TokenManager extends BgaCards.Manager<Token> {
     return document.getElementById(`seaside-token-${tokenId}`);
   }
 
-  drawToken(token: Token) {
+  drawToken(token: SeasideToken) {
     const tokenEl = document
       .getElementById("seaside-game-area")
       .insertAdjacentElement("beforeend", this.tokenToNode(token));
@@ -52,7 +41,7 @@ export class TokenManager extends BgaCards.Manager<Token> {
     tokenEl.setAttribute("data-inactive-type", activeType);
   }
 
-  createTokenInSea(token: Token) {
+  createTokenInSea(token: SeasideToken) {
     const seaEl = document.getElementById(
       `seaside-sea-area-${token.activeType}`
     );
@@ -61,7 +50,7 @@ export class TokenManager extends BgaCards.Manager<Token> {
     seaEl.insertAdjacentElement("beforeend", tokenEl);
   }
 
-  tokenToNode(token: Token): Element {
+  tokenToNode(token: SeasideToken): Element {
     const tokenEl = document.createElement("div");
     tokenEl.id = `seaside-token-${token.id}`;
     tokenEl.className = "seaside-token";

@@ -4,24 +4,32 @@ import { SeasideSetup } from "./seaside-setup";
 import { SeasideGameStates, SeasideStateManager } from "./seaside-state";
 import { TokenManager } from "./seaside-tokens";
 
+export class SeasideGame extends SeasideNotifications implements Game {
+  setupNotifications() {
+    console.log("notifications subscriptions setup");
+    this.bgaSetupPromiseNotifications();
+  }
 
-
-export class SeasideGame extends SeasideNotifications {
-  
   setup(gamedatas: SeasideGamedatas) {
     console.log("Starting game setup");
     console.log("gamedatas", gamedatas);
 
-    this.animations = new BgaAnimations.Manager({
-      animationsActive: this.bgaAnimationsActive(),
-    });
+    this.animationManager = new AnimationManager(this);
     this.tokens = new TokenManager(this, gamedatas);
     this.setups = new SeasideSetup(this);
     this.states = new SeasideStateManager(this);
     this.actions = new SeasideActions(this);
 
     this.setups.doSetup(gamedatas);
+    this.zoom = new ZoomManager({
+      element: document.getElementById("seaside-table"),
+      localStorageZoomKey: "mygame-zoom",
+      zoomControls: {
+        color: "white",
+      },
+    });
 
+    this.setupNotifications();
     console.log("Ending game setup");
   }
 

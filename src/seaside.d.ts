@@ -1,3 +1,11 @@
+declare interface SeasideToken {
+  id: number;
+  activeType: SeasideTokenType;
+  inactiveType: SeasideTokenType;
+  location: string;
+  locationArg: string;
+}
+
 declare interface SeasidePlayer extends Player {
     tokens: Record<number, SeasideToken>;
 }

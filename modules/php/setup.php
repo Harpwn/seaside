@@ -74,9 +74,9 @@ trait SetupTrait
         }
         $this->tokens->createCards($deck);
         // test player area limits
-        // foreach ($this->getPlayersIds() as $playerId) {
-        //     $this->tokens->createCards($deck, (string)$playerId);
-        // }
+        //foreach ($this->getPlayersIds() as $playerId) {
+        //    $this->tokens->createCards($deck, (string)$playerId);
+        //}
         $this->tokens->shuffle(BAG_LOCATION);
 
         // get number of players

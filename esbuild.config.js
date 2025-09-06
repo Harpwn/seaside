@@ -10,7 +10,7 @@ const scssFile = path.join(__dirname, "src/seaside.scss");
 
 function compileSCSS() {
   console.log("Compiling SCSS...");
-  const result = sass.compile(scssFile, { style: "compressed" });
+  const result = sass.compile(scssFile, { style: "compressed", loadPaths: ["src/styles"] });
   fs.writeFileSync("dist/seaside.css", result.css);
   fs.renameSync("dist/seaside.css", "seaside.css");
 }
@@ -57,7 +57,6 @@ const buildOptions = {
     "ebg/counter",
     "ebg/zone",
     "bga-animations",
-    "bga-cards",
   ],
   banner: {
     js: `define([
@@ -67,8 +66,13 @@ const buildOptions = {
           "ebg/counter",
           "ebg/zone",
           getLibUrl('bga-animations', '1.x'),
-          getLibUrl('bga-cards', '1.x'),
-        ],function(dojo,declare,GameGui,counter,zone,BgaAnimations,BgaCards){`,
+          getLibUrl('bga-zoom', '1.x'),
+          getLibUrl('bga-cards', '1.x')
+        ],function(dojo,declare,GameGui,counter,zone,BgaAnimations,BgaZoom,BgaCards){
+        var CardManager = BgaCards.Manager;
+        var AnimationManager = BgaAnimations.Manager;
+        var ZoomManager = BgaZoom.Manager;
+        `,
   },
   footer: {
     js: `
@@ -84,11 +88,7 @@ const buildOptions = {
       });
       currentProto = Object.getPrototypeOf(currentProto);
     }
-      
-    // Add your extra properties
-    seasideProto.BgaCards = BgaCards;
-    seasideProto.BgaAnimations = BgaAnimations;
-      
+
     // Declare as before
     var declaration = declare("bgagame.seaside", GameGui, seasideProto);
     return declaration;

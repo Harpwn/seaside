@@ -8,11 +8,18 @@
     "noEmit": true,
     "lib": ["dom", "esnext"],
     "sourceMap": false,
-    "typeRoots": ["src/types"],
     "paths": {
       "ebg/*": ["bga-framework.d.ts"],
       "dojo": ["bga-framework.d.ts"],
     },
   },
-  "include": ["bga-framework.d.ts", "src/**/*.ts", "src/**/*.d.ts"]
+  "include": [
+    "bga-framework.d.ts", 
+    "src/**/*.ts", 
+    "src/**/*.d.ts",
+    "node_modules/bga-animations/**/*.d.ts",
+    "node_modules/bga-cards/**/*.d.ts",
+    "node_modules/bga-help/**/*.d.ts",
+    "node_modules/bga-zoom/**/*.d.ts"
+  ]
 }

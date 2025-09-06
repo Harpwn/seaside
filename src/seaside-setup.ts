@@ -1,5 +1,4 @@
 import { SeasideGameGui } from "./seaside-gui";
-import { Token } from "./seaside-tokens";
 
 export class SeasideSetup {
   constructor(private game: SeasideGameGui) {
@@ -11,21 +10,24 @@ export class SeasideSetup {
     this.setupPlayerAreas(gamedatas);
     this.setupSea(gamedatas);
     this.setupTooltips();
-    this.setupNotifications();
   }
 
   setupBaseGameArea() {
     this.game.getGameAreaElement().insertAdjacentHTML(
       "beforeend",
-      `<div id="seaside-game-area">
-        <div id="seaside-sea">
-          <div id="seaside-other-players"></div>
-          <div id="seaside-sea-area">
-            <div class="seaside-sea-area-row" id="seaside-sea-area-ISOPOD"></div>
-            <div class="seaside-sea-area-row" id="seaside-sea-area-CRAB"></div>
-            <div class="seaside-sea-area-row" id="seaside-sea-area-SHELL"></div>
+      `<div id="seaside-table" class="bga-zoom-inner">
+        <div id="seaside-game-area">
+          <div class="seaside-sea-area-wrapper">
+            <div id="seaside-game-logo"></div>
+            <div id="seaside-publisher-logo"></div>
+            <div id="seaside-designer-logo"></div>
+            <div id="seaside-sea-area">
+              <div id="seaside-bag"><span id="bag-counter"></span></div>
+              <div class="seaside-sea-area-row" id="seaside-sea-area-ISOPOD"></div>
+              <div class="seaside-sea-area-row" id="seaside-sea-area-CRAB"></div>
+              <div class="seaside-sea-area-row" id="seaside-sea-area-SHELL"></div>
+            </div>
           </div>
-          <div id="seaside-player-area"></div>
         </div>
       </div>`
     );
@@ -33,33 +35,23 @@ export class SeasideSetup {
 
   setupPlayerAreas(gamedatas: SeasideGamedatas) {
     Object.values(gamedatas.players).forEach((player) => {
-      if (this.game.player_id.toString() != player.id) {
-        document.getElementById("seaside-other-players").insertAdjacentHTML(
-          "beforeend",
-          `<div id="seaside-player-${
-            player.id
-          }" class="seaside-player seaside-other-player" data-player-id="${
-            player.id
-          }">
+      document.getElementById("seaside-game-area").insertAdjacentHTML(
+        "beforeend",
+        `<div class="seaside-player-wrapper">
+          <div class="seaside-player-name">${player.name}</div>
+          <div id="seaside-player-${player.id}" class="seaside-player">
             ${this.setupTokenRows(Object.values(player.tokens))}
-          </div>`
-        );
-      } else {
-        document.getElementById("seaside-player-area").insertAdjacentHTML(
-          "beforeend",
-          `<div id="seaside-player-${player.id}" class="seaside-player">
-            ${this.setupTokenRows(Object.values(player.tokens))}
-            </div>`
-        );
-      }
+            </div>
+        </div>`
+      );
     });
   }
 
-  setupTokenRows(tokens: Token[]) {
+  setupTokenRows(tokens: SeasideToken[]) {
     const rowTypes = ["SANDPIPER", "BEACH", "SHELL", "WAVE", "CRAB", "ROCK"];
     const rowEls: Element[] = [];
     rowTypes.forEach((rowType) => {
-      const tokensForRow: Token[] = [];
+      const tokensForRow: SeasideToken[] = [];
       switch (rowType) {
         case "SANDPIPER-ISOPOD":
           tokensForRow.push(
@@ -98,11 +90,6 @@ export class SeasideSetup {
     Object.values(gamedatas.seaTokens).forEach((token) => {
       this.game.tokens.createTokenInSea(token);
     });
-  }
-
-  setupNotifications() {
-    console.log("notifications subscriptions setup");
-    this.game.bgaSetupPromiseNotifications();
   }
 
   setupHelpButton() {
