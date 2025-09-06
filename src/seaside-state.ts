@@ -1,14 +1,23 @@
-import { SeasideGame } from "src";
+import { SeasideGameGui } from "./seaside-gui";
+
+export enum SeasideGameStates {
+  PlayToken = "playToken",
+  PlayAgain = "playAgain",
+  StealCrab = "stealCrab",
+  FlipBeach = "flipBeach",
+  SelectIsopods = "selectIsopods",
+  NextPlayer = "nextPlayer",
+  GameEnd = "gameEnd",
+}
 
 export class SeasideStateManager {
-  private game: SeasideGame;
 
-  constructor(game: SeasideGame) {
+  constructor(private game: SeasideGameGui) {
     this.game = game;
   }
 
   enteringPlayTokenState(args: SeasidePlayTokenArgs) {
-    this.game.drawToken(args.token);
+    this.game.tokens.drawToken(args.token);
   }
 
   leaveStatePlayToken() {}
@@ -26,10 +35,10 @@ export class SeasideStateManager {
   enteringFlipBeachState(args: SeasideFlipBeachArgs) {
     if (this.game.isCurrentPlayerActive()) {
       args.flippableBeachIds.forEach((beachId) => {
-        const beachEl = this.game.getTokenElById(beachId);
+        const beachEl = this.game.tokens.getTokenElById(beachId);
         beachEl.classList.add("possible-move");
         beachEl.addEventListener("click", () => {
-          this.game.selectSingleToken(beachId);
+          this.game.tokens.selectSingleToken(beachId);
         });
       });
     }
@@ -57,10 +66,10 @@ export class SeasideStateManager {
   enteringSelectIsopodsState(args: SeasideSelectIsopodsArgs) {
     if (this.game.isCurrentPlayerActive()) {
       args.selectableIsopodIds.forEach((isopodId) => {
-        const isopodEl = this.game.getTokenElById(isopodId);
+        const isopodEl = this.game.tokens.getTokenElById(isopodId);
         isopodEl.classList.add("possible-move");
         isopodEl.addEventListener("click", () =>
-          this.game.selectMultipleToken(isopodId)
+          this.game.tokens.selectMultipleToken(isopodId)
         );
       });
     }

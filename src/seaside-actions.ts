@@ -1,4 +1,4 @@
-import { SeasideGame } from "src";
+import { SeasideGameGui } from "./seaside-gui";
 
 enum SeasideGameActions {
   PlayToken = "actPlayToken",
@@ -9,7 +9,7 @@ enum SeasideGameActions {
 }
 
 export class SeasideActions {
-  constructor(private game: SeasideGame) {
+  constructor(private game: SeasideGameGui) {
     this.game = game;
   }
 
@@ -22,23 +22,22 @@ export class SeasideActions {
     if (tokenType == "SANDPIPER") {
       this.handlePlaySandpiper(args);
     } else {
-      const tokenEl = this.game.getTokenElById(args.token.id);
+      const tokenEl = this.game.tokens.getTokenElById(args.token.id);
 
       if (args.token.activeType !== tokenType) {
-        this.game.flipToken(tokenEl);
+        this.game.tokens.flipToken(tokenEl);
       }
 
       this.game.bgaPerformAction(SeasideGameActions.PlayToken, data);
     }
   }
-
   
   handlePlaySandpiper(args: SeasidePlayTokenArgs) {
     const data: PlayTokenActionData = {
       tokenId: args.token.id,
       tokenType: "SANDPIPER",
     };
-    const tokenEl = this.game.getTokenElById(args.token.id);
+    const tokenEl = this.game.tokens.getTokenElById(args.token.id);
 
     if (
       args.selectableIsopodIds.length == 0 &&
@@ -48,7 +47,7 @@ export class SeasideActions {
         "There are no Isopods in the sea and you have an existing pile bigger than one, playing this will cause it to be discarded.",
         () => {
           if (args.token.activeType !== "SANDPIPER") {
-            this.game.flipToken(tokenEl);
+            this.game.tokens.flipToken(tokenEl);
           }
 
           this.game.bgaPerformAction(SeasideGameActions.PlayToken, data);
@@ -56,7 +55,7 @@ export class SeasideActions {
       );
     } else {
       if (args.token.activeType !== "SANDPIPER") {
-        this.game.flipToken(tokenEl);
+        this.game.tokens.flipToken(tokenEl);
       }
 
       this.game.bgaPerformAction(SeasideGameActions.PlayToken, data);
@@ -128,7 +127,7 @@ export class SeasideActions {
         `Confirm`,
         () => {
           const beachEl = document.querySelector(".selected-move");
-          this.actFlipBeach(this.game.getTokenId(beachEl));
+          this.actFlipBeach(this.game.tokens.getTokenId(beachEl));
         },
         {
           id: `seaside-confirm`,
@@ -145,7 +144,7 @@ export class SeasideActions {
         () => {
           const isopodIds = Array.from(
             document.querySelectorAll(".selected-move")
-          ).map((el) => this.game.getTokenId(el));
+          ).map((el) => this.game.tokens.getTokenId(el));
           const newPileSize = isopodIds.length + 1;
           if (args.currentPileSizes.length > 0) {
             const largerPiles = args.currentPileSizes.filter(

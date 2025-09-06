@@ -73,15 +73,23 @@ const buildOptions = {
   footer: {
     js: `
     var seasideProto = {};
-    // list all classes you want to merge
-    
-    Object.getOwnPropertyNames(seasideModule.SeasideGame.prototype).forEach(function(key) {
-      if (key !== "constructor") seasideProto[key] = seasideModule.SeasideGame.prototype[key];
-    });
 
+    // Walk the prototype chain and copy everything (except constructors)
+    let currentProto = seasideModule.SeasideGame.prototype;
+    while (currentProto && currentProto !== Object.prototype && currentProto !== GameGui.prototype) {
+      Object.getOwnPropertyNames(currentProto).forEach(function (key) {
+        if (key !== "constructor" && seasideProto[key] === undefined) {
+          seasideProto[key] = currentProto[key];
+        }
+      });
+      currentProto = Object.getPrototypeOf(currentProto);
+    }
+      
+    // Add your extra properties
     seasideProto.BgaCards = BgaCards;
     seasideProto.BgaAnimations = BgaAnimations;
-
+      
+    // Declare as before
     var declaration = declare("bgagame.seaside", GameGui, seasideProto);
     return declaration;
   });`,

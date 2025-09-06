@@ -1,7 +1,8 @@
-import { SeasideGame } from "src";
+import { SeasideGameGui } from "./seaside-gui";
+import { Token } from "./seaside-tokens";
 
 export class SeasideSetup {
-  constructor(private game: SeasideGame) {
+  constructor(private game: SeasideGameGui) {
     this.game = game;
   }
 
@@ -54,11 +55,11 @@ export class SeasideSetup {
     });
   }
 
-  setupTokenRows(tokens: SeasideToken[]) {
+  setupTokenRows(tokens: Token[]) {
     const rowTypes = ["SANDPIPER", "BEACH", "SHELL", "WAVE", "CRAB", "ROCK"];
     const rowEls: Element[] = [];
     rowTypes.forEach((rowType) => {
-      const tokensForRow: SeasideToken[] = [];
+      const tokensForRow: Token[] = [];
       switch (rowType) {
         case "SANDPIPER-ISOPOD":
           tokensForRow.push(
@@ -78,7 +79,7 @@ export class SeasideSetup {
         row.classList.add(`seaside-player-row-ISOPOD`);
       }
       tokensForRow.forEach((token) => {
-        row.appendChild(this.game.tokenToNode(token));
+        row.appendChild(this.game.tokens.tokenToNode(token));
       });
       rowEls.push(row);
     });
@@ -89,13 +90,13 @@ export class SeasideSetup {
     console.log("tooltips setup");
     const tokens = document.querySelectorAll(".seaside-token");
     tokens.forEach((token) => {
-      this.game.addTokenTooltip(token);
+      this.game.tokens.addTokenTooltip(token);
     });
   }
 
   setupSea(gamedatas: SeasideGamedatas) {
     Object.values(gamedatas.seaTokens).forEach((token) => {
-      this.game.createTokenInSea(token);
+      this.game.tokens.createTokenInSea(token);
     });
   }
 
