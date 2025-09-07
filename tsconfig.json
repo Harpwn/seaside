@@ -15,10 +15,10 @@
   },
   "include": [
     "bga-framework.d.ts", 
-    "src/**/*.ts", 
-    "src/**/*.d.ts",
-    "node_modules/bga-animations/**/*.d.ts",
-    "node_modules/bga-cards/**/*.d.ts",
+    "src/**/*.ts",
+    "src/types/bga-cards.d.ts",
+    "src/types/seaside.d.ts",
+    "src/types/bga-animations.d.ts",
     "node_modules/bga-help/**/*.d.ts",
     "node_modules/bga-zoom/**/*.d.ts"
   ]

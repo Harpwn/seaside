@@ -17,7 +17,7 @@ trait ArgsTrait {
         return [
             "token" => $this->drawRandomToken(),
             "currentPileSizes" => $this->getCurrentPileSizes(),
-            "selectableIsopodIds" => $this->getSelectableIsopodIds()
+            "selectableIsopods" => $this->getSelectableIsopods()
         ];
     }
 
@@ -40,7 +40,7 @@ trait ArgsTrait {
     public function argFlipBeach(): array
     {
         return [
-            "flippableBeachIds" => array_column($this->getAllTokensOfTypeForLocation((string)$this->getActivePlayerId(), BEACH), 'id')
+            "flippableBeachs" => $this->getAllTokensOfTypeForLocation((string)$this->getActivePlayerId(), BEACH)
         ];
     }
 
@@ -48,8 +48,8 @@ trait ArgsTrait {
     {
 
         return [
-            "sandpiperId" => $this->getAllTokensOfTypeForLocation((string)$this->getActivePlayerId(), SANDPIPER, 0)[0]->id,
-            "selectableIsopodIds" => $this->getSelectableIsopodIds(),
+            "sandpiper" => $this->getAllTokensOfTypeForLocation((string)$this->getActivePlayerId(), SANDPIPER, 0)[0],
+            "selectableIsopods" => $this->getSelectableIsopods(),
             "currentPileSizes" => $this->getCurrentPileSizes()
         ];
     }
@@ -68,8 +68,8 @@ trait ArgsTrait {
         return array_values($currentPileSizes);
     }
 
-    private function getSelectableIsopodIds(): array
+    private function getSelectableIsopods(): array
     {
-        return array_column($this->getAllTokensOfTypeForLocation(SEA_LOCATION, ISOPOD), 'id');
+        return $this->getAllTokensOfTypeForLocation(SEA_LOCATION, ISOPOD);
     }
 }

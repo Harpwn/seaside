@@ -7,14 +7,14 @@ trait NotificationsTrait
         $this->notify->all("tokenPlayed", clienttranslate('${playerName} plays ${tokenSide}'), [
             "playerId" => $playerId,
             "tokenSide" => $token->activeType,
-            "tokenId" => $token->id,
+            "token" => $token,
         ]);
     }
 
     function nfTokenToSea (Token $token, int $tokenLocationArgs) {
         $this->notify->all("tokenToSea", clienttranslate('${tokenSide} played into the sea'), [
             "tokenSide" => $token->activeType,
-            "tokenId" => $token->id,
+            "token" => $token,
             "tokenLocationArgs" => $tokenLocationArgs
         ]);
     }
@@ -22,7 +22,7 @@ trait NotificationsTrait
     function nfTokenToPlayerArea(int $playerId, Token $token, int $tokenLocationArgs = 0) {
         $this->notify->all("tokenToPlayerArea", clienttranslate('${tokenSide} played into ${playerName}\'s shore'), [
             "tokenSide" => $token->activeType,
-            "tokenId" => $token->id,
+            "token" => $token,
             "playerId" => $playerId,
             "tokenLocationArgs" => $tokenLocationArgs
         ]);
@@ -31,7 +31,7 @@ trait NotificationsTrait
     function nfTokenMovesWithinPlayerArea(int $playerId, Token $token, int $fromLocationArgs, int $toLocationArgs) {
         $this->notify->all("tokenMovesWithinPlayerArea", clienttranslate('${tokenSide} moves within ${playerName}\'s shore'), [
             "tokenSide" => $token->activeType,
-            "tokenId" => $token->id,
+            "token" => $token,
             "playerId" => $playerId,
             "fromLocationArgs" => $fromLocationArgs,
             "toLocationArgs" => $toLocationArgs
@@ -41,49 +41,48 @@ trait NotificationsTrait
     function nfCrabStolen(int $playerId, int $thiefId, Token $token) {
         $this->notify->all("crabStolen", clienttranslate('One of ${playerName}\'s CRAB tokens is stolen'), [
             "playerId" => $playerId,
-            "tokenId" => $token->id,
+            "token" => $token,
             "thiefId" => $thiefId
         ]);
     }
 
     function nfRockGetsCrabs(int $playerId, array $crabs) {
-        $this->notify->all("rockGetsCrabs", clienttranslate('${playerName}\'s ROCK pair attracts ${crabCount} CRAB tokens'), [
+        $this->notify->all("rockGetsCrabs", clienttranslate('${playerName}\'s ROCK pair attracts ${tokenCount} CRAB tokens'), [
             "playerId" => $playerId,
-            "crabCount" => count($crabs),
-            "tokenIds" => array_column($crabs, 'id'),
+            "tokenCount" => count($crabs),
+            "tokens" => $crabs,
         ]);
     }
 
     function nfBeachGetsShells(int $playerId, array $seaShells) {
-        $this->notify->all("beachGetsShells", clienttranslate('${playerName}\'s Beaches find ${shellCount} buried SHELL tokens'), [
+        $this->notify->all("beachGetsShells", clienttranslate('${playerName}\'s Beaches find ${tokenCount} buried SHELL tokens'), [
             "playerId" => $playerId,
-            "shellCount" => count($seaShells),
-            "tokenIds" => array_column($seaShells, 'id'),
+            "tokenCount" => count($seaShells),
+            "tokens" => $seaShells,
         ]);
     }
 
     function nfSandpiperGetsIsopods(int $playerId, array $isopods, int $newSandpiperPileId) {
-        $this->notify->all("sandpiperGetsIsopods", clienttranslate('${playerName}\'s SANDPIPER grabs a pile of ${isopodCount} ISOPOD tokens'), [
+        $this->notify->all("sandpiperGetsIsopods", clienttranslate('${playerName}\'s SANDPIPER grabs a pile of ${tokenCount} ISOPOD tokens'), [
             "playerId" => $playerId,
-            "isopodCount" => count($isopods),
-            "tokenIds" => array_column($isopods, 'id'),
+            "tokenCount" => count($isopods),
+            "tokens" => $isopods,
             "newSandpiperPileId" => $newSandpiperPileId
         ]);
     }
 
-    function nfSandpiperIsopodsLost(int $playerId, int $sandpiperId, array $isopodIds) {
-        $this->notify->all("sandpiperIsopodsLost", clienttranslate('${playerName} loses SANDPIPER with a pile of ${isopodCount} ISOPOD tokens'), [
+    function nfSandpiperIsopodsLost(int $playerId, array $pileTokens) {
+        $this->notify->all("sandpiperIsopodsLost", clienttranslate('${playerName} loses SANDPIPER pile of ${tokenCount} tokens'), [
             "playerId" => $playerId,
-            "isopodCount" => count($isopodIds),
-            "tokenIds" => $isopodIds,
-            "sandpiperId" => $sandpiperId
+            "tokenCount" => count($pileTokens),
+            "tokens" => $pileTokens,
         ]);
     }
 
     function nfBeachFlip(int $playerId, Token $beach) {
         $this->notify->all("beachFlip", clienttranslate('${playerName}\'s WAVE washes away a BEACH to reveal a ${otherSideType} token'), [
             "playerId" => $playerId,
-            "tokenId" => $beach->id,
+            "token" => $beach,
             "otherSideType" => $beach->inactiveType
         ]);
     }
@@ -92,19 +91,19 @@ trait NotificationsTrait
         $this->notify->all("endGameWaveBonus", clienttranslate('${playerName} has the most waves, so they get the ${tokenCount} leftover sea tokens'), [
             "playerId" => $playerId,
             "tokenCount" => count($seaTokens),
-            "tokenIds" => array_column($seaTokens, 'id'),
+            "tokens" => $seaTokens,
         ]);
     }
 
-    function nfEndGameWaveBonusTie(array $playerIdsAndTokenIds) 
+    function nfEndGameWaveBonusTie(array $playerIdsAndTokens) 
     {
-        $playerIds = array_keys($playerIdsAndTokenIds);
+        $playerIds = array_keys($playerIdsAndTokens);
         $allPlayerNames = $this->dbGetPlayerNames();
         $playerNames = array_map(fn($id) => $allPlayerNames[$id]['player_name'] ?? '', $playerIds);
         $this->notify->all("endGameWaveBonusTie", clienttranslate('${playerNames} have tied for the most waves, so they each get ${tokenCount} leftover sea tokens'), [
-            "playerIdsAndTokenIds" => $playerIdsAndTokenIds,
+            "playerIdsAndTokens" => $playerIdsAndTokens,
             "playerNames" => implode(',', array_values($playerNames)),
-            "tokenCount" => count($playerIdsAndTokenIds[array_key_first($playerIdsAndTokenIds)]),
+            "tokenCount" => count($playerIdsAndTokens[array_key_first($playerIdsAndTokens)]),
         ]);
     }
 

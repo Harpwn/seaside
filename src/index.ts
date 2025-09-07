@@ -13,23 +13,8 @@ export class SeasideGame extends SeasideNotifications implements Game {
   setup(gamedatas: SeasideGamedatas) {
     console.log("Starting game setup");
     console.log("gamedatas", gamedatas);
-
-    this.animationManager = new AnimationManager(this);
-    this.tokens = new TokenManager(this, gamedatas);
-    this.setups = new SeasideSetup(this);
-    this.states = new SeasideStateManager(this);
-    this.actions = new SeasideActions(this);
-
-    this.setups.doSetup(gamedatas);
-    this.zoom = new ZoomManager({
-      element: document.getElementById("seaside-table"),
-      localStorageZoomKey: "mygame-zoom",
-      zoomControls: {
-        color: "white",
-      },
-    });
-
-    this.setupNotifications();
+    const setup = new SeasideSetup(this);
+    setup.doSetup(gamedatas);
     console.log("Ending game setup");
   }
 

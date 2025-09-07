@@ -3,6 +3,8 @@
 class Token
 {
     public int $id;
+    public string $side1;
+    public string $side2;
     public string $activeType;
     public string $inactiveType;
     public string $location;
@@ -18,14 +20,15 @@ class Token
     public function __construct($dbCard, $flipped)
     {
         $types = explode('/', $dbCard['type']);
-        $this->activeType = $types[0];
-        $this->inactiveType = $types[1] ?? '';
+        $this->side1 = $types[0];
+        $this->side2 = $types[1] ?? '';
+
         if($flipped) {
-            $this->activeType = $types[1];
-            $this->inactiveType = $types[0];
+            $this->activeType = $this->side2;
+            $this->inactiveType = $this->side1;
         } else {
-            $this->activeType = $types[0];
-            $this->inactiveType = $types[1];
+            $this->activeType = $this->side1;
+            $this->inactiveType = $this->side2;
         }
 
         $this->flipped = $flipped;

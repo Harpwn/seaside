@@ -18,22 +18,16 @@ enum SeasideGameNotifications {
 export class SeasideNotifications extends SeasideGameGui {
     
   async notif_tokenPlayed(args: TokenPlayedNotificationData) {
-    const tokenEl = this.tokens.getTokenElById(args.tokenId);
-    //flip is needed
-    if (tokenEl.getAttribute("data-active-type") !== args.tokenSide) {
-      this.tokens.flipToken(tokenEl);
-    }
   }
 
   async notif_tokenToSea(args: TokenToSeaNotificationData) {
-    await this.tokens.moveTokenToSea(args.tokenId, args.tokenLocationArgs);
+    await this.tokens.moveTokenToSea(args.token);
   }
 
   async notif_tokenToPlayerArea(args: TokenToPlayerAreaNotificationData) {
     await this.tokens.moveTokenToPlayerArea(
-      args.playerId.toString(),
-      args.tokenId,
-      args.tokenLocationArgs
+      args.token,
+      args.playerId.toString()
     );
     this.scoreCtrl[args.playerId].incValue(1);
   }
@@ -42,69 +36,65 @@ export class SeasideNotifications extends SeasideGameGui {
     args: TokenMovesWithinPlayerAreaNotificationData
   ) {
     await this.tokens.moveTokenToPlayerArea(
+      args.token,
       args.playerId.toString(),
-      args.tokenId,
-      args.toLocationArgs
     );
   }
 
   async notif_crabStolen(args: CrabStolenNotificationData) {
-    await this.tokens.moveTokenToPlayerArea(args.thiefId.toString(), args.tokenId, 0);
+    await this.tokens.moveTokenToPlayerArea(args.token, args.thiefId.toString());
     this.scoreCtrl[args.playerId].incValue(-1);
     this.scoreCtrl[args.thiefId].incValue(1);
   }
 
   async notif_rockGetsCrabs(args: RockGetsCrabsNotificationData) {
-    for (const tokenId of args.tokenIds) {
-      await this.tokens.moveTokenToPlayerArea(args.playerId.toString(), tokenId, 0);
+    for (const token of args.tokens) {
+      await this.tokens.moveTokenToPlayerArea(token, args.playerId.toString());
     }
-    this.scoreCtrl[args.playerId].incValue(args.crabCount);
+    this.scoreCtrl[args.playerId].incValue(args.tokenCount);
   }
 
   async notif_beachGetsShells(args: BeachGetsShellsNotificationData) {
-    for (const tokenId of args.tokenIds) {
-      await this.tokens.moveTokenToPlayerArea(args.playerId.toString(), tokenId, 0);
+    for (const token of args.tokens) {
+      await this.tokens.moveTokenToPlayerArea(token, args.playerId.toString());
     }
-    this.scoreCtrl[args.playerId].incValue(args.shellCount);
+    this.scoreCtrl[args.playerId].incValue(args.tokenCount);
   }
 
   async notif_sandpiperGetsIsopods(args: SandpiperGetsIsopodsNotificationData) {
-    for (const tokenId of args.tokenIds) {
+    for (const token of args.tokens) {
       await this.tokens.moveTokenToPlayerArea(
-        args.playerId.toString(),
-        tokenId,
-        args.newSandpiperPileId
+        token,
+        args.playerId.toString()
       );
     }
-    this.scoreCtrl[args.playerId].incValue(args.isopodCount);
+    this.scoreCtrl[args.playerId].incValue(args.tokenCount);
   }
 
   async notif_sandpiperIsopodsLost(args: SandpiperIsopodsLostNotificationData) {
-    await this.tokens.moveTokenToDiscard(args.sandpiperId);
     this.scoreCtrl[args.playerId].incValue(-1);
-    for (const tokenId of args.tokenIds) {
-      await this.tokens.moveTokenToDiscard(tokenId);
+    for (const token of args.tokens) {
+      await this.tokens.moveTokenToDiscard(token);
     }
-    this.scoreCtrl[args.playerId].incValue(-args.isopodCount);
+    this.scoreCtrl[args.playerId].incValue(-args.tokenCount);
   }
 
   async notif_beachFlip(args: BeachFlipNotificationData) {
-    //await this.tokens.flipToken(this.getTokenElById(args.tokenId));
   }
 
   async notif_endGameWaveBonusTie(args: EndGameWaveBonusTieNotificationData) {
-    Object.keys(args.playerIdsAndTokenIds).forEach((playerId) => {
-      const tokenIds = args.playerIdsAndTokenIds[playerId];
-      tokenIds.forEach(async (seaTokenId) => {
-        await this.tokens.moveTokenToPlayerArea(playerId, seaTokenId, 0);
+    Object.keys(args.playerIdsAndTokens).forEach((playerId) => {
+      const tokens = args.playerIdsAndTokens[playerId];
+      tokens.forEach(async (token) => {
+        await this.tokens.moveTokenToPlayerArea(token, playerId);
       });
-      this.scoreCtrl[playerId].incValue(tokenIds.length);
+      this.scoreCtrl[playerId].incValue(tokens.length);
     });
   }
 
   async notif_endGameWaveBonus(args: EndGameWaveBonusNotificationData) {
-    args.tokenIds.forEach(async (seaTokenId) => {
-      await this.tokens.moveTokenToPlayerArea(args.playerId.toString(), seaTokenId, 0);
+    args.tokens.forEach(async (token) => {
+      await this.tokens.moveTokenToPlayerArea(token, args.playerId.toString());
     });
     this.scoreCtrl[args.playerId].incValue(args.tokenCount);
   }

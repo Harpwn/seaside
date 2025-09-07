@@ -210,7 +210,8 @@ trait LogicTrait
         }
 
         $piles = [];
-        $piles[$sandpiper->id] = array_column($isopods, 'id');
+        $piles[$sandpiper->id] = $isopods;
+        array_push($piles[$sandpiper->id], $sandpiper);
 
 
         // Get other piles
@@ -218,7 +219,8 @@ trait LogicTrait
         foreach ($playerSandpipers as $playerSandpiper) {
             if ($playerSandpiper->id !== $sandpiper->id) {
                 $sandpiperIsopods = $this->getAllTokensOfTypeForLocation((string)$playerId, ISOPOD, $playerSandpiper->locationArg);
-                $piles[$playerSandpiper->id] = array_column($sandpiperIsopods, 'id');
+                $piles[$playerSandpiper->id] = $sandpiperIsopods;
+                array_push($piles[$playerSandpiper->id], $sandpiper);
             }
         }
 
@@ -228,12 +230,11 @@ trait LogicTrait
             return count($pile) < $highestPileSize;
         });
 
-        foreach ($smallerPiles as $sandpiperId => $pileTokenIds) {
-            $this->sendTokensToDiscard([$sandpiperId]);
-            $this->sendTokensToDiscard($pileTokenIds);
-            $this->nfSandpiperIsopodsLost($playerId, $sandpiperId, $pileTokenIds);
+        foreach ($smallerPiles as $sandpiperId => $pileTokens) {
+            $this->sendTokensToDiscard($pileTokens);
+            $this->nfSandpiperIsopodsLost($playerId, $pileTokens);
             $this->incStat(-1, STAT_NO_SANDPIPER, $playerId);
-            $this->incStat(count($pileTokenIds), STAT_NO_ISOPOD, $playerId);
+            $this->incStat(count($pileTokens), STAT_NO_ISOPOD, $playerId);
         }
 
         //End turn
@@ -289,17 +290,17 @@ trait LogicTrait
         else if (count($playersWithMostWaves) > 1) 
         {
             //split up sea tokens equally
-            $playerIdsAndTokenIds = [];
+            $playerIdsAndTokens = [];
             $tokensPerPlayer = intdiv(count($seaTokens), count($playersWithMostWaves));
             foreach ($playersWithMostWaves as $playerId) 
             {
                 $tokensForPlayer = array_splice($seaTokens, 0, $tokensPerPlayer);
                 $this->sendTokensToPlayerArea($tokensForPlayer, (int)$playerId);
-                $playerIdsAndTokenIds[$playerId] = array_column($tokensForPlayer, 'id');
+                $playerIdsAndTokens[$playerId] = $tokensForPlayer;
                 $this->incStat(count($tokensForPlayer), STAT_NO_SEATOKENS, $playerId);
                 $this->updatePlayerScore($playerId);
             }
-            $this->nfEndGameWaveBonusTie($playerIdsAndTokenIds);
+            $this->nfEndGameWaveBonusTie($playerIdsAndTokens);
         }
     }
 
@@ -330,12 +331,12 @@ trait LogicTrait
         $this->tokens->moveCard($token->id, (string)$playerId, $toLocationArgs);
     }
 
-    function sendTokensToDiscard(array $tokenIds)
+    function sendTokensToDiscard(array $tokens)
     {
-        if(count($tokenIds) == 0) {
+        if(count($tokens) == 0) {
             return;
         }
-        $this->tokens->moveCards($tokenIds, DISCARD_LOCATION);
+        $this->tokens->moveCards(array_column($tokens, 'id'), DISCARD_LOCATION);
     }
 
     function flipToken(Token $token)

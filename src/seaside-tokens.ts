@@ -1,175 +1,138 @@
 import { SeasideGame } from "src";
 
-export class TokenManager extends CardManager<SeasideToken> {
-  constructor(public game: SeasideGame, private gameData: SeasideGamedatas) {
-    super(game, {
-      getId: (token) => `seaside-token-${token.id}`,
-      cardWidth: 75,
-      cardHeight: 75,
+export class TokenManager extends BgaCards.Manager<SeasideToken> {
+  private bagStock: CardStock<SeasideToken>;
+  private seaStock: CardStock<SeasideToken>;
+  private discardStock: VoidStock<SeasideToken>;
+  private playerAreaStocks: Record<string, CardStock<SeasideToken>> = {};
+
+  private selectedTokens: SeasideToken[] = [];
+
+  constructor(public game: SeasideGame, private gameDatas: SeasideGamedatas) {
+    //@ts-ignore
+    super({
+      animationManager: game.animationManager,
+      cardWidth: 100,
+      cardHeight: 100,
+      cardBorderRadius: "50%",
+      isCardVisible: (token: SeasideToken) => {
+        return token.flipped;
+      },
       setupBackDiv: (token: SeasideToken, div: HTMLElement) => {
-        div.setAttribute("data-inactive-type", token.inactiveType);
+        div.classList.add("seaside-token");
+        div.setAttribute("data-type", token.side1);
+        this.game.setTooltip(div.id, this.getTooltip(token));
       },
       setupFrontDiv: (token: SeasideToken, div: HTMLElement) => {
-        div.setAttribute("data-inactive-type", token.inactiveType);
+        div.classList.add("seaside-token");
+        div.setAttribute("data-type", token.side2);
         this.game.setTooltip(div.id, this.getTooltip(token));
       },
     });
+
+    this.bagStock = new CardStock(this, document.getElementById('seaside-draw-bag'));
+    this.addStock(this.bagStock);
+    this.seaStock = new CardStock(this, document.getElementById('seaside-sea-area'));
+    this.addStock(this.seaStock);
+    this.discardStock = new VoidStock(this, document.getElementById('seaside-discard'));
+    this.addStock(this.discardStock);
+    this.gameDatas.playerorder.forEach(playerId => {
+      this.playerAreaStocks[playerId] = new CardStock(this, document.getElementById(`seaside-player-${playerId}`));
+      this.addStock(this.playerAreaStocks[playerId]);
+    });
+
   }
 
   private getTooltip(token: SeasideToken): string {
     return `
         <p><strong>${_("Active Side:")}</strong> ${token.activeType}</p>
         <p><strong>${_("Inactive Side:")}</strong> ${token.inactiveType}</p>
+        <p><strong>${_("Pile:")}</strong> ${token.locationArg}</p>
       `;
   }
 
-  getTokenElById(tokenId: number): Element {
-    return document.getElementById(`seaside-token-${tokenId}`);
-  }
-
   drawToken(token: SeasideToken) {
-    const tokenEl = document
-      .getElementById("seaside-game-area")
-      .insertAdjacentElement("beforeend", this.tokenToNode(token));
-    this.addTokenTooltip(tokenEl);
+    this.bagStock.addCard(token);
+    this.getCardElement(token).onclick = () => {
+      if(this.game.isCurrentPlayerActive()) {
+        this.flipCard(token);
+      }
+    };
   }
 
-  flipToken(tokenEl: Element) {
-    const activeType = tokenEl.getAttribute("data-active-type");
-    const inactiveType = tokenEl.getAttribute("data-inactive-type");
-    tokenEl.setAttribute("data-active-type", inactiveType);
-    tokenEl.setAttribute("data-inactive-type", activeType);
+  moveTokenToSea(token: SeasideToken) {
+    this.seaStock.addCard(token);
   }
 
-  createTokenInSea(token: SeasideToken) {
-    const seaEl = document.getElementById(
-      `seaside-sea-area-${token.activeType}`
-    );
-    const tokenEl = this.tokenToNode(token);
-
-    seaEl.insertAdjacentElement("beforeend", tokenEl);
+  moveTokenToPlayerArea(token: SeasideToken, playerId: string) {
+    this.playerAreaStocks[playerId].addCard(token);
   }
 
-  tokenToNode(token: SeasideToken): Element {
-    const tokenEl = document.createElement("div");
-    tokenEl.id = `seaside-token-${token.id}`;
-    tokenEl.className = "seaside-token";
-    tokenEl.setAttribute("data-id", token.id.toString());
-    tokenEl.setAttribute("data-active-type", token.activeType);
-    tokenEl.setAttribute("data-inactive-type", token.inactiveType);
-    tokenEl.setAttribute("data-location", token.location);
-    tokenEl.setAttribute("data-location-arg", token.locationArg);
-    return tokenEl;
-  }
-
-  selectMultipleToken(tokenId: number) {
-    const tokenEl = this.getTokenElById(tokenId);
-    tokenEl.classList.add("selected-move");
+  selectMultipleToken(token: SeasideToken) {
+    const tokenEl = this.getCardElement(token);
+    tokenEl.classList.add(this.getSelectedCardClass());
+    this.selectedTokens.push(token);
     const newEl = this.game.removeAllClickEvents(tokenEl);
-    newEl.addEventListener("click", () => this.deselectMultipleToken(tokenId));
+    newEl.addEventListener("click", () => this.deselectMultipleToken(token));
   }
 
-  deselectMultipleToken(tokenId: number) {
-    const tokenEl = this.getTokenElById(tokenId);
-    tokenEl.classList.remove("selected-move");
+  deselectMultipleToken(token: SeasideToken) {
+    const tokenEl = this.getCardElement(token);
+    tokenEl.classList.remove(this.getSelectedCardClass());
+    this.selectedTokens = this.selectedTokens.filter(t => t !== token);
     const newEl = this.game.removeAllClickEvents(tokenEl);
-    newEl.addEventListener("click", () => this.selectMultipleToken(tokenId));
+    newEl.addEventListener("click", () => this.selectMultipleToken(token));
   }
 
-  selectSingleToken(tokenId: number) {
-    const tokenEl = this.getTokenElById(tokenId);
-    tokenEl.classList.add("selected-move");
+  getSelectedTokens(): SeasideToken[] {
+    return this.selectedTokens;
+  }
+
+  selectSingleToken(token: SeasideToken) {
+    const tokenEl = this.getCardElement(token);
+    tokenEl.classList.add(this.getSelectedCardClass());
+    this.selectedTokens.push(token);
     const newEl = this.game.removeAllClickEvents(tokenEl);
-    newEl.addEventListener("click", () => this.deselectSingleToken(tokenId));
-    const otherSelectedTokens = document.querySelectorAll(".selected-move");
-    otherSelectedTokens.forEach((token) => {
-      if (token !== newEl) {
-        token.classList.remove("selected-move");
-        const newOtherToken = this.game.removeAllClickEvents(token);
-        const otherTokenId = this.getTokenId(newOtherToken);
+    newEl.addEventListener("click", () => this.deselectSingleToken(token));
+    this.selectedTokens.forEach((selectedToken) => {
+      if (selectedToken != token) {
+        const tokenEl = this.getCardElement(selectedToken);
+        tokenEl.classList.remove(this.getSelectedCardClass());
+        this.selectedTokens = this.selectedTokens.filter(t => t !== selectedToken);
+        const newOtherToken = this.game.removeAllClickEvents(tokenEl);
         newOtherToken.addEventListener("click", () =>
-          this.selectSingleToken(otherTokenId)
+          this.selectSingleToken(selectedToken)
         );
       }
     });
     this.game.updateConfirmDisabled(false);
   }
 
-  deselectSingleToken(tokenId: number) {
-    const tokenEl = this.getTokenElById(tokenId);
-    tokenEl.classList.remove("selected-move");
+  deselectSingleToken(token: SeasideToken) {
+    const tokenEl = this.getCardElement(token);
+    tokenEl.classList.remove(this.getSelectedCardClass());
+    this.selectedTokens = this.selectedTokens = [];
     const newEl = this.game.removeAllClickEvents(tokenEl);
-    newEl.addEventListener("click", () => this.selectSingleToken(tokenId));
+    newEl.addEventListener("click", () => this.selectSingleToken(token));
     this.game.updateConfirmDisabled(true);
   }
 
-  updateTokenElLocation(
-    element: Element,
-    location: string,
-    locationArg: number
-  ) {
-    element.setAttribute("data-location", location);
-    element.setAttribute("data-location-arg", locationArg.toString());
+  async moveTokenToDiscard(token: SeasideToken) {
+    this.removeCard(token);
   }
 
-  addTokenTooltip(tokenEl: Element) {
-    const activeType = tokenEl.getAttribute("data-active-type");
-    const inactiveType = tokenEl.getAttribute("data-inactive-type");
-    this.game.addTooltip(
-      tokenEl.id,
-      "Sides - " + activeType + " / " + inactiveType,
-      ""
-    );
+  setupTokens(gamedatas: SeasideGamedatas) {
+    this.seaStock.addCards(Object.values(gamedatas.seaTokens));
+    Object.values(gamedatas.players).forEach((player) => {
+      this.playerAreaStocks[player.id].addCards(Object.values(player.tokens));
+    });
   }
 
-  getTokenId(tokenEl: Element): number {
-    return parseInt(tokenEl.getAttribute("data-id"));
+  getSelectableCardClass() {
+    return "possible-move";
   }
 
-  getTokenActiveType(tokenEl: Element): string {
-    return tokenEl.getAttribute("data-active-type");
-  }
-
-  async moveTokenToSea(tokenId: number, tokenLocationArgs: number) {
-    const oldTokenEl = this.getTokenElById(tokenId);
-    this.updateTokenElLocation(oldTokenEl, "SEA", tokenLocationArgs);
-    const seaEl = document.getElementById(
-      `seaside-sea-area-${this.getTokenActiveType(oldTokenEl)}`
-    );
-    const newTokenEl = oldTokenEl.cloneNode(true) as Element; // deep clone
-    newTokenEl.removeAttribute("style");
-    newTokenEl.classList.add("seaside-token-hidden");
-    seaEl.insertAdjacentElement("beforeend", newTokenEl);
-    await this.game.bgaPlayDojoAnimation(
-      this.game.slideToObjectAndDestroy(oldTokenEl, newTokenEl)
-    );
-    newTokenEl.classList.remove("seaside-token-hidden");
-  }
-
-  async moveTokenToDiscard(tokenId: number) {
-    const tokenEl = this.getTokenElById(tokenId);
-    const anim = this.game.fadeOutAndDestroy(tokenEl);
-    await this.game.bgaPlayDojoAnimation(anim);
-  }
-
-  async moveTokenToPlayerArea(
-    playerId: string,
-    tokenId: number,
-    tokenLocationArgs: number
-  ) {
-    const oldTokenEl = this.getTokenElById(tokenId);
-    const type = this.getTokenActiveType(oldTokenEl);
-    this.updateTokenElLocation(oldTokenEl, playerId, tokenLocationArgs);
-    const playerAreaRowEl = document
-      .getElementById(`seaside-player-${playerId}`)
-      .getElementsByClassName(`seaside-player-row-${type}`)[0];
-    const newTokenEl = oldTokenEl.cloneNode(true) as Element; // deep clone
-    newTokenEl.removeAttribute("style");
-    newTokenEl.classList.add("seaside-token-hidden");
-    playerAreaRowEl.insertAdjacentElement("beforeend", newTokenEl);
-    await this.game.bgaPlayDojoAnimation(
-      this.game.slideToObjectAndDestroy(oldTokenEl, newTokenEl)
-    );
-    newTokenEl.classList.remove("seaside-token-hidden");
+  getSelectedCardClass() {
+    return "selected-move";
   }
 }

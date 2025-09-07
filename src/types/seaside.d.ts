@@ -1,9 +1,12 @@
 declare interface SeasideToken {
   id: number;
+  side1: SeasideTokenType;
+  side2: SeasideTokenType;
   activeType: SeasideTokenType;
   inactiveType: SeasideTokenType;
   location: string;
   locationArg: string;
+  flipped: boolean;
 }
 
 declare interface SeasidePlayer extends Player {
@@ -16,28 +19,26 @@ declare interface SeasideGamedatas extends Gamedatas<SeasidePlayer> {
 
 declare interface TokenPlayedNotificationData {
     playerId: number;
-    tokenId: number;
+    token: SeasideToken;
     tokenSide: SeasideTokenType;
-    tokenLocation: string;
-    tokenLocationArgs: number;
 }
 
 declare interface TokenToSeaNotificationData {
-    tokenId: number;
+    token: SeasideToken;
     tokenSide: SeasideTokenType;
     tokenLocationArgs: number;
 }
 
 declare interface TokenToPlayerAreaNotificationData {
     playerId: number;
-    tokenId: number;
+    token: SeasideToken;
     tokenSide: SeasideTokenType;
     tokenLocationArgs: number;
 }
 
 declare interface TokenMovesWithinPlayerAreaNotificationData {
     playerId: number;
-    tokenId: number;
+    token: SeasideToken;
     tokenSide: SeasideTokenType;
     fromLocationArgs: number;
     toLocationArgs: number;
@@ -46,50 +47,48 @@ declare interface TokenMovesWithinPlayerAreaNotificationData {
 declare interface CrabStolenNotificationData {
     thiefId: number;
     playerId: number;
-    tokenId: number;
+    token: SeasideToken;
 }
 
 declare interface RockGetsCrabsNotificationData {
     playerId: number;
-    crabCount: number;
-    tokenIds: number[];
+    tokenCount: number;
+    tokens: SeasideToken[];
 }
 
 declare interface BeachGetsShellsNotificationData {
     playerId: number;
-    shellCount: number;
-    tokenIds: number[];
+    tokenCount: number;
+    tokens: SeasideToken[];
 }
 
 declare interface SandpiperGetsIsopodsNotificationData {
     playerId: number;
-    isopodCount: number;
-    tokenIds: number[];
+    tokenCount: number;
+    tokens: SeasideToken[];
     newSandpiperPileId: number;
 }
 
 declare interface SandpiperIsopodsLostNotificationData {
     playerId: number;
-    isopodCount: number;
-    tokenIds: number[];
-    sandpiperId: number;
+    tokenCount: number;
+    tokens: SeasideToken[];
 }
 
 declare interface BeachFlipNotificationData {
     playerId: number;
-    tokenId: number;
-    otherSideType: SeasideTokenType;
+    token: SeasideToken;
 }
 
 declare interface EndGameWaveBonusTieNotificationData {
-  playerIdsAndTokenIds: Record<number, number[]>;
+  playerIdsAndTokens: Record<number, SeasideToken[]>;
   playerNames: string[];
 }
 
 declare interface EndGameWaveBonusNotificationData {
     playerId: number;
     tokenCount: number;
-    tokenIds: number[];
+    tokens: SeasideToken[];
 }
 
 declare interface PlayTokenActionData {
@@ -112,13 +111,13 @@ declare interface SelectIsopodsActionData {
 declare interface SeasidePlayTokenArgs {
   token: SeasideToken;
   currentPileSizes: number[];
-  selectableIsopodIds: number[];
+  selectableIsopods: SeasideToken[];
 }
 
 declare interface SeasideNextPlayerArgs {}
 
 declare interface SeasideFlipBeachArgs {
-  flippableBeachIds: number[];
+  flippableBeachs: SeasideToken[];
 }
 
 declare interface SeasidePlayAgainArgs {}
@@ -128,8 +127,8 @@ declare interface SeasideStealCrabArgs {
 }
 
 declare interface SeasideSelectIsopodsArgs {
-  selectableIsopodIds: number[];
-  sandpiperId: number;
+  selectableIsopods: SeasideToken[];
+  sandpiper: SeasideToken;
   currentPileSizes: number[];
 }
 

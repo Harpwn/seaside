@@ -55,7 +55,7 @@ trait DebugUtilsTrait
                 case GAME_STATE_PLAYER_PLAY_TOKEN:
                     $args = $this->argPlayToken();
                     $rand = rand(1,2);
-                    $this->actPlayToken($args['token']->id, $rand == 1 ? $args['token']->activeType : $args['token']->inactiveType);
+                    $this->actPlayToken($args['token']->id, $rand == 1 ? $args['token']->side1 : $args['token']->side2);
                     break;
                 case GAME_STATE_PLAYER_ROCK_STEAL_CRAB:
                     $args = $this->argStealCrab();
@@ -65,15 +65,15 @@ trait DebugUtilsTrait
                     break;
                 case GAME_STATE_PLAYER_WAVE_FLIP_BEACH:
                     $args = $this->argFlipBeach();
-                    $flippableBeachIds = $args['flippableBeachIds'];
-                    $rand = rand(0, count($flippableBeachIds) - 1);
-                    $this->actFlipBeach($flippableBeachIds[$rand]);
+                    $flippableBeachs = $args['flippableBeachs'];
+                    $rand = rand(0, count($flippableBeachs) - 1);
+                    $this->actFlipBeach($flippableBeachs[$rand]->id);
                     break;
                 case GAME_STATE_PLAYER_SANDPIPER_SELECT_ISOPODS:
                     $args = $this->argSelectIsopods();
-                    $selectableIsopodIds = $args['selectableIsopodIds'];
-                    $numberToSelect = rand(0, count($selectableIsopodIds));
-                    $selectedIsopodIds = array_slice($selectableIsopodIds, 0, $numberToSelect);
+                    $selectableIsopods = $args['selectableIsopods'];
+                    $numberToSelect = rand(0, count($selectableIsopods));
+                    $selectedIsopodIds = array_slice(array_column($selectableIsopods, 'id'), 0, $numberToSelect);
                     $this->actSelectIsopods(implode(',', $selectedIsopodIds));
                     break;
             }

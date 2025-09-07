@@ -52,6 +52,8 @@ trait SetupTrait
 
         $result['deckRemainingCount'] = $this->tokens->countCardsInLocation(BAG_LOCATION);
 
+        $result['bagTokens'] = $this->tokens->getCardsInLocation(BAG_LOCATION);
+
         // TODO: Gather all information about current game situation (visible by player $currentPlayerId).
 
         return $result;

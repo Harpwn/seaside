@@ -1,15 +1,31 @@
-import { SeasideGameGui } from "./seaside-gui";
+import { SeasideGame } from "src";
+import { SeasideStateManager } from "./seaside-state";
+import { SeasideActions } from "./seaside-actions";
+import { TokenManager } from "./seaside-tokens";
 
 export class SeasideSetup {
-  constructor(private game: SeasideGameGui) {
+  constructor(private game: SeasideGame) {
     this.game = game;
   }
 
   doSetup(gamedatas: SeasideGamedatas) {
     this.setupBaseGameArea();
     this.setupPlayerAreas(gamedatas);
-    this.setupSea(gamedatas);
-    this.setupTooltips();
+
+    this.game.animationManager = new BgaAnimations.Manager();
+    this.game.states = new SeasideStateManager(this.game);
+    this.game.actions = new SeasideActions(this.game);
+    this.game.tokens = new TokenManager(this.game, gamedatas);
+    this.game.zoom = new ZoomManager({
+      element: document.getElementById("seaside-table"),
+      localStorageZoomKey: "mygame-zoom",
+      zoomControls: {
+        color: "white",
+      },
+    });
+
+    this.game.setupNotifications();
+    this.game.tokens.setupTokens(gamedatas);
   }
 
   setupBaseGameArea() {
@@ -18,14 +34,12 @@ export class SeasideSetup {
       `<div id="seaside-table" class="bga-zoom-inner">
         <div id="seaside-game-area">
           <div class="seaside-sea-area-wrapper">
+            <div id="seaside-draw-bag"><span id="bag-counter"></span></div>
+            <div id="seaside-discard"></div>
             <div id="seaside-game-logo"></div>
             <div id="seaside-publisher-logo"></div>
             <div id="seaside-designer-logo"></div>
             <div id="seaside-sea-area">
-              <div id="seaside-bag"><span id="bag-counter"></span></div>
-              <div class="seaside-sea-area-row" id="seaside-sea-area-ISOPOD"></div>
-              <div class="seaside-sea-area-row" id="seaside-sea-area-CRAB"></div>
-              <div class="seaside-sea-area-row" id="seaside-sea-area-SHELL"></div>
             </div>
           </div>
         </div>
@@ -41,55 +55,9 @@ export class SeasideSetup {
         `<div class="seaside-player-wrapper">
           <div class="seaside-player-name">${player.name}</div>
           <div id="seaside-player-${player.id}" class="seaside-player">
-            ${this.setupTokenRows(Object.values(player.tokens))}
-            </div>
+          </div>
         </div>`
       );
-    });
-  }
-
-  setupTokenRows(tokens: SeasideToken[]) {
-    const rowTypes = ["SANDPIPER", "BEACH", "SHELL", "WAVE", "CRAB", "ROCK"];
-    const rowEls: Element[] = [];
-    rowTypes.forEach((rowType) => {
-      const tokensForRow: SeasideToken[] = [];
-      switch (rowType) {
-        case "SANDPIPER-ISOPOD":
-          tokensForRow.push(
-            ...tokens.filter(
-              (t) => t.activeType === "SANDPIPER" || t.activeType === "ISOPOD"
-            )
-          );
-          break;
-        default:
-          tokensForRow.push(...tokens.filter((t) => t.activeType === rowType));
-          break;
-      }
-      const row = document.createElement("div");
-      row.classList.add("seaside-player-row", `seaside-player-row-${rowType}`);
-
-      if (rowType == "SANDPIPER") {
-        row.classList.add(`seaside-player-row-ISOPOD`);
-      }
-      tokensForRow.forEach((token) => {
-        row.appendChild(this.game.tokens.tokenToNode(token));
-      });
-      rowEls.push(row);
-    });
-    return rowEls.map((el) => el.outerHTML).join("");
-  }
-
-  setupTooltips() {
-    console.log("tooltips setup");
-    const tokens = document.querySelectorAll(".seaside-token");
-    tokens.forEach((token) => {
-      this.game.tokens.addTokenTooltip(token);
-    });
-  }
-
-  setupSea(gamedatas: SeasideGamedatas) {
-    Object.values(gamedatas.seaTokens).forEach((token) => {
-      this.game.tokens.createTokenInSea(token);
     });
   }
 

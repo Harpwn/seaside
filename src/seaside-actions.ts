@@ -22,12 +22,6 @@ export class SeasideActions {
     if (tokenType == "SANDPIPER") {
       this.handlePlaySandpiper(args);
     } else {
-      const tokenEl = this.game.tokens.getTokenElById(args.token.id);
-
-      if (args.token.activeType !== tokenType) {
-        this.game.tokens.flipToken(tokenEl);
-      }
-
       this.game.bgaPerformAction(SeasideGameActions.PlayToken, data);
     }
   }
@@ -37,27 +31,17 @@ export class SeasideActions {
       tokenId: args.token.id,
       tokenType: "SANDPIPER",
     };
-    const tokenEl = this.game.tokens.getTokenElById(args.token.id);
-
     if (
-      args.selectableIsopodIds.length == 0 &&
+      args.selectableIsopods.length == 0 &&
       args.currentPileSizes.some((size) => size > 1)
     ) {
       this.game.confirmationDialog(
         "There are no Isopods in the sea and you have an existing pile bigger than one, playing this will cause it to be discarded.",
         () => {
-          if (args.token.activeType !== "SANDPIPER") {
-            this.game.tokens.flipToken(tokenEl);
-          }
-
           this.game.bgaPerformAction(SeasideGameActions.PlayToken, data);
         }
       );
     } else {
-      if (args.token.activeType !== "SANDPIPER") {
-        this.game.tokens.flipToken(tokenEl);
-      }
-
       this.game.bgaPerformAction(SeasideGameActions.PlayToken, data);
     }
   }
@@ -89,12 +73,12 @@ export class SeasideActions {
   updateActionButtonsPlayToken(args: SeasidePlayTokenArgs) {
     if (this.game.isCurrentPlayerActive()) {
       this.game.statusBar.addActionButton(
-        `Play ${args.token.activeType} Side`,
-        () => this.actPlayToken(args, args.token.activeType)
+        `Play ${args.token.side1} Side`,
+        () => this.actPlayToken(args, args.token.side1)
       );
       this.game.statusBar.addActionButton(
-        `Play ${args.token.inactiveType} Side`,
-        () => this.actPlayToken(args, args.token.inactiveType)
+        `Play ${args.token.side2} Side`,
+        () => this.actPlayToken(args, args.token.side2)
       );
     }
   }
@@ -126,8 +110,8 @@ export class SeasideActions {
       this.game.statusBar.addActionButton(
         `Confirm`,
         () => {
-          const beachEl = document.querySelector(".selected-move");
-          this.actFlipBeach(this.game.tokens.getTokenId(beachEl));
+          const beachToken = this.game.tokens.getSelectedTokens()[0];
+          this.actFlipBeach(beachToken.id);
         },
         {
           id: `seaside-confirm`,
@@ -142,10 +126,8 @@ export class SeasideActions {
       this.game.statusBar.addActionButton(
         `Confirm`,
         () => {
-          const isopodIds = Array.from(
-            document.querySelectorAll(".selected-move")
-          ).map((el) => this.game.tokens.getTokenId(el));
-          const newPileSize = isopodIds.length + 1;
+          const isopodTokenIds = this.game.tokens.getSelectedTokens().map((t) => t.id);
+          const newPileSize = isopodTokenIds.length + 1;
           if (args.currentPileSizes.length > 0) {
             const largerPiles = args.currentPileSizes.filter(
               (size) => size > newPileSize
@@ -159,7 +141,7 @@ export class SeasideActions {
                   ...args.currentPileSizes
                 )}), so this pile will be discarded.`,
                 () => {
-                  this.actSelectIsopods(isopodIds);
+                  this.actSelectIsopods(isopodTokenIds);
                 }
               );
             } else if (smallerPiles.length > 0) {
@@ -169,15 +151,14 @@ export class SeasideActions {
                   0
                 )} tokens.`,
                 () => {
-                  this.actSelectIsopods(isopodIds);
+                  this.actSelectIsopods(isopodTokenIds);
                 }
               );
             } else {
-              this.actSelectIsopods(isopodIds);
+              this.actSelectIsopods(isopodTokenIds);
             }
           } else {
-            console.log(isopodIds);
-            this.actSelectIsopods(isopodIds);
+            this.actSelectIsopods(isopodTokenIds);
           }
         },
         {

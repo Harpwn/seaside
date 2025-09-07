@@ -10,7 +10,10 @@ const scssFile = path.join(__dirname, "src/seaside.scss");
 
 function compileSCSS() {
   console.log("Compiling SCSS...");
-  const result = sass.compile(scssFile, { style: "compressed", loadPaths: ["src/styles"] });
+  const result = sass.compile(scssFile, {
+    style: "compressed",
+    loadPaths: ["src/styles"],
+  });
   fs.writeFileSync("dist/seaside.css", result.css);
   fs.renameSync("dist/seaside.css", "seaside.css");
 }
@@ -67,12 +70,21 @@ const buildOptions = {
           "ebg/zone",
           getLibUrl('bga-animations', '1.x'),
           getLibUrl('bga-zoom', '1.x'),
-          getLibUrl('bga-cards', '1.x')
+          getLibUrl('bga-cards', '1.0.4')
         ],function(dojo,declare,GameGui,counter,zone,BgaAnimations,BgaZoom,BgaCards){
-        var CardManager = BgaCards.Manager;
-        var AnimationManager = BgaAnimations.Manager;
-        var ZoomManager = BgaZoom.Manager;
-        `,
+          for (const [key, value] of Object.entries(BgaCards)) {
+            if (!window[key]) window[key] = value;
+          }
+          for (const [key, value] of Object.entries(BgaAnimations)) {
+            if (!window[key]) window[key] = value;
+          }
+          for (const [key, value] of Object.entries(BgaZoom)) {
+            if (!window[key]) window[key] = value;
+          }
+          window.CardManager = BgaCards.Manager;
+          window.AnimationManager = BgaAnimations.Manager;
+          window.ZoomManager = BgaZoom.Manager;
+      `,
   },
   footer: {
     js: `

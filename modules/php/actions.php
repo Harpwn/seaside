@@ -29,7 +29,7 @@ trait ActionTrait
         $token = $this->getToken($tokenId);
 
         //Validation Here
-        if ($token->activeType !== $tokenType && $token->inactiveType !== $tokenType) {
+        if ($token->side1 !== $tokenType && $token->side2 !== $tokenType) {
             throw new \BgaUserException("Invalid token type: {$tokenType}");
         }
 
@@ -69,7 +69,7 @@ trait ActionTrait
         $beach = $this->getToken($beachId);
 
         //Validation here
-        if (!in_array($beachId, $inputArgs['flippableBeachIds'])) {
+        if (!in_array($beachId, array_column($inputArgs['flippableBeachs'], 'id'))) {
             throw new \BgaUserException("Invalid Beach ID: {$beachId}");
         }
 
@@ -84,15 +84,15 @@ trait ActionTrait
 
         // check input values
         $inputArgs = $this->argSelectIsopods();
-        $tokenId = $inputArgs['sandpiperId'];
-        $selectableIsopodIds = $inputArgs['selectableIsopodIds'];
+        $token = $inputArgs['sandpiper'];
+        $selectableIsopods = $inputArgs['selectableIsopods'];
 
-        $sandpiper = $this->getToken((int)$tokenId);
+        $sandpiper = $this->getToken((int)$token->id);
         $isopods = $this->getTokens($isopodIds);
 
         //Validation here
         foreach ($isopodIds as $isopodId) {
-            if (!in_array($isopodId, $selectableIsopodIds)) {
+            if (!in_array($isopodId, array_column($selectableIsopods, 'id'))) {
                 throw new \BgaUserException("Invalid isopod ID: {$isopodId}");
             }
         }

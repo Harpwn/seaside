@@ -1,7 +1,5 @@
 @use '../node_modules/bga-zoom/bga-zoom';
 @use '../node_modules/bga-help/bga-help';
-@use '../node_modules/bga-cards/bga-cards';
-
 
 #seaside-table {
   display: flex;
@@ -29,6 +27,28 @@
   }
 }
 
+#seaside-discard {
+  display:none;
+}
+
+#seaside-draw-bag {
+  z-index: 100;
+  height: 139px;
+  width: 242px;
+  position: absolute;
+  top: 30px;
+  background-image: url(img/draw-bag.png);
+  background-size: contain;
+  background-repeat: no-repeat;
+  left: 278px;
+  background-color: #add8e6;
+  border: 5px solid #fff;
+
+  .game-card {
+    margin-left: 124px;
+    margin-top: 19px;
+  }
+}
 
 #seaside-sea-area {
   height: 50%;
@@ -36,22 +56,6 @@
   display: flex;
   flex-direction: column;
   padding-top: 225px;
-
-  .seaside-sea-area-row {
-    display: flex;
-    height: 100%;
-    width: 90%;
-    background: hsla(0, 0%, 100%, .04);
-    margin: auto;
-
-    .seaside-token:first-child {
-      margin-left: 0;
-    }
-
-    .seaside-token {
-      margin-left: -50px;
-    }
-  }
 }
 
 .seaside-player-name {
@@ -67,17 +71,13 @@
 .seaside-token {
   background-image: url("img/tokens.png");
   background-repeat: no-repeat;
-  background-size: 710%;
+  background-size: 765%;
   background-position-y: 75%;
 
   height: 100px;
   width: 100px;
   position: relative;
   flex-shrink: 0;
-
-  &.seaside-token-hidden {
-    opacity: 0;
-  }
 
   &.possible-move {
     border: 5px dashed lightgreen !important;
@@ -92,31 +92,31 @@
     z-index: 1000;
   }
 
-  &[data-active-type="WAVE"] {
+  &[data-type="WAVE"] {
     background-position-x: 0%
   }
 
-  &[data-active-type="ROCK"] {
+  &[data-type="ROCK"] {
     background-position-x: 17%;
   }
 
-  &[data-active-type="ISOPOD"] {
+  &[data-type="ISOPOD"] {
     background-position-x: 33%;
   }
 
-  &[data-active-type="SHELL"] {
+  &[data-type="SHELL"] {
     background-position-x: 50%;
   }
 
-  &[data-active-type="CRAB"] {
+  &[data-type="CRAB"] {
     background-position-x: 66.5%;
   }
 
-  &[data-active-type="SANDPIPER"] {
+  &[data-type="SANDPIPER"] {
     background-position-x: 83%;
   }
 
-  &[data-active-type="BEACH"] {
+  &[data-type="BEACH"] {
     background-position-x: 99.5%;
   }
 }
@@ -179,33 +179,18 @@
   justify-content: center;
   margin: 10px;
   display: flex;
-
-  .seaside-player-row {
-    display: flex;
-    flex-direction: column;
-    background-image: url(img/sand.jpg);
-    background-size: 100%;
-    background-blend-mode: lighten;
-    background-color: rgba(255, 255, 255, 0.6);
-    padding: 5px;
-    margin-top: 80px;
-    height: 70%;
-
-    .seaside-token:first-child {
-      margin-top: 0;
-    }
-
-    .seaside-token {
-      margin-top: -77px;
-    }
-
-    &:empty {
-      padding: 0;
-      order: 100;
-    }
-  }
 }
 
 .possible-move {
   cursor: pointer;
+}
+
+.game-card {
+  &.possible-move {
+    border: 5px dashed lightgreen !important;
+  }
+
+  &.selected-move {
+    border: 5px solid darkgreen !important;
+  }
 }

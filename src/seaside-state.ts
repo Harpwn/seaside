@@ -34,11 +34,11 @@ export class SeasideStateManager {
 
   enteringFlipBeachState(args: SeasideFlipBeachArgs) {
     if (this.game.isCurrentPlayerActive()) {
-      args.flippableBeachIds.forEach((beachId) => {
-        const beachEl = this.game.tokens.getTokenElById(beachId);
-        beachEl.classList.add("possible-move");
+      args.flippableBeachs.forEach((beach) => {
+        const beachEl = this.game.tokens.getCardElement(beach);
+        beachEl.classList.add(this.game.tokens.getSelectableCardClass());
         beachEl.addEventListener("click", () => {
-          this.game.tokens.selectSingleToken(beachId);
+          this.game.tokens.selectSingleToken(beach);
         });
       });
     }
@@ -61,15 +61,14 @@ export class SeasideStateManager {
   }
 
   leaveStateStealCrab() {}
-
   
   enteringSelectIsopodsState(args: SeasideSelectIsopodsArgs) {
     if (this.game.isCurrentPlayerActive()) {
-      args.selectableIsopodIds.forEach((isopodId) => {
-        const isopodEl = this.game.tokens.getTokenElById(isopodId);
-        isopodEl.classList.add("possible-move");
+      args.selectableIsopods.forEach((isopod) => {
+        const isopodEl = this.game.tokens.getCardElement(isopod);
+        isopodEl.classList.add(this.game.tokens.getSelectableCardClass());
         isopodEl.addEventListener("click", () =>
-          this.game.tokens.selectMultipleToken(isopodId)
+          this.game.tokens.selectMultipleToken(isopod)
         );
       });
     }

@@ -4,7 +4,7 @@ import { SeasideStateManager } from "./seaside-state";
 import { TokenManager } from "./seaside-tokens";
 
 export class SeasideGameGui extends GameGui<SeasideGamedatas> {
-  public animationManager: AnimationManager;
+  public animationManager;
   public tokens: TokenManager;
   public setups: SeasideSetup;
   public states: SeasideStateManager;
@@ -12,14 +12,14 @@ export class SeasideGameGui extends GameGui<SeasideGamedatas> {
   public zoom: ZoomManager
 
   public clearMoves() {
-    const possibleMoveEls = document.querySelectorAll(".possible-move");
+    const possibleMoveEls = document.querySelectorAll('.' +this.tokens.getSelectableCardClass());
     possibleMoveEls.forEach((el) => {
-      el.classList.remove("possible-move");
+      el.classList.remove(this.tokens.getSelectableCardClass());
       this.removeAllClickEvents(el);
     });
-    const selectedMoveEls = document.querySelectorAll(".selected-move");
+    const selectedMoveEls = document.querySelectorAll('.' +this.tokens.getSelectedCardClass());
     selectedMoveEls.forEach((el) => {
-      el.classList.remove("selected-move");
+      el.classList.remove(this.tokens.getSelectedCardClass());
       this.removeAllClickEvents(el);
     });
   }
