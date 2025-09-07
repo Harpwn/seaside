@@ -34,7 +34,8 @@ export class SeasideSetup {
   }
 
   setupPlayerAreas(gamedatas: SeasideGamedatas) {
-    Object.values(gamedatas.players).forEach((player) => {
+    Object.values(gamedatas.playerorder).forEach((playerId) => {
+      const player = gamedatas.players[playerId];
       document.getElementById("seaside-game-area").insertAdjacentHTML(
         "beforeend",
         `<div class="seaside-player-wrapper">

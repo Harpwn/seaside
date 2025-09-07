@@ -4,7 +4,7 @@ import { SeasideStateManager } from "./seaside-state";
 import { TokenManager } from "./seaside-tokens";
 
 export class SeasideGameGui extends GameGui<SeasideGamedatas> {
-  public animations: AnimationManager;
+  public animationManager: AnimationManager;
   public tokens: TokenManager;
   public setups: SeasideSetup;
   public states: SeasideStateManager;
