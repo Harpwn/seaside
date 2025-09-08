@@ -24,8 +24,8 @@ export class SeasideSetup {
       },
     });
 
-    this.game.setupNotifications();
     this.game.tokens.setupTokens(gamedatas);
+    this.game.setupNotifications();
   }
 
   setupBaseGameArea() {
@@ -36,10 +36,7 @@ export class SeasideSetup {
           <div class="seaside-sea-area-wrapper">
             <div id="seaside-draw-bag"><span id="bag-counter"></span></div>
             <div id="seaside-discard"></div>
-            <div id="seaside-game-logo"></div>
-            <div id="seaside-publisher-logo"></div>
-            <div id="seaside-designer-logo"></div>
-            <div id="seaside-sea-area">
+            <div id="seaside-sea-stock">
             </div>
           </div>
         </div>
@@ -55,6 +52,7 @@ export class SeasideSetup {
         `<div class="seaside-player-wrapper">
           <div class="seaside-player-name">${player.name}</div>
           <div id="seaside-player-${player.id}" class="seaside-player">
+            <div id="seaside-player-${playerId}-sandpiper-pile" class="seaside-player-area-stock-sandpiper"></div>
           </div>
         </div>`
       );

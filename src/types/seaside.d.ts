@@ -5,7 +5,7 @@ declare interface SeasideToken {
   activeType: SeasideTokenType;
   inactiveType: SeasideTokenType;
   location: string;
-  locationArg: string;
+  locationArg: number;
   flipped: boolean;
 }
 
@@ -62,11 +62,10 @@ declare interface BeachGetsShellsNotificationData {
     tokens: SeasideToken[];
 }
 
-declare interface SandpiperGetsIsopodsNotificationData {
+declare interface CreateSandpiperPileNotificationData {
     playerId: number;
     tokenCount: number;
     tokens: SeasideToken[];
-    newSandpiperPileId: number;
 }
 
 declare interface SandpiperIsopodsLostNotificationData {
@@ -123,7 +122,7 @@ declare interface SeasideFlipBeachArgs {
 declare interface SeasidePlayAgainArgs {}
 
 declare interface SeasideStealCrabArgs {
-  playersWithCrabsIds: number[];
+  playersWithCrabs: { id: number; name: string }[];
 }
 
 declare interface SeasideSelectIsopodsArgs {

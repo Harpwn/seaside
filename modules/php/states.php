@@ -11,6 +11,8 @@ trait StatesTrait
     */
     function stPlayAgain()
     {
+        $playerId = (int)$this->getActivePlayerId();
+        
         $remainingTokens = $this->tokens->countCardsInLocation(BAG_LOCATION);
         if ($remainingTokens == 0) {
             $this->gamestate->nextState(TRANSITION_END_SCORE);
@@ -18,6 +20,8 @@ trait StatesTrait
             $this->nfPlayAgain((int)$this->getActivePlayerId());
             $this->gamestate->nextState(TRANSITION_PLAY_TOKEN);
         }
+
+        $this->giveExtraTime($playerId);
     }
 
     function stPreEndGame() 

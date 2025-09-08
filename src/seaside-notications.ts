@@ -16,19 +16,14 @@ enum SeasideGameNotifications {
 }
 
 export class SeasideNotifications extends SeasideGameGui {
-    
-  async notif_tokenPlayed(args: TokenPlayedNotificationData) {
-  }
+  async notif_tokenPlayed(args: TokenPlayedNotificationData) {}
 
   async notif_tokenToSea(args: TokenToSeaNotificationData) {
     await this.tokens.moveTokenToSea(args.token);
   }
 
   async notif_tokenToPlayerArea(args: TokenToPlayerAreaNotificationData) {
-    await this.tokens.moveTokenToPlayerArea(
-      args.token,
-      args.playerId.toString()
-    );
+    await this.tokens.moveTokenToPlayerArea(args.token, args.playerId.toString());
     this.scoreCtrl[args.playerId].incValue(1);
   }
 
@@ -37,12 +32,15 @@ export class SeasideNotifications extends SeasideGameGui {
   ) {
     await this.tokens.moveTokenToPlayerArea(
       args.token,
-      args.playerId.toString(),
+      args.playerId.toString()
     );
   }
 
   async notif_crabStolen(args: CrabStolenNotificationData) {
-    await this.tokens.moveTokenToPlayerArea(args.token, args.thiefId.toString());
+    await this.tokens.moveTokenToPlayerArea(
+      args.token,
+      args.thiefId.toString()
+    );
     this.scoreCtrl[args.playerId].incValue(-1);
     this.scoreCtrl[args.thiefId].incValue(1);
   }
@@ -61,26 +59,20 @@ export class SeasideNotifications extends SeasideGameGui {
     this.scoreCtrl[args.playerId].incValue(args.tokenCount);
   }
 
-  async notif_sandpiperGetsIsopods(args: SandpiperGetsIsopodsNotificationData) {
-    for (const token of args.tokens) {
-      await this.tokens.moveTokenToPlayerArea(
-        token,
-        args.playerId.toString()
-      );
-    }
+  async notif_createSandpiperPile(args: CreateSandpiperPileNotificationData) {
+    await this.tokens.createSandpiperPile(args.tokens, args.playerId.toString());
     this.scoreCtrl[args.playerId].incValue(args.tokenCount);
   }
 
   async notif_sandpiperIsopodsLost(args: SandpiperIsopodsLostNotificationData) {
-    this.scoreCtrl[args.playerId].incValue(-1);
-    for (const token of args.tokens) {
-      await this.tokens.moveTokenToDiscard(token);
-    }
+    await this.tokens.discardSandpiperPile(
+      args.tokens,
+      args.playerId.toString()
+    );
     this.scoreCtrl[args.playerId].incValue(-args.tokenCount);
   }
 
-  async notif_beachFlip(args: BeachFlipNotificationData) {
-  }
+  async notif_beachFlip(args: BeachFlipNotificationData) {}
 
   async notif_endGameWaveBonusTie(args: EndGameWaveBonusTieNotificationData) {
     Object.keys(args.playerIdsAndTokens).forEach((playerId) => {

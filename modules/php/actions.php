@@ -52,7 +52,7 @@ trait ActionTrait
         $inputArgs = $this->argStealCrab();
 
         //Validation here
-        if (!in_array($victimId, $inputArgs['playersWithCrabsIds'])) {
+        if (!in_array($victimId, array_column($inputArgs['playersWithCrabs'], 'id'))) {
             throw new \BgaUserException("Invalid Victim ID: {$victimId}");
         }
 

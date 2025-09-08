@@ -23,17 +23,17 @@ trait ArgsTrait {
 
     public function argStealCrab(): array
     {
-        $playersWithCrabIds = [];
+        $playersWithCrabs = [];
         foreach ($this->getPlayersIds() as $playerId) {
             if ($this->getActivePlayerId() != $playerId) {
                 $crabs = $this->getAllTokensOfTypeForLocation((string)$playerId, CRAB);
                 if (count($crabs) > 0) {
-                    $playersWithCrabIds[] = (int)$playerId;
+                    $playersWithCrabs[] = [ "id" => (int)$playerId, "name" => $this->getPlayerNameById($playerId) ];
                 }
             }
         }
         return [
-            "playersWithCrabsIds" => $playersWithCrabIds
+            "playersWithCrabs" => $playersWithCrabs
         ];
     }
 
@@ -46,9 +46,8 @@ trait ArgsTrait {
 
     public function argSelectIsopods(): array
     {
-
         return [
-            "sandpiper" => $this->getAllTokensOfTypeForLocation((string)$this->getActivePlayerId(), SANDPIPER, 0)[0],
+            "sandpiper" => $this->getAllTokensOfTypeForLocation(BAG_LOCATION, SANDPIPER)[0],
             "selectableIsopods" => $this->getSelectableIsopods(),
             "currentPileSizes" => $this->getCurrentPileSizes()
         ];

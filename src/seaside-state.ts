@@ -47,17 +47,6 @@ export class SeasideStateManager {
   leaveStateFlipBeach() {}
 
   enteringStealCrabState(args: SeasideStealCrabArgs) {
-    if (this.game.isCurrentPlayerActive()) {
-      args.playersWithCrabsIds.forEach((playerId) => {
-        const playerPanel = document.getElementById(
-          `seaside-player-${playerId}`
-        );
-        playerPanel.classList.add("possible-move");
-        playerPanel.addEventListener("click", () => {
-          this.game.selectSinglePlayer(playerId);
-        });
-      });
-    }
   }
 
   leaveStateStealCrab() {}

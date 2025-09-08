@@ -62,12 +62,11 @@ trait NotificationsTrait
         ]);
     }
 
-    function nfSandpiperGetsIsopods(int $playerId, array $isopods, int $newSandpiperPileId) {
-        $this->notify->all("sandpiperGetsIsopods", clienttranslate('${playerName}\'s SANDPIPER grabs a pile of ${tokenCount} ISOPOD tokens'), [
+    function nfcreateSandpiperPile(int $playerId, array $tokens) {
+        $this->notify->all("createSandpiperPile", clienttranslate('${playerName}\'s SANDPIPER grabs a pile of ${tokenCount} tokens'), [
             "playerId" => $playerId,
-            "tokenCount" => count($isopods),
-            "tokens" => $isopods,
-            "newSandpiperPileId" => $newSandpiperPileId
+            "tokenCount" => count($tokens),
+            "tokens" => $tokens,
         ]);
     }
 

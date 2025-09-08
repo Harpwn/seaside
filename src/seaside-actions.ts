@@ -25,7 +25,7 @@ export class SeasideActions {
       this.game.bgaPerformAction(SeasideGameActions.PlayToken, data);
     }
   }
-  
+
   handlePlaySandpiper(args: SeasidePlayTokenArgs) {
     const data: PlayTokenActionData = {
       tokenId: args.token.id,
@@ -72,13 +72,11 @@ export class SeasideActions {
 
   updateActionButtonsPlayToken(args: SeasidePlayTokenArgs) {
     if (this.game.isCurrentPlayerActive()) {
-      this.game.statusBar.addActionButton(
-        `Play ${args.token.side1} Side`,
-        () => this.actPlayToken(args, args.token.side1)
+      this.game.statusBar.addActionButton(`Play ${args.token.side1} Side`, () =>
+        this.actPlayToken(args, args.token.side1)
       );
-      this.game.statusBar.addActionButton(
-        `Play ${args.token.side2} Side`,
-        () => this.actPlayToken(args, args.token.side2)
+      this.game.statusBar.addActionButton(`Play ${args.token.side2} Side`, () =>
+        this.actPlayToken(args, args.token.side2)
       );
     }
   }
@@ -89,19 +87,12 @@ export class SeasideActions {
 
   updateActionButtonsStealCrab(args: SeasideStealCrabArgs) {
     if (this.game.isCurrentPlayerActive()) {
-      this.game.statusBar.addActionButton(
-        `Confirm`,
-        () => {
-          const victimId = document
-            .querySelector(".selected-move")
-            .getAttribute("data-player-id");
-          this.actStealCrab(parseInt(victimId));
-        },
-        {
-          id: `seaside-confirm`,
-          disabled: true,
-        }
-      );
+      args.playersWithCrabs.forEach((player) => {
+        this.game.statusBar.addActionButton(
+          `${player.name}`,
+          () => this.actStealCrab(player.id)
+        );
+      });
     }
   }
 
@@ -126,7 +117,9 @@ export class SeasideActions {
       this.game.statusBar.addActionButton(
         `Confirm`,
         () => {
-          const isopodTokenIds = this.game.tokens.getSelectedTokens().map((t) => t.id);
+          const isopodTokenIds = this.game.tokens
+            .getSelectedTokens()
+            .map((t) => t.id);
           const newPileSize = isopodTokenIds.length + 1;
           if (args.currentPileSizes.length > 0) {
             const largerPiles = args.currentPileSizes.filter(

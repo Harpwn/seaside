@@ -59,9 +59,9 @@ trait DebugUtilsTrait
                     break;
                 case GAME_STATE_PLAYER_ROCK_STEAL_CRAB:
                     $args = $this->argStealCrab();
-                    $playersWithCrabsIds = $args['playersWithCrabsIds'];
-                    $rand = rand(0, count($playersWithCrabsIds) - 1);
-                    $this->actStealCrab((int)$playersWithCrabsIds[$rand]);
+                    $playersWithCrabs = $args['playersWithCrabs'];
+                    $rand = rand(0, count($playersWithCrabs) - 1);
+                    $this->actStealCrab((int)$playersWithCrabs[$rand]->id);
                     break;
                 case GAME_STATE_PLAYER_WAVE_FLIP_BEACH:
                     $args = $this->argFlipBeach();

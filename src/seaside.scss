@@ -9,8 +9,11 @@
   transform-origin: center top;
 }
 
-#seaside-game-area {
+#page-content {
   background-color: rgba(0, 0, 0, 0.5);
+}
+
+#seaside-game-area {
 
   //direct child token selector
   >.seaside-token {
@@ -28,54 +31,50 @@
 }
 
 #seaside-discard {
-  display:none;
+  display: block;
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  left: -100px;
 }
 
 #seaside-draw-bag {
   z-index: 100;
-  height: 139px;
-  width: 242px;
+  height: 170px;
+  width: 280px;
+  bottom: 0;
   position: absolute;
-  top: 30px;
   background-image: url(img/draw-bag.png);
   background-size: contain;
   background-repeat: no-repeat;
-  left: 278px;
-  background-color: #add8e6;
-  border: 5px solid #fff;
+  background-color: rgba(0, 0, 0, 0.3);
+  margin: 20px;
 
   .game-card {
-    margin-left: 124px;
-    margin-top: 19px;
+    margin-left: 150px;
+    margin-top: 35px;
   }
 }
 
-#seaside-sea-area {
+#seaside-sea-stock {
   height: 50%;
   position: relative;
   display: flex;
   flex-direction: column;
-  padding-top: 225px;
+  padding-top: 60px;
 }
 
 .seaside-player-name {
   position: absolute;
   color: white;
   z-index: 100;
-  top: 21px;
-  left: 25px;
+  top: 15px;
+  left: 50px;
   font-size: 20px;
   font-weight: 500;
 }
 
 .seaside-token {
-  background-image: url("img/tokens.png");
-  background-repeat: no-repeat;
-  background-size: 765%;
-  background-position-y: 75%;
-
-  height: 100px;
-  width: 100px;
   position: relative;
   flex-shrink: 0;
 
@@ -87,37 +86,39 @@
     }
   }
 
-  &:hover {
-    transform: scale(1.1);
-    z-index: 1000;
-  }
+  .bga-cards_card-side {
+    background-image: url("img/tokens.png");
+    background-repeat: no-repeat;
+    background-size: 765%;
+    background-position-y: 75%;
 
-  &[data-type="WAVE"] {
-    background-position-x: 0%
-  }
+    &[data-type="WAVE"] {
+      background-position-x: 1%
+    }
 
-  &[data-type="ROCK"] {
-    background-position-x: 17%;
-  }
+    &[data-type="ROCK"] {
+      background-position-x: 17%;
+    }
 
-  &[data-type="ISOPOD"] {
-    background-position-x: 33%;
-  }
+    &[data-type="ISOPOD"] {
+      background-position-x: 33%;
+    }
 
-  &[data-type="SHELL"] {
-    background-position-x: 50%;
-  }
+    &[data-type="SHELL"] {
+      background-position-x: 50%;
+    }
 
-  &[data-type="CRAB"] {
-    background-position-x: 66.5%;
-  }
+    &[data-type="CRAB"] {
+      background-position-x: 66.5%;
+    }
 
-  &[data-type="SANDPIPER"] {
-    background-position-x: 83%;
-  }
+    &[data-type="SANDPIPER"] {
+      background-position-x: 83%;
+    }
 
-  &[data-type="BEACH"] {
-    background-position-x: 99.5%;
+    &[data-type="BEACH"] {
+      background-position-x: 99.5%;
+    }
   }
 }
 
@@ -125,41 +126,15 @@
   width: 800px;
   height: 855px;
   background-color: #2F2F89;
+  background-image: url("img/main-board-background.jpg");
   align-items: center;
   position: relative;
-}
 
-#seaside-game-logo {
-  background-image: url(img/seaside-logo.png);
-  width: 100px;
-  height: 100px;
-  position: absolute;
-  background-size: contain;
-  background-repeat: no-repeat;
-  margin: 10px;
-}
-
-#seaside-publisher-logo {
-  background-image: url('img/seaside-publisher-logo.png');
-  width: 100px;
-  height: 70px;
-  position: absolute;
-  background-size: contain;
-  background-repeat: no-repeat;
-  margin: 10px;
-  bottom: 0;
-  right: 10px;
-}
-
-#seaside-designer-logo {
-  background-image: url('img/seaside-designer-logo.png');
-  width: 100px;
-  height: 20px;
-  position: absolute;
-  background-size: contain;
-  background-repeat: no-repeat;
-  margin: 10px;
-  bottom: 0;
+  .seaside-sea-stock-slot {
+    .bga-cards_card {
+      margin-left: -80px;
+    }
+  }
 }
 
 .seaside-player-wrapper {
@@ -169,16 +144,31 @@
 }
 
 .seaside-player {
-  background-image: url('img/player-background.png');
-  background-size: 100%;
-  position: relative;
-  height: 400px;
+  background-image: url('img/player-background.jpg');
+  background-size: cover;
+  min-height: 400px;
   width: 750px;
-  flex-direction: row;
-  gap: 1%;
-  justify-content: center;
   margin: 10px;
-  display: flex;
+  padding-top: 90px;
+  padding-bottom: 10px;
+
+  .seaside-player-area-slot,
+  .seaside-player-area-slot-sandpiper {
+    flex-direction: column;
+    align-self: start;
+
+    >:first-child.bga-cards_card {
+      margin-top: -0px;
+    }
+
+    >.bga-cards_card {
+      margin-top: -80px;
+    }
+  }
+}
+
+.seaside-player-area-stock-sandpiper {
+  align-self: start;
 }
 
 .possible-move {
