@@ -46,7 +46,6 @@ const BAG_LOCATION = "deck";
 const DISCARD_LOCATION = "discard";
 
 const SANDPIPER_PILE_INIT = 100;
-const ROCK_PILE_INIT = 1;
 
 const DECK = [
     65 => [ 1 => BEACH, 2 => SANDPIPER ],

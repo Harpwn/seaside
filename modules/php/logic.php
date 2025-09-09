@@ -112,25 +112,9 @@ trait LogicTrait
     {
         $playerRocks = $this->getAllTokensOfTypeForLocation((string)$playerId, ROCK);
         if (is_array($playerRocks) && count($playerRocks) % 2 === 1) {
-            //Odd number of rocks, attract crabs
-
-            $newRockPileId = ROCK_PILE_INIT;
-            if (count($playerRocks) !== 0) {
-                //new pile id to place crabs and rocks
-                $newRockPileId = max(array_column($playerRocks, 'locationArg')) + 1;
-            }
-
-            //Find rock to create pair
-            //BUG HERE
-            $unPiledRockToken = $this->getAllTokensOfTypeForLocation((string)$playerId, ROCK, 0)[0];
-
-
-            //Send main rock to player area
-            $this->sendTokenToPlayerArea($rock, $playerId, $newRockPileId);
+            $this->sendTokenToPlayerArea($rock, $playerId);
             $this->nfTokenToPlayerArea($playerId, $rock);
             $this->incStat(1, STAT_NO_ROCK, $playerId);
-            $this->moveTokenWithinPlayerArea($playerId, $unPiledRockToken, $newRockPileId);
-            $this->nfTokenMovesWithinPlayerArea($playerId, $unPiledRockToken, 0, $newRockPileId);
 
             //Send all crabs in sea to player area
             $seaCrabs = $this->getAllTokensOfTypeForLocation(SEA_LOCATION, CRAB);

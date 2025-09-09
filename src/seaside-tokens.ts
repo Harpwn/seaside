@@ -88,6 +88,17 @@ export class TokenManager extends BgaCards.Manager<SeasideToken> {
     await this.playerAreaStocks[playerId].addCard(token);
   }
 
+  async moveEndGameBonusTokens(tokens: SeasideToken[], playerId: string) {
+    const isopods = tokens.filter(t => t.activeType === 'ISOPOD');
+    for (const token of isopods) {
+      await this.createSandpiperPile(isopods, playerId);
+    }
+    const otherTokens = tokens.filter(t => t.activeType !== 'ISOPOD');
+    for (const token of otherTokens) {
+      await this.moveTokenToPlayerArea(token, playerId);
+    }
+  }
+
   async createSandpiperPile(tokens: SeasideToken[], playerId: string) {
     this.playerAreaSandpiperPileStocks[playerId].addSlotsIds([tokens[0].locationArg]);
     const isopods = tokens.filter(t => t.activeType === 'ISOPOD');

@@ -12,11 +12,11 @@ trait DebugUtilsTrait
         }die('debug data : '.json_encode($debugData));
     }
 
-    public function debugLog($debugData) {
+    public function debugLog($debugData, $debugMessage) {
         if ($this->getBgaEnvironment() != 'studio') { 
             return;
         }
-        self::notifyAllPlayers('logdummy', clienttranslate('${message} - ${value}'),  ['message' => "debug data: ", 'value' => json_encode($debugData)] );
+        self::notifyAllPlayers('logdummy', clienttranslate('${message} - ${value}'),  ['message' => $debugMessage ?? 'debug data:', 'value' => json_encode($debugData)] );
     }
 
     function debug_playToEndGame() 
@@ -61,7 +61,7 @@ trait DebugUtilsTrait
                     $args = $this->argStealCrab();
                     $playersWithCrabs = $args['playersWithCrabs'];
                     $rand = rand(0, count($playersWithCrabs) - 1);
-                    $this->actStealCrab((int)$playersWithCrabs[$rand]->id);
+                    $this->actStealCrab((int)$playersWithCrabs[$rand]['id']);
                     break;
                 case GAME_STATE_PLAYER_WAVE_FLIP_BEACH:
                     $args = $this->argFlipBeach();
