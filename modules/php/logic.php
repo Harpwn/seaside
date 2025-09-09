@@ -82,10 +82,7 @@ trait LogicTrait
 
     function handlePlaySandpiperToken(int $playerId, Token $sandpiper)
     {
-        //$this->sendTokenToPlayerArea($sandpiper, $playerId);
-        //$this->nfTokenToPlayerArea($playerId, $sandpiper);
-        $this->incStat(1, STAT_NO_SANDPIPER, $playerId);
-
+        $this->sendTokenToPlayArea($sandpiper);
 
         $availIsopods = array_column($this->getAllTokensOfTypeForLocation(SEA_LOCATION, ISOPOD), 'id');
         if (count($availIsopods) > 0) {
@@ -291,6 +288,11 @@ trait LogicTrait
     function sendTokenToPlayerArea(Token $token, int $playerId, int $tokenLocationArgs = 0)
     {
         $this->tokens->moveCard($token->id, (string)$playerId, $tokenLocationArgs);
+    }
+
+    function sendTokenToPlayArea(Token $token)
+    {
+        $this->tokens->moveCard($token->id, PLAY_LOCATION, 0);
     }
 
     function sendTokensToPlayerArea(array $tokens, int $playerId, int $tokenLocationArgs = 0)

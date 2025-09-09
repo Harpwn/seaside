@@ -47,7 +47,7 @@ trait ArgsTrait {
     public function argSelectIsopods(): array
     {
         return [
-            "sandpiper" => $this->getAllTokensOfTypeForLocation(BAG_LOCATION, SANDPIPER)[0],
+            "sandpiper" => $this->getAllTokensOfTypeForLocation(PLAY_LOCATION, SANDPIPER)[0],
             "selectableIsopods" => $this->getSelectableIsopods(),
             "currentPileSizes" => $this->getCurrentPileSizes()
         ];

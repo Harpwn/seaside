@@ -169,6 +169,10 @@
 
 .seaside-player-area-stock-sandpiper {
   align-self: start;
+
+  [data-slot-id="0"] {
+    order: 100;
+  }
 }
 
 .possible-move {

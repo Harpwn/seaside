@@ -52,8 +52,8 @@ export class TokenManager extends BgaCards.Manager<SeasideToken> {
       this.playerAreaStocks[playerId] = new SlotStock(this, document.getElementById(`seaside-player-${playerId}`), slotSettings);
       this.addStock(this.playerAreaStocks[playerId]);
       this.playerAreaSandpiperPileStocks[playerId] = new SlotStock(this, document.getElementById(`seaside-player-${playerId}-sandpiper-pile`), {
-        slotsIds: [],
-        mapCardToSlot: (token: SeasideToken) => token.locationArg,
+        slotsIds: [0],
+        mapCardToSlot: (token: SeasideToken) => token.locationArg ?? 0,
         slotClasses: ["seaside-player-area-slot-sandpiper"],
         direction: "column"
       });
@@ -89,13 +89,14 @@ export class TokenManager extends BgaCards.Manager<SeasideToken> {
   }
 
   async moveEndGameBonusTokens(tokens: SeasideToken[], playerId: string) {
-    const isopods = tokens.filter(t => t.activeType === 'ISOPOD');
-    for (const token of isopods) {
+    const isopods = tokens.filter(t => t.activeType == 'ISOPOD');
+    if(isopods.length > 0) {
       await this.createSandpiperPile(isopods, playerId);
     }
-    const otherTokens = tokens.filter(t => t.activeType !== 'ISOPOD');
-    for (const token of otherTokens) {
-      await this.moveTokenToPlayerArea(token, playerId);
+
+    const otherTokens = tokens.filter(t => t.activeType != 'ISOPOD');
+    if(otherTokens.length > 0) {
+      await this.playerAreaStocks[playerId].addCards(otherTokens);
     }
   }
 
@@ -103,8 +104,13 @@ export class TokenManager extends BgaCards.Manager<SeasideToken> {
     this.playerAreaSandpiperPileStocks[playerId].addSlotsIds([tokens[0].locationArg]);
     const isopods = tokens.filter(t => t.activeType === 'ISOPOD');
     const sandpiper = tokens.find(t => t.activeType === 'SANDPIPER');
-    await this.playerAreaSandpiperPileStocks[playerId].addCards(isopods, {}, 100);
-    await this.playerAreaSandpiperPileStocks[playerId].addCard(sandpiper);
+
+    if(isopods.length > 0) {
+      await this.playerAreaSandpiperPileStocks[playerId].addCards(isopods, {}, 100);
+    }
+    if(sandpiper) {
+      await this.playerAreaSandpiperPileStocks[playerId].addCard(sandpiper);
+    }
   }
 
   async discardSandpiperPile(tokens: SeasideToken[], playerId: string) {
