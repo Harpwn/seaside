@@ -123,9 +123,8 @@ export class TokenManager extends BgaCards.Manager<SeasideToken> {
 
   private getTooltip(token: SeasideToken): string {
     return `
-        <p><strong>${_("Active Side:")}</strong> ${token.activeType}</p>
-        <p><strong>${_("Inactive Side:")}</strong> ${token.inactiveType}</p>
-        <p><strong>${_("Pile:")}</strong> ${token.locationArg}</p>
+        <p><strong>${_("Side A:")}</strong> ${token.side1}</p>
+        <p><strong>${_("Side B:")}</strong> ${token.side2}</p>
       `;
   }
 
