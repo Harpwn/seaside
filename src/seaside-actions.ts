@@ -101,7 +101,7 @@ export class SeasideActions {
       this.game.statusBar.addActionButton(
         `Confirm`,
         () => {
-          const beachToken = this.game.tokens.getSelectedTokens()[0];
+          const beachToken = this.game.tokens.playerAreaStocks[this.game.player_id].getSelection()[0];
           this.actFlipBeach(beachToken.id);
         },
         {
@@ -117,9 +117,7 @@ export class SeasideActions {
       this.game.statusBar.addActionButton(
         `Confirm`,
         () => {
-          const isopodTokenIds = this.game.tokens
-            .getSelectedTokens()
-            .map((t) => t.id);
+          const isopodTokenIds = this.game.tokens.seaStock.getSelection().map(t => t.id);
           const newPileSize = isopodTokenIds.length + 1;
           if (args.currentPileSizes.length > 0) {
             const largerPiles = args.currentPileSizes.filter(

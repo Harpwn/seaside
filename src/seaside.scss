@@ -1,14 +1,6 @@
 @use '../node_modules/bga-zoom/bga-zoom';
 @use '../node_modules/bga-help/bga-help';
 
-#seaside-table {
-  display: flex;
-  justify-content: center;
-  overflow-x: auto;
-  position: relative;
-  transform-origin: center top;
-}
-
 #page-content {
   background-color: rgba(0, 0, 0, 0.5);
 }
@@ -75,16 +67,6 @@
 }
 
 .seaside-token {
-  position: relative;
-  flex-shrink: 0;
-
-  &.possible-move {
-    border: 5px dashed lightgreen !important;
-
-    &.selected-move {
-      border: 5px solid darkgreen !important;
-    }
-  }
 
   .bga-cards_card-side {
     background-image: url("img/tokens.png");
@@ -138,7 +120,6 @@
 }
 
 .seaside-player-wrapper {
-  display: inline-block;
   margin-left: 20px;
   position: relative;
 }
@@ -172,19 +153,5 @@
 
   [data-slot-id="0"] {
     order: 100;
-  }
-}
-
-.possible-move {
-  cursor: pointer;
-}
-
-.game-card {
-  &.possible-move {
-    border: 5px dashed lightgreen !important;
-  }
-
-  &.selected-move {
-    border: 5px solid darkgreen !important;
   }
 }

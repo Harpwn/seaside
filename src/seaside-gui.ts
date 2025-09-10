@@ -13,16 +13,6 @@ export class SeasideGameGui extends GameGui<SeasideGamedatas> {
 
   public clearMoves() {
     this.tokens.clearSelectedTokens();
-    const possibleMoveEls = document.querySelectorAll('.' +this.tokens.getSelectableCardClass());
-    possibleMoveEls.forEach((el) => {
-      el.classList.remove(this.tokens.getSelectableCardClass());
-      this.removeAllClickEvents(el);
-    });
-    const selectedMoveEls = document.querySelectorAll('.' +this.tokens.getSelectedCardClass());
-    selectedMoveEls.forEach((el) => {
-      el.classList.remove(this.tokens.getSelectedCardClass());
-      this.removeAllClickEvents(el);
-    });
   }
 
   

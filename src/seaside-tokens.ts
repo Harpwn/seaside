@@ -1,16 +1,14 @@
 import { SeasideGame } from "src";
 
 export class TokenManager extends BgaCards.Manager<SeasideToken> {
-  private bagStock: CardStock<SeasideToken>;
-  private seaStock: SlotStock<SeasideToken>;
-  private discardStock: VoidStock<SeasideToken>;
-  private playerAreaStocks: Record<string, SlotStock<SeasideToken>> = {};
-  private playerAreaSandpiperPileStocks: Record<
+  public bagStock: CardStock<SeasideToken>;
+  public seaStock: SlotStock<SeasideToken>;
+  public discardStock: VoidStock<SeasideToken>;
+  public playerAreaStocks: Record<string, SlotStock<SeasideToken>> = {};
+  public playerAreaSandpiperPileStocks: Record<
     string,
     SlotStock<SeasideToken>
   > = {};
-
-  private selectedTokens: SeasideToken[] = [];
 
   constructor(public game: SeasideGame, private gameDatas: SeasideGamedatas) {
     //@ts-ignore
@@ -157,6 +155,19 @@ export class TokenManager extends BgaCards.Manager<SeasideToken> {
     }
   }
 
+  setSelectableIsopods(tokens: SeasideToken[]) {
+    this.seaStock.setSelectionMode('multiple');
+    this.seaStock.setSelectableCards(tokens);
+  }
+
+  setSelectableBeaches(playerId: string, tokens: SeasideToken[]) {
+    this.playerAreaStocks[playerId].setSelectionMode('single');
+    this.playerAreaStocks[playerId].setSelectableCards(tokens);
+    this.playerAreaStocks[playerId].onSelectionChange = (selection) => {
+      this.game.updateConfirmDisabled(selection.length === 0);
+    };
+  }
+
   async createSandpiperPile(tokens: SeasideToken[], playerId: string) {
     this.playerAreaSandpiperPileStocks[playerId].addSlotsIds([
       tokens[0].locationArg,
@@ -183,70 +194,14 @@ export class TokenManager extends BgaCards.Manager<SeasideToken> {
     await this.discardStock.addCards(tokens, {}, 100);
   }
 
-  selectMultipleToken(token: SeasideToken) {
-    const tokenEl = this.getCardElement(token);
-    tokenEl.classList.add(this.getSelectedCardClass());
-    this.selectedTokens.push(token);
-    const newEl = this.game.removeAllClickEvents(tokenEl);
-    newEl.addEventListener("click", () => this.deselectMultipleToken(token));
-  }
-
-  deselectMultipleToken(token: SeasideToken) {
-    const tokenEl = this.getCardElement(token);
-    tokenEl.classList.remove(this.getSelectedCardClass());
-    this.selectedTokens = this.selectedTokens.filter((t) => t !== token);
-    const newEl = this.game.removeAllClickEvents(tokenEl);
-    newEl.addEventListener("click", () => this.selectMultipleToken(token));
-  }
-
-  getSelectedTokens(): SeasideToken[] {
-    return this.selectedTokens;
-  }
-
-  selectSingleToken(token: SeasideToken) {
-    const tokenEl = this.getCardElement(token);
-    tokenEl.classList.add(this.getSelectedCardClass());
-    this.selectedTokens.push(token);
-    const newEl = this.game.removeAllClickEvents(tokenEl);
-    newEl.addEventListener("click", () => this.deselectSingleToken(token));
-    this.selectedTokens.forEach((selectedToken) => {
-      if (selectedToken != token) {
-        const tokenEl = this.getCardElement(selectedToken);
-        tokenEl.classList.remove(this.getSelectedCardClass());
-        this.selectedTokens = this.selectedTokens.filter(
-          (t) => t !== selectedToken
-        );
-        const newOtherToken = this.game.removeAllClickEvents(tokenEl);
-        newOtherToken.addEventListener("click", () =>
-          this.selectSingleToken(selectedToken)
-        );
-      }
-    });
-    this.game.updateConfirmDisabled(false);
-  }
-
-  deselectSingleToken(token: SeasideToken) {
-    const tokenEl = this.getCardElement(token);
-    tokenEl.classList.remove(this.getSelectedCardClass());
-    this.selectedTokens = this.selectedTokens = [];
-    const newEl = this.game.removeAllClickEvents(tokenEl);
-    newEl.addEventListener("click", () => this.selectSingleToken(token));
-    this.game.updateConfirmDisabled(true);
-  }
-
   async moveTokenToDiscard(token: SeasideToken) {
     await this.discardStock.addCard(token);
   }
 
-  getSelectableCardClass() {
-    return "possible-move";
-  }
-
-  getSelectedCardClass() {
-    return "selected-move";
-  }
-
   clearSelectedTokens() {
-    this.selectedTokens = [];
+    this.seaStock.setSelectionMode('none');
+    Object.values(this.gameDatas.players).forEach((player) => {
+      this.playerAreaStocks[player.id].setSelectionMode('none');
+    });
   }
 }

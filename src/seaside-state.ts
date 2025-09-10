@@ -34,13 +34,7 @@ export class SeasideStateManager {
 
   enteringFlipBeachState(args: SeasideFlipBeachArgs) {
     if (this.game.isCurrentPlayerActive()) {
-      args.flippableBeachs.forEach((beach) => {
-        const beachEl = this.game.tokens.getCardElement(beach);
-        beachEl.classList.add(this.game.tokens.getSelectableCardClass());
-        beachEl.addEventListener("click", () => {
-          this.game.tokens.selectSingleToken(beach);
-        });
-      });
+      this.game.tokens.setSelectableBeaches(this.game.player_id.toString(), args.flippableBeachs);
     }
   }
 
@@ -54,13 +48,7 @@ export class SeasideStateManager {
   enteringSelectIsopodsState(args: SeasideSelectIsopodsArgs) {
     this.game.tokens.drawToken(args.sandpiper);
     if (this.game.isCurrentPlayerActive()) {
-      args.selectableIsopods.forEach((isopod) => {
-        const isopodEl = this.game.tokens.getCardElement(isopod);
-        isopodEl.classList.add(this.game.tokens.getSelectableCardClass());
-        isopodEl.addEventListener("click", () =>
-          this.game.tokens.selectMultipleToken(isopod)
-        );
-      });
+      this.game.tokens.setSelectableIsopods(args.selectableIsopods);
     }
   }
 
