@@ -52,6 +52,7 @@ export class SeasideStateManager {
   leaveStateStealCrab() {}
   
   enteringSelectIsopodsState(args: SeasideSelectIsopodsArgs) {
+    this.game.tokens.drawToken(args.sandpiper);
     if (this.game.isCurrentPlayerActive()) {
       args.selectableIsopods.forEach((isopod) => {
         const isopodEl = this.game.tokens.getCardElement(isopod);

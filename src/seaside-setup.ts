@@ -8,7 +8,7 @@ export class SeasideSetup {
     this.game = game;
   }
 
-  doSetup(gamedatas: SeasideGamedatas) {
+  async doSetup(gamedatas: SeasideGamedatas) {
     this.setupBaseGameArea();
     this.setupPlayerAreas(gamedatas);
 
@@ -24,7 +24,6 @@ export class SeasideSetup {
       },
     });
 
-    this.game.tokens.setupTokens(gamedatas);
     this.game.setupNotifications();
   }
 
