@@ -84,11 +84,11 @@ trait SetupTrait
         switch ($numPlayers) {
             case 2:
                 // Remove 30-40 tokens
-                $this->removeNoTokens(rand(30, 40));
+                $this->removeNoTokens(bga_rand(30, 40));
                 break;
             case 3:
                 // Remove 15-20 tokens
-                $this->removeNoTokens(rand(15, 20));
+                $this->removeNoTokens(bga_rand(15, 20));
                 break;
             case 4:
             case 5:
