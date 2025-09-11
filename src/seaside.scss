@@ -155,3 +155,43 @@
     order: 100;
   }
 }
+
+/** Tooltip and help button **/
+
+.seaside-help-container {
+  position: relative;
+  display: inline-block;
+}
+
+.helpful-buttons {
+  bottom: 20px;
+  left: 10px;
+  z-index: 999;
+}
+
+.seaside-help-button {
+  background-color: #232594;
+  border-radius: 9999px;
+  color: white;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.seaside-help-tooltip {
+  position: absolute;
+  bottom: 110%;
+  left: 0%;
+  display: none;
+  border: 5px solid white;
+}
+
+#seaside-player-aid {
+  background-image: url("img/player-aid.jpg");
+  width: 400px;
+  aspect-ratio: 668/1002;
+  display: block;
+  background-size: contain;
+}

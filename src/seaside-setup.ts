@@ -11,6 +11,7 @@ export class SeasideSetup {
   async doSetup(gamedatas: SeasideGamedatas) {
     this.setupBaseGameArea();
     this.setupPlayerAreas(gamedatas);
+    this.setupHelpButton();
 
     this.game.animationManager = new BgaAnimations.Manager();
     this.game.states = new SeasideStateManager(this.game);
@@ -39,7 +40,11 @@ export class SeasideSetup {
             </div>
           </div>
         </div>
-      </div>`
+      </div>
+      <div class="helpful-buttons flex fixed gap-2">
+          <div id="seaside-help"></div>
+        </div>
+      `
     );
   }
 
@@ -59,27 +64,13 @@ export class SeasideSetup {
   }
 
   setupHelpButton() {
-    // Setting up player boards
-    // example of setting up players boards
-    let helpButton = $("seaside-help-button");
+    let helpButton = $("seaside-help");
     helpButton.insertAdjacentHTML(
       "beforeend",
       `<div class="seaside-help-container">
-        <div class="seaside-help-help-button w-12 h-12 text-3xl" onmouseover="this.nextElementSibling.style.display = 'block'" onmouseout="this.nextElementSibling.style.display = 'none'">?</div>        
-        <div class="seaside-help-help-tooltip">
-            <div class="seaside-help-help-tooltip-text">
-              <p class="text-white text-5xl">${_("Player Aid")}</p>
-              <span class="text-sm">${_(
-                "From the strongest to the weakest"
-              )}</span>
-              <div class="flex flex-col seaside-help-tooltip-combinations">
-                <div><div>${_("Color-Run")}</div></div>
-                <div><div>${_("Three of a Kind")}</div></div>
-                <div><div>${_("Color")}</div></div>
-                <div><div>${_("Run")}</div></div>
-                <div><div>${_("Sum")}</div></div>
-              </div>
-            </div>
+        <div class="seaside-help-button w-12 h-12 text-3xl" onmouseover="this.nextElementSibling.style.display = 'block'" onmouseout="this.nextElementSibling.style.display = 'none'">?</div>        
+        <div class="seaside-help-tooltip">
+            <span id="seaside-player-aid"></span>
         </div>
       </div>`
     );
