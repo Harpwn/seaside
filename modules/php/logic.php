@@ -107,12 +107,11 @@ trait LogicTrait
 
     function handlePlayRockToken(int $playerId, Token $rock)
     {
+        $this->sendTokenToPlayerArea($rock, $playerId);
+        $this->nfTokenToPlayerArea($playerId, $rock);
+        $this->incStat(1, STAT_NO_ROCK, $playerId);
         $playerRocks = $this->getAllTokensOfTypeForLocation((string)$playerId, ROCK);
-        if (is_array($playerRocks) && count($playerRocks) % 2 === 1) {
-            $this->sendTokenToPlayerArea($rock, $playerId);
-            $this->nfTokenToPlayerArea($playerId, $rock);
-            $this->incStat(1, STAT_NO_ROCK, $playerId);
-
+        if (is_array($playerRocks) && count($playerRocks) % 2 === 0) {            
             //Send all crabs in sea to player area
             $seaCrabs = $this->getAllTokensOfTypeForLocation(SEA_LOCATION, CRAB);
 
@@ -133,11 +132,6 @@ trait LogicTrait
                     }
                 }
             }
-        } else {
-            //crabs not interested
-            $this->sendTokenToPlayerArea($rock, $playerId);
-            $this->nfTokenToPlayerArea($playerId, $rock);
-            $this->incStat(1, STAT_NO_ROCK, $playerId);
         }
 
         //next player

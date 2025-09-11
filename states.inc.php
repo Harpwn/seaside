@@ -78,7 +78,7 @@ $machinestates = [
         ->action('stNextPlayer')
         ->updateGameProgression(true)
         ->transitions([
-            TRANSITION_END_SCORE => GAME_STATE_PRE_END_GAME,
+            TRANSITION_GAME_ENDING => GAME_STATE_PRE_END_GAME,
             TRANSITION_NEXT_PLAYER => GAME_STATE_PLAYER_PLAY_TOKEN
         ]) 
         ->build(),
@@ -91,7 +91,7 @@ $machinestates = [
         ->action('stPlayAgain')
         ->transitions([
             TRANSITION_PLAY_TOKEN => GAME_STATE_PLAYER_PLAY_TOKEN,
-            TRANSITION_END_SCORE => GAME_STATE_PRE_END_GAME,
+            TRANSITION_GAME_ENDING => GAME_STATE_PRE_END_GAME,
         ])
         ->build(),
 
@@ -102,7 +102,17 @@ $machinestates = [
         ->action('stPreEndGame')
         ->updateGameProgression(true)
         ->transitions([
-            TRANSITION_SCORING_FINISHED => GAME_STATE_END_GAME,
+            TRANSITION_SCORING_STARTED => GAME_STATE_END_GAME_SCORING,
         ])
         ->build(),
+
+    GAME_STATE_END_GAME_SCORING => GameStateBuilder::create()
+        ->name('endGameScoring')
+        ->description(clienttranslate('End of game: final scoring'))
+        ->type(StateType::GAME)
+        ->action('stEndGameScoring')
+        ->transitions([
+            TRANSITION_SCORING_FINISHED => GAME_STATE_END_GAME,
+        ])
+        ->build()
 ];

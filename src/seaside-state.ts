@@ -7,6 +7,8 @@ export enum SeasideGameStates {
   FlipBeach = "flipBeach",
   SelectIsopods = "selectIsopods",
   NextPlayer = "nextPlayer",
+  PreEndGame = "preEndGame",
+  EndGameScoring = "endGameScoring",
   GameEnd = "gameEnd",
 }
 

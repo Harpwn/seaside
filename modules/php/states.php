@@ -15,7 +15,7 @@ trait StatesTrait
         
         $remainingTokens = $this->tokens->countCardsInLocation(BAG_LOCATION);
         if ($remainingTokens == 0) {
-            $this->gamestate->nextState(TRANSITION_END_SCORE);
+            $this->gamestate->nextState(TRANSITION_GAME_ENDING);
         } else {
             $this->nfPlayAgain((int)$this->getActivePlayerId());
             $this->gamestate->nextState(TRANSITION_PLAY_TOKEN);
@@ -32,6 +32,11 @@ trait StatesTrait
             $this->handleEndGameWaveBonus($seaTokens);
         }
 
+        $this->gamestate->nextState(TRANSITION_SCORING_STARTED);
+    }
+
+    function stEndGameScoring()
+    {
         $this->gamestate->nextState(TRANSITION_SCORING_FINISHED);
     }
 
@@ -50,7 +55,7 @@ trait StatesTrait
         // Go to another gamestate
         $remainingTokens = $this->tokens->countCardsInLocation(BAG_LOCATION);
         if ($remainingTokens == 0) {
-            $this->gamestate->nextState(TRANSITION_END_SCORE);
+            $this->gamestate->nextState(TRANSITION_GAME_ENDING);
         } else {
             $this->gamestate->nextState(TRANSITION_NEXT_PLAYER);
         }
