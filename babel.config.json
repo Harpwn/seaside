@@ -7,5 +7,8 @@
       "bugfixes": true
     }],
     "@babel/preset-typescript"
-  ]
+  ],
+  "compact": true,
+  "minified": true,
+  "comments": false
 }

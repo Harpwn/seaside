@@ -13,6 +13,7 @@ function compileSCSS() {
   const result = sass.compile(scssFile, {
     style: "compressed",
     loadPaths: ["src/styles"],
+    minify: true,
   });
   fs.writeFileSync("dist/seaside.css", result.css);
   fs.renameSync("dist/seaside.css", "seaside.css");
