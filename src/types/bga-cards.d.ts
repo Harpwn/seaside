@@ -485,7 +485,6 @@ declare class CardStock<T> {
     setLastPlayedCards(cards: T[] | null, color?: string, cardClass?: string): void;
 }
 
-type AnimationManager = any;
 /**
  * selectable: only send card click event when the card is selectable.
  * stock-selectable: only send card click event when the stock is selectable (but the card might be disabled).
@@ -1513,6 +1512,7 @@ declare class VoidStock<T> extends CardStock<T> {
     addCard(card: T, settings?: AddCardToVoidStockSettings): Promise<boolean>;
 }
 
+// @ts-ignore
 declare const BgaCards: {
     Manager: typeof CardManager;
     sort: typeof sort;
@@ -1528,3 +1528,19 @@ declare const BgaCards: {
     SlotStock: typeof SlotStock;
     VoidStock: typeof VoidStock;
 };
+
+interface BgaCardsType<T> {
+    Manager: CardManager<T>;
+    sort: typeof sort;
+    AllVisibleDeck: AllVisibleDeck<T>;
+    CardStock: CardStock<T>;
+    Deck: Deck<T>;
+    DiscardDeck: DiscardDeck<T>;
+    GridStock: GridStock<T>;
+    HandStock: HandStock<T>;
+    LineStock: LineStock<T>;
+    ManualPositionStock: ManualPositionStock<T>;
+    ScrollableStock: ScrollableStock<T>;
+    SlotStock: SlotStock<T>;
+    VoidStock: VoidStock<T>;
+}

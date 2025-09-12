@@ -467,6 +467,11 @@ declare class AnimationManager {
     playInterval(animations: ((index: number) => Promise<any>)[], interval?: number): Promise<void>;
 }
 
+// @ts-ignore
 declare const BgaAnimations: {
     Manager: typeof AnimationManager;
 };
+
+interface BgaAnimationsType {
+    Manager: AnimationManager;
+}

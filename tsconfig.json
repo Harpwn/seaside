@@ -1,25 +1,25 @@
 {
   "rootDir": ".",
   "compilerOptions": {
-    "baseUrl": ".",
-    "target": "es2015",
-    "module": "esnext",
-    "moduleResolution": "node",
-    "noEmit": true,
+    "target": "es5",
+    "module": "none",
     "lib": ["dom", "esnext"],
     "sourceMap": false,
-    "paths": {
-      "ebg/*": ["bga-framework.d.ts"],
-      "dojo": ["bga-framework.d.ts"],
-    },
+    "typeRoots": ["src/types", "./types", "./node_modules/@types"],
+    "outFile": "seaside.js",
+    "downlevelIteration": true
   },
-  "include": [
-    "bga-framework.d.ts", 
-    "src/**/*.ts",
+  "files": [
+    "bga-framework.d.ts",
     "src/types/bga-cards.d.ts",
     "src/types/seaside.d.ts",
+    "src/types/bga-zoom.d.ts",
+    "src/begin.ts",
     "src/types/bga-animations.d.ts",
-    "node_modules/bga-help/**/*.d.ts",
-    "node_modules/bga-zoom/**/*.d.ts"
+    "src/actions.ts",
+    "src/state.ts",
+    "src/tokens.ts",
+    "src/seaside.ts",
+    "src/end.ts"
   ]
 }

@@ -1,6 +1,4 @@
-import { SeasideGame } from "src";
-
-export class TokenManager extends BgaCards.Manager<SeasideToken> {
+class TokenManager {
   public bagStock: CardStock<SeasideToken>;
   public seaStock: SlotStock<SeasideToken>;
   public discardStock: VoidStock<SeasideToken>;
@@ -10,29 +8,7 @@ export class TokenManager extends BgaCards.Manager<SeasideToken> {
     SlotStock<SeasideToken>
   > = {};
 
-  constructor(public game: SeasideGame, private gameDatas: SeasideGamedatas) {
-    //@ts-ignore
-    super({
-      animationManager: game.animationManager,
-      cardWidth: 100,
-      cardHeight: 100,
-      cardBorderRadius: "50%",
-
-      isCardVisible: (token: SeasideToken) => {
-        return token.flipped;
-      },
-      setupDiv: (token: SeasideToken, div: HTMLElement) => {
-        div.classList.add("seaside-token");
-        this.game.setTooltip(div.id, this.getTooltip(token));
-      },
-      setupBackDiv: (token: SeasideToken, div: HTMLElement) => {
-        div.setAttribute("data-type", token.side1);
-      },
-      setupFrontDiv: (token: SeasideToken, div: HTMLElement) => {
-        div.setAttribute("data-type", token.side2);
-      },
-    });
-
+  constructor(public game: SeasideGame, private gameDatas: SeasideGamedatas, private cards: CardManager<SeasideToken>) {
     this.setupBagStock();
     this.setupDiscardStock();
 
@@ -45,30 +21,30 @@ export class TokenManager extends BgaCards.Manager<SeasideToken> {
       .getElementById("seaside-draw-bag")
       .addEventListener("click", () => {
         if (this.game.isCurrentPlayerActive()) {
-          this.flipCard(this.bagStock.getCards()[0]);
+          this.cards.flipCard(this.bagStock.getCards()[0]);
         }
       });
   }
 
   private setupBagStock() {
-    this.bagStock = new CardStock(
-      this,
+    this.bagStock = new BgaCards.CardStock(
+      this.cards,
       document.getElementById("seaside-draw-bag")
     );
-    this.addStock(this.bagStock);
+    this.cards.addStock(this.bagStock);
   }
 
   private setupDiscardStock() {
-    this.discardStock = new VoidStock(
-      this,
+    this.discardStock = new BgaCards.VoidStock(
+      this.cards,
       document.getElementById("seaside-discard")
     );
-    this.addStock(this.discardStock);
+    this.cards.addStock(this.discardStock);
   }
 
   private setupSeaStock(gameDatas: SeasideGamedatas) {
-    this.seaStock = new SlotStock(
-      this,
+    this.seaStock = new BgaCards.SlotStock(
+      this.cards,
       document.getElementById("seaside-sea-stock"),
       {
         slotsIds: ["ISOPOD", "SHELL", "CRAB"],
@@ -76,13 +52,13 @@ export class TokenManager extends BgaCards.Manager<SeasideToken> {
         slotClasses: ["seaside-sea-stock-slot"],
       }
     );
-    this.addStock(this.seaStock);
+    this.cards.addStock(this.seaStock);
     this.seaStock.addCards(Object.values(gameDatas.seaTokens));
   }
 
   private setupPlayerStocks(player: SeasidePlayer) {
-    this.playerAreaStocks[player.id] = new SlotStock(
-      this,
+    this.playerAreaStocks[player.id] = new BgaCards.SlotStock(
+      this.cards,
       document.getElementById(`seaside-player-${player.id}`),
       {
         slotsIds: ["SHELL", "CRAB", "ROCK", "WAVE", "BEACH"],
@@ -90,7 +66,7 @@ export class TokenManager extends BgaCards.Manager<SeasideToken> {
         slotClasses: ["seaside-player-area-slot"],
       }
     );
-    this.addStock(this.playerAreaStocks[player.id]);
+    this.cards.addStock(this.playerAreaStocks[player.id]);
     const tokens = Object.values(player.tokens).filter(
       (t) => t.activeType !== "SANDPIPER" && t.activeType !== "ISOPOD"
     );
@@ -98,8 +74,8 @@ export class TokenManager extends BgaCards.Manager<SeasideToken> {
       this.playerAreaStocks[player.id].addCards(tokens);
     }
 
-    this.playerAreaSandpiperPileStocks[player.id] = new SlotStock(
-      this,
+    this.playerAreaSandpiperPileStocks[player.id] = new BgaCards.SlotStock(
+      this.cards,
       document.getElementById(`seaside-player-${player.id}-sandpiper-pile`),
       {
         slotsIds: [0],
@@ -108,7 +84,7 @@ export class TokenManager extends BgaCards.Manager<SeasideToken> {
         direction: "column",
       }
     );
-    this.addStock(this.playerAreaSandpiperPileStocks[player.id]);
+    this.cards.addStock(this.playerAreaSandpiperPileStocks[player.id]);
     const sandpodTokens = Object.values(player.tokens).filter(
       (t) => t.activeType === "SANDPIPER" || t.activeType === "ISOPOD"
     );
@@ -121,12 +97,7 @@ export class TokenManager extends BgaCards.Manager<SeasideToken> {
     }
   }
 
-  private getTooltip(token: SeasideToken): string {
-    return `
-        <p><strong>${_("Side A:")}</strong> ${token.side1}</p>
-        <p><strong>${_("Side B:")}</strong> ${token.side2}</p>
-      `;
-  }
+
 
   async drawToken(token: SeasideToken) {
     if (!this.bagStock.getCards().includes(token)) {
@@ -167,8 +138,8 @@ export class TokenManager extends BgaCards.Manager<SeasideToken> {
       this.game.updateConfirmDisabled(selection.length === 0);
     };
     this.playerAreaSandpiperPileStocks[playerId].getCards().forEach((token) => {
-      this.getCardElement(token).classList.add(
-        this.getUnselectableCardStyle().class
+      this.cards.getCardElement(token).classList.add(
+        this.cards.getUnselectableCardStyle().class
       );
     });
   }
@@ -222,8 +193,8 @@ export class TokenManager extends BgaCards.Manager<SeasideToken> {
       this.playerAreaSandpiperPileStocks[player.id]
         .getCards()
         .forEach((token) => {
-          this.getCardElement(token).classList.remove(
-            this.getUnselectableCardStyle().class
+          this.cards.getCardElement(token).classList.remove(
+            this.cards.getUnselectableCardStyle().class
           );
         });
     });

@@ -1,6 +1,4 @@
-import { SeasideGameGui } from "./seaside-gui";
-
-export enum SeasideGameStates {
+enum SeasideGameStates {
   PlayToken = "playToken",
   PlayAgain = "playAgain",
   StealCrab = "stealCrab",
@@ -12,14 +10,14 @@ export enum SeasideGameStates {
   GameEnd = "gameEnd",
 }
 
-export class SeasideStateManager {
+class SeasideStateManager {
 
-  constructor(private game: SeasideGameGui) {
+  constructor(private game: GameGui, private tokens: TokenManager) {
     this.game = game;
   }
 
   enteringPlayTokenState(args: SeasidePlayTokenArgs) {
-    this.game.tokens.drawToken(args.token);
+    this.tokens.drawToken(args.token);
   }
 
   leaveStatePlayToken() {}
@@ -36,7 +34,7 @@ export class SeasideStateManager {
 
   enteringFlipBeachState(args: SeasideFlipBeachArgs) {
     if (this.game.isCurrentPlayerActive()) {
-      this.game.tokens.setSelectableBeaches(this.game.player_id.toString(), args.flippableBeachs);
+      this.tokens.setSelectableBeaches(this.game.player_id.toString(), args.flippableBeachs);
     }
   }
 
@@ -48,9 +46,9 @@ export class SeasideStateManager {
   leaveStateStealCrab() {}
   
   enteringSelectIsopodsState(args: SeasideSelectIsopodsArgs) {
-    this.game.tokens.drawToken(args.sandpiper);
+    this.tokens.drawToken(args.sandpiper);
     if (this.game.isCurrentPlayerActive()) {
-      this.game.tokens.setSelectableIsopods(args.selectableIsopods);
+      this.tokens.setSelectableIsopods(args.selectableIsopods);
     }
   }
 

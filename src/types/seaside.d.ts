@@ -1,4 +1,4 @@
-declare interface SeasideToken {
+interface SeasideToken {
   id: number;
   side1: SeasideTokenType;
   side2: SeasideTokenType;
@@ -9,34 +9,34 @@ declare interface SeasideToken {
   flipped: boolean;
 }
 
-declare interface SeasidePlayer extends Player {
+interface SeasidePlayer extends Player {
     tokens: Record<number, SeasideToken>;
 }
 
-declare interface SeasideGamedatas extends Gamedatas<SeasidePlayer> {
+interface SeasideGamedatas extends Gamedatas<SeasidePlayer> {
     seaTokens: Record<number, SeasideToken>;
 }
 
-declare interface TokenPlayedNotificationData {
+interface TokenPlayedNotificationData {
     playerId: number;
     token: SeasideToken;
     tokenSide: SeasideTokenType;
 }
 
-declare interface TokenToSeaNotificationData {
+interface TokenToSeaNotificationData {
     token: SeasideToken;
     tokenSide: SeasideTokenType;
     tokenLocationArgs: number;
 }
 
-declare interface TokenToPlayerAreaNotificationData {
+interface TokenToPlayerAreaNotificationData {
     playerId: number;
     token: SeasideToken;
     tokenSide: SeasideTokenType;
     tokenLocationArgs: number;
 }
 
-declare interface TokenMovesWithinPlayerAreaNotificationData {
+interface TokenMovesWithinPlayerAreaNotificationData {
     playerId: number;
     token: SeasideToken;
     tokenSide: SeasideTokenType;
@@ -44,91 +44,104 @@ declare interface TokenMovesWithinPlayerAreaNotificationData {
     toLocationArgs: number;
 }
 
-declare interface CrabStolenNotificationData {
+interface CrabStolenNotificationData {
     thiefId: number;
     playerId: number;
     token: SeasideToken;
 }
 
-declare interface RockGetsCrabsNotificationData {
+interface RockGetsCrabsNotificationData {
     playerId: number;
     tokenCount: number;
     tokens: SeasideToken[];
 }
 
-declare interface BeachGetsShellsNotificationData {
+interface BeachGetsShellsNotificationData {
     playerId: number;
     tokenCount: number;
     tokens: SeasideToken[];
 }
 
-declare interface CreateSandpiperPileNotificationData {
+interface CreateSandpiperPileNotificationData {
     playerId: number;
     tokenCount: number;
     tokens: SeasideToken[];
 }
 
-declare interface SandpiperIsopodsLostNotificationData {
+interface SandpiperIsopodsLostNotificationData {
     playerId: number;
     tokenCount: number;
     tokens: SeasideToken[];
 }
 
-declare interface BeachFlipNotificationData {
+interface BeachFlipNotificationData {
     playerId: number;
     token: SeasideToken;
 }
 
-declare interface EndGameWaveBonusTieNotificationData {
+interface EndGameWaveBonusTieNotificationData {
   playerIdsAndTokens: Record<number, SeasideToken[]>;
   playerNames: string[];
 }
 
-declare interface EndGameWaveBonusNotificationData {
+interface EndGameWaveBonusNotificationData {
     playerId: number;
     tokenCount: number;
     tokens: SeasideToken[];
 }
 
-declare interface PlayTokenActionData {
+interface PlayTokenActionData {
   tokenId: number;
   tokenType: SeasideTokenType;
 }
 
-declare interface FlipBeachActionData {
+interface FlipBeachActionData {
   beachId: number;
 }
 
-declare interface StealCrabActionData {
+interface StealCrabActionData {
   victimId: number;
 }
 
-declare interface SelectIsopodsActionData {
+interface SelectIsopodsActionData {
   isopodIds: string;
 }
 
-declare interface SeasidePlayTokenArgs {
+interface SeasidePlayTokenArgs {
   token: SeasideToken;
   currentPileSizes: number[];
   selectableIsopods: SeasideToken[];
 }
 
-declare interface SeasideNextPlayerArgs {}
+interface SeasideNextPlayerArgs {}
 
-declare interface SeasideFlipBeachArgs {
+interface SeasideFlipBeachArgs {
   flippableBeachs: SeasideToken[];
 }
 
-declare interface SeasidePlayAgainArgs {}
+interface SeasidePlayAgainArgs {}
 
-declare interface SeasideStealCrabArgs {
+interface SeasideStealCrabArgs {
   playersWithCrabs: { id: number; name: string }[];
 }
 
-declare interface SeasideSelectIsopodsArgs {
+interface SeasideSelectIsopodsArgs {
   selectableIsopods: SeasideToken[];
   sandpiper: SeasideToken;
   currentPileSizes: number[];
 }
 
 type SeasideTokenType = 'CRAB' | 'ISOPOD' | 'BEACH' | 'SHELL' | 'SANDPIPER' | 'WAVE' | 'ROCK';
+
+interface SeasideGame extends GameGui<SeasideGamedatas> {
+  animationManager: AnimationManager;
+  tokens: TokenManager;
+  states: SeasideStateManager;
+  actions: SeasideActions;
+  zoom: ZoomManager;
+
+  setTooltip(id: string, html: string): void;
+  onUpdateActionButtons(stateName: string, args: any): void;
+  updateConfirmDisabled(disabled: boolean): void;
+  setupNotifications(): void;
+}
