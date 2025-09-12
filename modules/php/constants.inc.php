@@ -46,6 +46,7 @@ const SEA_LOCATION = "SEA";
 const BAG_LOCATION = "deck";
 const PLAY_LOCATION = "play";
 const DISCARD_LOCATION = "discard";
+const EXCLUDED_LOCATION = "excluded";
 
 const SANDPIPER_PILE_INIT = 100;
 

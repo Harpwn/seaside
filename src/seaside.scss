@@ -195,3 +195,30 @@
   display: block;
   background-size: contain;
 }
+
+#seaside-guage-bar-container {
+  background-color: #181818;
+  top: 25%;
+  left: 24%;
+  width: 7px;
+  height: 60px;
+  position: absolute;
+  border: white 3px solid;
+}
+
+#seaside-guage-bar {
+  background-color: #9BC9C7;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  //border-top: 6px solid #FFF;
+  box-sizing: border-box;
+  animation: grow 1.5s ease-out forwards;
+  transform-origin: bottom;
+}
+
+@keyframes grow {
+  from {
+    transform: scaleY(0);
+  }
+}

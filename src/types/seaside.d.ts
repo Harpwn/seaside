@@ -111,6 +111,7 @@ interface SeasidePlayTokenArgs {
   token: SeasideToken;
   currentPileSizes: number[];
   selectableIsopods: SeasideToken[];
+  gameProgression: number;
 }
 
 interface SeasideNextPlayerArgs {}
@@ -144,4 +145,5 @@ interface SeasideGame extends GameGui<SeasideGamedatas> {
   onUpdateActionButtons(stateName: string, args: any): void;
   updateConfirmDisabled(disabled: boolean): void;
   setupNotifications(): void;
+  setDrawBagGuage(percentage: number): void;
 }

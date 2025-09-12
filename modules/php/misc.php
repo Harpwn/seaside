@@ -11,9 +11,10 @@ trait MiscTrait
     public function getGameProgression()
     {
         // get tokens left in deck
+        $excluded_tokens_count = $this->tokens->countCardsInLocation(EXCLUDED_LOCATION);
         $tokens_locations = $this->tokens->countCardsInLocations();
         $deck_tokens_count = $tokens_locations[BAG_LOCATION] ?? 0;
-        $total_tokens_count = array_sum($tokens_locations);
+        $total_tokens_count = array_sum($tokens_locations) - $excluded_tokens_count;
 
         return ($total_tokens_count - $deck_tokens_count) / $total_tokens_count * 100;
     }

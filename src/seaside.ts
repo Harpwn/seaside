@@ -44,16 +44,20 @@ class Seaside extends GameGui<SeasideGamedatas> implements SeasideGame {
       `<div id="seaside-table" class="bga-zoom-inner">
         <div id="seaside-game-area">
           <div class="seaside-sea-area-wrapper">
-            <div id="seaside-draw-bag"><span id="bag-counter"></span></div>
-            <div id="seaside-discard"></div>
-            <div id="seaside-sea-stock">
+            <div id="seaside-draw-bag">
+              <div id="seaside-guage-bar-container">
+                <div id="seaside-guage-bar" style="height: 0%"></div>
+              </div>
             </div>
+          <div id="seaside-discard"></div>
+          <div id="seaside-sea-stock"></div>
+          </div>
           </div>
         </div>
       </div>
       <div class="helpful-buttons flex fixed gap-2">
-          <div id="seaside-help"></div>
-        </div>
+        <div id="seaside-help"></div>
+      </div>
       `
     );
   }
@@ -88,6 +92,14 @@ class Seaside extends GameGui<SeasideGamedatas> implements SeasideGame {
 
   public clearMoves() {
     this.tokens.clearSelectedTokens();
+  }
+
+  public setDrawBagGuage(percentage: number) {
+    const guageBar = document.getElementById("seaside-guage-bar");
+    guageBar.style.height = `${100 - percentage}%`;
+    if(percentage > 75) {
+      guageBar.style.backgroundColor = "red";
+    }
   }
 
   public removeAllClickEvents(element: Element) {

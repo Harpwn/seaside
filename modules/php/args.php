@@ -17,7 +17,8 @@ trait ArgsTrait {
         return [
             "token" => $this->drawRandomToken(),
             "currentPileSizes" => $this->getCurrentPileSizes(),
-            "selectableIsopods" => $this->getSelectableIsopods()
+            "selectableIsopods" => $this->getSelectableIsopods(),
+            "gameProgression" => $this->getGameProgression()
         ];
     }
 

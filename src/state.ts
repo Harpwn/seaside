@@ -12,12 +12,13 @@ enum SeasideGameStates {
 
 class SeasideStateManager {
 
-  constructor(private game: GameGui, private tokens: TokenManager) {
+  constructor(private game: SeasideGame, private tokens: TokenManager) {
     this.game = game;
   }
 
   enteringPlayTokenState(args: SeasidePlayTokenArgs) {
     this.tokens.drawToken(args.token);
+    this.game.setDrawBagGuage(args.gameProgression);
   }
 
   leaveStatePlayToken() {}

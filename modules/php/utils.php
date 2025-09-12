@@ -21,7 +21,7 @@ trait UtilsTrait
     {
         for ($i = 0; $i < $n; $i++) {
             $token = $this->drawRandomToken();
-            $this->tokens->moveCard($token->id, DISCARD_LOCATION);
+            $this->tokens->moveCard($token->id, EXCLUDED_LOCATION);
         }
     }
 
