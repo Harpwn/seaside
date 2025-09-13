@@ -142,13 +142,22 @@ class Seaside extends GameGui<SeasideGamedatas> implements SeasideGame {
       },
       setupDiv: (token: SeasideToken, div: HTMLElement) => {
         div.classList.add("seaside-token");
-        this.setTooltip(div.id, this.getTooltip(token));
       },
       setupBackDiv: (token: SeasideToken, div: HTMLElement) => {
         div.setAttribute("data-type", token.side1);
+        div.classList.add("seaside-token-face");
+        const child = document.createElement("div");
+        child.setAttribute("data-type", token.side2);
+        child.classList.add("seaside-token-back-icon");
+        div.replaceChildren(child);
       },
       setupFrontDiv: (token: SeasideToken, div: HTMLElement) => {
         div.setAttribute("data-type", token.side2);
+        div.classList.add("seaside-token-face");
+        const child = document.createElement("div");
+        child.setAttribute("data-type", token.side1);
+        child.classList.add("seaside-token-back-icon");
+        div.replaceChildren(child);
       },
     });
     this.tokens = new TokenManager(this, gamedatas, cardsManager);
@@ -161,6 +170,8 @@ class Seaside extends GameGui<SeasideGamedatas> implements SeasideGame {
         color: "white",
       },
     });
+
+    this.setDrawBagGuage(gamedatas.gameProgression);
 
     this.setupNotifications();
   }

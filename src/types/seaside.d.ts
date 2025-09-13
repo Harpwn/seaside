@@ -15,6 +15,7 @@ interface SeasidePlayer extends Player {
 
 interface SeasideGamedatas extends Gamedatas<SeasidePlayer> {
     seaTokens: Record<number, SeasideToken>;
+    gameProgression: number;
 }
 
 interface TokenPlayedNotificationData {

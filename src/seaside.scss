@@ -66,16 +66,82 @@
   font-weight: 500;
 }
 
+
 .seaside-token {
 
-  .bga-cards_card-side {
+  &:hover {
+    z-index: 998;
+  }
+
+  .seaside-token-face {
+
     background-image: url("img/tokens.png");
     background-repeat: no-repeat;
     background-size: 765%;
     background-position-y: 75%;
 
+    .seaside-token-back-icon {
+      background-image: url(img/icons-white.png);
+      width: 20px;
+      height: 20px;
+      position: absolute;
+      bottom: 21%;
+      left: 69%;
+      display: block;
+      background-size: 130px;
+      background-position-y: 1px;
+      background-repeat: no-repeat;
+      border-radius: 50%;
+      background-color: #2F2F89;
+
+      &[data-type="WAVE"] {
+        background-position-x: -1%;
+        background-size: 120px;
+      }
+
+      &[data-type="ROCK"] {
+        background-position-x: 18%;
+        background-size: 115px;
+        background-position-y: 0px;
+      }
+
+      &[data-type="ISOPOD"] {
+        background-position-x: 38%;
+        background-size: 125px;
+        background-position-y: 1px;
+      }
+
+      &[data-type="SHELL"] {
+        background-position-x: 53.9%;
+        background-size: 120px;
+      }
+
+      &[data-type="CRAB"] {
+        background-position-x: 70.8%;
+      }
+
+      &[data-type="SANDPIPER"] {
+        background-position-x: 85%;
+      }
+
+      &[data-type="BEACH"] {
+        background-position-x: 101.2%;
+        background-size: 139px;
+        background-position-y: 0px;
+      }
+    }
+
+    &[data-type="SHELL"],
+    &[data-type="CRAB"],
+    &[data-type="ISOPOD"] {
+      .seaside-token-back-icon {
+        background-image: url(img/icons-blue.png);
+        background-color: white;
+      }
+    }
+
     &[data-type="WAVE"] {
-      background-position-x: 1%
+      background-position-x: 1%;
     }
 
     &[data-type="ROCK"] {

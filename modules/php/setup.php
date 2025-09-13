@@ -49,10 +49,9 @@ trait SetupTrait
         }
 
         $result['seaTokens'] = $this->getAllTokensForLocation(SEA_LOCATION);
-
         $result['deckRemainingCount'] = $this->tokens->countCardsInLocation(BAG_LOCATION);
-
         $result['bagTokens'] = $this->tokens->getCardsInLocation(BAG_LOCATION);
+        $result['gameProgression'] = $this->getGameProgression();
 
         return $result;
     }

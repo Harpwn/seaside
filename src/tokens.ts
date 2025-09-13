@@ -2,6 +2,7 @@ class TokenManager {
   public bagStock: CardStock<SeasideToken>;
   public seaStock: SlotStock<SeasideToken>;
   public discardStock: VoidStock<SeasideToken>;
+  public hoverTimers;
   public playerAreaStocks: Record<string, SlotStock<SeasideToken>> = {};
   public playerAreaSandpiperPileStocks: Record<
     string,
@@ -96,8 +97,6 @@ class TokenManager {
       });
     }
   }
-
-
 
   async drawToken(token: SeasideToken) {
     if (!this.bagStock.getCards().includes(token)) {
