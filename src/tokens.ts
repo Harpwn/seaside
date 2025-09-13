@@ -4,10 +4,8 @@ class TokenManager {
   public discardStock: VoidStock<SeasideToken>;
   public hoverTimers;
   public playerAreaStocks: Record<string, SlotStock<SeasideToken>> = {};
-  public playerAreaSandpiperPileStocks: Record<
-    string,
-    SlotStock<SeasideToken>
-  > = {};
+  public playerAreaSandpiperPileStocks: Record<string, SlotStock<SeasideToken>> = {};
+  public playerEndGameScoringStocks: Record<string, CardStock<SeasideToken>> = {};
 
   constructor(public game: SeasideGame, private gameDatas: SeasideGamedatas, private cards: CardManager<SeasideToken>) {
     this.setupBagStock();
@@ -96,6 +94,17 @@ class TokenManager {
         this.createSandpiperPile(tokens, player.id, true);
       });
     }
+
+    this.playerEndGameScoringStocks[player.id] = new BgaCards.CardStock(this.cards,document.getElementById(`seaside-endgame-scoring-stock-${player.id}`));
+    this.cards.addStock(this.playerEndGameScoringStocks[player.id]);
+  }
+
+  async performEndGameScoring(tokensByPlayer: Record<number, SeasideToken[]>) {
+    for (const playerId of Object.keys(tokensByPlayer)) {
+      const tokens = tokensByPlayer[Number(playerId)];
+      await this.playerEndGameScoringStocks[playerId].addCards(tokens, {}, 400);
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+    };
   }
 
   async drawToken(token: SeasideToken) {

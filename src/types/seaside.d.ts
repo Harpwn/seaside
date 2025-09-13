@@ -24,6 +24,10 @@ interface TokenPlayedNotificationData {
     tokenSide: SeasideTokenType;
 }
 
+interface EndGameScoringNotificationData {
+    tokensByPlayer: Record<number, SeasideToken[]>;
+}
+
 interface TokenToSeaNotificationData {
     token: SeasideToken;
     tokenSide: SeasideTokenType;

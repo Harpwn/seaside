@@ -55,6 +55,10 @@ class Seaside extends GameGui<SeasideGamedatas> implements SeasideGame {
           </div>
         </div>
       </div>
+      <div id="seaside-endgame-scoring">
+        <div id="seaside-endgame-scoring-title">End Game Scoring</div>
+        <div id="seaside-endgame-scoring-stocks" class="flex gap-4 justify-center"></div>
+      </div>
       <div class="helpful-buttons flex fixed gap-2">
         <div id="seaside-help"></div>
       </div>
@@ -72,6 +76,13 @@ class Seaside extends GameGui<SeasideGamedatas> implements SeasideGame {
           <div id="seaside-player-${player.id}" class="seaside-player">
             <div id="seaside-player-${playerId}-sandpiper-pile" class="seaside-player-area-stock-sandpiper"></div>
           </div>
+        </div>`
+      );
+
+      document.getElementById("seaside-endgame-scoring-stocks").insertAdjacentHTML(
+        "beforeend",
+        `<div id="seaside-endgame-scoring-stock-${player.id}">
+          <div class="seaside-endgame-scoring-player-name">${player.name}</div>
         </div>`
       );
     });
@@ -174,13 +185,6 @@ class Seaside extends GameGui<SeasideGamedatas> implements SeasideGame {
     this.setDrawBagGuage(gamedatas.gameProgression);
 
     this.setupNotifications();
-  }
-
-  private getTooltip(token: SeasideToken): string {
-    return `
-        <p><strong>${_("Side A:")}</strong> ${token.side1}</p>
-        <p><strong>${_("Side B:")}</strong> ${token.side2}</p>
-      `;
   }
 
   onEnteringState(stateName: string, payload: any) {
@@ -332,5 +336,10 @@ class Seaside extends GameGui<SeasideGamedatas> implements SeasideGame {
       args.playerId.toString()
     );
     this.scoreCtrl[args.playerId].incValue(args.tokenCount);
+  }
+
+  async notif_endGameScoring(args: EndGameScoringNotificationData) {
+    document.getElementById("seaside-endgame-scoring").style.display = "block";
+    await this.tokens.performEndGameScoring(args.tokensByPlayer);
   }
 }

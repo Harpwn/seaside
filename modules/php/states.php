@@ -37,6 +37,11 @@ trait StatesTrait
 
     function stEndGameScoring()
     {
+        $tokensByPlayer = [];
+        foreach ($this->getPlayersIds() as $playerId) {
+            $tokensByPlayer[$playerId] = $this->getAllTokensForLocation((string)$playerId);
+        }
+        $this->nfEndGameScoring($tokensByPlayer);
         $this->gamestate->nextState(TRANSITION_SCORING_FINISHED);
     }
 

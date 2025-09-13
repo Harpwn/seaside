@@ -288,3 +288,53 @@
     transform: scaleY(0);
   }
 }
+
+#seaside-endgame-scoring {
+  display: none;
+  position: absolute;
+  height: 643px;
+  width: 680px;
+  top: 85px;
+  margin: 10px;
+  background-color: rgba(255, 255, 255, 0.8);
+  z-index: 999;
+
+  #seaside-endgame-scoring-title {
+    font-size: 24px;
+    font-weight: 700;
+    text-align: center;
+    margin-top: 20px;
+  }
+
+  .seaside-endgame-scoring-player-name {
+    position: absolute;
+    top: -27px;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    color: white;
+    background-color: darkblue;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    overflow: hidden;
+    font-weight: 500;
+  }
+
+  .card-stock {
+    width: 100px;
+    background-color: rgba(255, 255, 255, .5);
+    height: 500px;
+    margin-top: 45px;
+    padding: 5px;
+    display: flex;
+    flex-direction: column-reverse;
+
+    .bga-cards_card {
+      margin-bottom: -90px;
+    }
+
+    :nth-child(2).bga-cards_card {
+      margin-bottom: 0px;
+    }
+  }
+}

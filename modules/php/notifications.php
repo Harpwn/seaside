@@ -127,6 +127,13 @@ trait NotificationsTrait
         ]);
     }
 
+    function nfEndGameScoring(array $tokensByPlayer) {
+        //$this->debugLog($tokensByPlayer, 'nfEndGameScoring');
+        $this->notify->all("endGameScoring", clienttranslate('End game scoring results'), [
+            "tokensByPlayer" => $tokensByPlayer
+        ]);
+    }
+
     function addPlayerNameDecorator() 
     {
         $this->notify->addDecorator(function (string $message, array $args) {
