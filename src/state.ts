@@ -27,6 +27,10 @@ class SeasideStateManager {
     //Play some kind of animation
   }
 
+  enteringGameEndState() {
+    document.getElementById("seaside-endgame-scoring").style.display = "block";
+  }
+
   leaveStatePlayAgain() {}
 
   enteringNextPlayerState(args: SeasideNextPlayerArgs) {}

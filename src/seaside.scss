@@ -289,6 +289,8 @@
   }
 }
 
+
+
 #seaside-endgame-scoring {
   display: none;
   position: absolute;
@@ -333,8 +335,30 @@
       margin-bottom: -90px;
     }
 
-    :nth-child(2).bga-cards_card {
+    :nth-child(3).bga-cards_card {
       margin-bottom: 0px;
     }
+  }
+}
+
+#seaside-endgame-scoring-solo-text {
+  opacity: 0;
+  animation: fadeIn 1s ease-in-out;
+  position: absolute;
+  width: 200px;
+  height: 505px;
+  top: 78px;
+  left: 154px;
+  font-weight: 300;
+  font-size: 24px;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
   }
 }

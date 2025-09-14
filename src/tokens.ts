@@ -56,6 +56,13 @@ class TokenManager {
   }
 
   private setupPlayerStocks(player: SeasidePlayer) {
+    if(this.game.gamedatas.gamestate.name == "gameEnd") {
+      this.playerEndGameScoringStocks[player.id] = new BgaCards.CardStock(this.cards,document.getElementById(`seaside-endgame-scoring-stock-${player.id}`));
+      this.playerEndGameScoringStocks[player.id].addCards(Object.values(player.tokens));
+      this.cards.addStock(this.playerEndGameScoringStocks[player.id]);
+      return;
+    }
+
     this.playerAreaStocks[player.id] = new BgaCards.SlotStock(
       this.cards,
       document.getElementById(`seaside-player-${player.id}`),

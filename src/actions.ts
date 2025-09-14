@@ -7,7 +7,7 @@ enum SeasideGameActions {
 }
 
 class SeasideActions {
-  constructor(private gameGui: GameGui, private tokens: TokenManager) {
+  constructor(private game: SeasideGame, private tokens: TokenManager) {
   }
 
   actPlayToken(args: SeasidePlayTokenArgs, tokenType: SeasideTokenType) {
@@ -19,7 +19,7 @@ class SeasideActions {
     if (tokenType == "SANDPIPER") {
       this.handlePlaySandpiper(args);
     } else {
-      this.gameGui.bgaPerformAction(SeasideGameActions.PlayToken, data);
+      this.game.bgaPerformAction(SeasideGameActions.PlayToken, data);
     }
   }
 
@@ -32,14 +32,13 @@ class SeasideActions {
       args.selectableIsopods.length == 0 &&
       args.currentPileSizes.some((size) => size > 1)
     ) {
-      this.gameGui.confirmationDialog(
-        "There are no Isopods in the sea and you have an existing pile bigger than one, playing this will cause it to be discarded.",
+      this.game.confirmationDialog(this.game.gamedatas.sandPiperWarnings["EMPTY_SEA"],
         () => {
-          this.gameGui.bgaPerformAction(SeasideGameActions.PlayToken, data);
+          this.game.bgaPerformAction(SeasideGameActions.PlayToken, data);
         }
       );
     } else {
-      this.gameGui.bgaPerformAction(SeasideGameActions.PlayToken, data);
+      this.game.bgaPerformAction(SeasideGameActions.PlayToken, data);
     }
   }
 
@@ -48,7 +47,7 @@ class SeasideActions {
       beachId: tokenId,
     };
 
-    this.gameGui.bgaPerformAction(SeasideGameActions.FlipBeach, data);
+    this.game.bgaPerformAction(SeasideGameActions.FlipBeach, data);
   }
 
   actStealCrab(victimId: number) {
@@ -56,7 +55,7 @@ class SeasideActions {
       victimId,
     };
 
-    this.gameGui.bgaPerformAction(SeasideGameActions.StealCrab, data);
+    this.game.bgaPerformAction(SeasideGameActions.StealCrab, data);
   }
 
   actSelectIsopods(isopodIds: number[]) {
@@ -64,15 +63,15 @@ class SeasideActions {
       isopodIds: isopodIds.join(","),
     };
 
-    this.gameGui.bgaPerformAction(SeasideGameActions.SelectIsopods, data);
+    this.game.bgaPerformAction(SeasideGameActions.SelectIsopods, data);
   }
 
   updateActionButtonsPlayToken(args: SeasidePlayTokenArgs) {
-    if (this.gameGui.isCurrentPlayerActive()) {
-      this.gameGui.statusBar.addActionButton(`Play ${args.token.side1} Side`, () =>
+    if (this.game.isCurrentPlayerActive()) {
+      this.game.statusBar.addActionButton(`Play ${args.token.side1} Side`, () =>
         this.actPlayToken(args, args.token.side1)
       );
-      this.gameGui.statusBar.addActionButton(`Play ${args.token.side2} Side`, () =>
+      this.game.statusBar.addActionButton(`Play ${args.token.side2} Side`, () =>
         this.actPlayToken(args, args.token.side2)
       );
     }
@@ -83,9 +82,9 @@ class SeasideActions {
   updateActionButtonsNextPlayer(args: SeasideNextPlayerArgs) {}
 
   updateActionButtonsStealCrab(args: SeasideStealCrabArgs) {
-    if (this.gameGui.isCurrentPlayerActive()) {
+    if (this.game.isCurrentPlayerActive()) {
       args.playersWithCrabs.forEach((player) => {
-        this.gameGui.statusBar.addActionButton(
+        this.game.statusBar.addActionButton(
           `${player.name}`,
           () => this.actStealCrab(player.id)
         );
@@ -94,11 +93,11 @@ class SeasideActions {
   }
 
   updateActionButtonsFlipBeach(args: SeasideFlipBeachArgs) {
-    if (this.gameGui.isCurrentPlayerActive()) {
-      this.gameGui.statusBar.addActionButton(
+    if (this.game.isCurrentPlayerActive()) {
+      this.game.statusBar.addActionButton(
         `Confirm`,
         () => {
-          const beachToken = this.tokens.playerAreaStocks[this.gameGui.player_id].getSelection()[0];
+          const beachToken = this.tokens.playerAreaStocks[this.game.player_id].getSelection()[0];
           this.actFlipBeach(beachToken.id);
         },
         {
@@ -110,8 +109,8 @@ class SeasideActions {
   }
 
   updateActionButtonsSelectIsopods(args: SeasideSelectIsopodsArgs) {
-    if (this.gameGui.isCurrentPlayerActive()) {
-      this.gameGui.statusBar.addActionButton(
+    if (this.game.isCurrentPlayerActive()) {
+      this.game.statusBar.addActionButton(
         `Confirm`,
         () => {
           const isopodTokenIds = this.tokens.seaStock.getSelection().map(t => t.id);
@@ -124,20 +123,19 @@ class SeasideActions {
               (size) => size < newPileSize
             );
             if (largerPiles.length > 0) {
-              this.gameGui.confirmationDialog(
-                `${newPileSize} tokens is less than your current largest pile (${Math.max(
-                  ...args.currentPileSizes
-                )}), so this pile will be discarded.`,
+              this.game.confirmationDialog(
+                this.game.gamedatas.sandPiperWarnings["SMALLER_PILE"]
+                  .replace("!NEW_PILE_SIZE", newPileSize.toString())
+                  .replace("!MAX_PILE_SIZE", Math.max(...args.currentPileSizes).toString()),
                 () => {
                   this.actSelectIsopods(isopodTokenIds);
                 }
               );
             } else if (smallerPiles.length > 0) {
-              this.gameGui.confirmationDialog(
-                `${newPileSize} tokens is your largest pile, all smaller piles will be discarded losing you ${smallerPiles.reduce(
-                  (a, b) => a + b,
-                  0
-                )} tokens.`,
+              this.game.confirmationDialog(
+                this.game.gamedatas.sandPiperWarnings["LARGER_PILE"]
+                  .replace("!NEW_PILE_SIZE", newPileSize.toString())
+                  .replace("!OTHER_PILE_TOKEN_COUNTS", smallerPiles.reduce((a, b) => a + b, 0).toString()),
                 () => {
                   this.actSelectIsopods(isopodTokenIds);
                 }

@@ -1,9 +1,11 @@
 <?php
+
 declare(strict_types=1);
 
 trait NotificationsTrait
 {
-    function nfTokenPlayed (int $playerId, Token $token) {
+    function nfTokenPlayed(int $playerId, Token $token)
+    {
         //$this->debugLog([$playerId, $token], 'nfTokenPlayed');
         $this->notify->all("tokenPlayed", clienttranslate('${playerName} plays ${tokenSide}'), [
             "playerId" => $playerId,
@@ -12,7 +14,8 @@ trait NotificationsTrait
         ]);
     }
 
-    function nfTokenToSea (Token $token, int $tokenLocationArgs) {
+    function nfTokenToSea(Token $token, int $tokenLocationArgs)
+    {
         //$this->debugLog([$token, $tokenLocationArgs], 'nfTokenToSea');
         $this->notify->all("tokenToSea", clienttranslate('${tokenSide} played into the sea'), [
             "tokenSide" => $token->activeType,
@@ -21,7 +24,8 @@ trait NotificationsTrait
         ]);
     }
 
-    function nfTokenToPlayerArea(int $playerId, Token $token, int $tokenLocationArgs = 0) {
+    function nfTokenToPlayerArea(int $playerId, Token $token, int $tokenLocationArgs = 0)
+    {
         //$this->debugLog([$playerId, $token, $tokenLocationArgs], 'nfTokenToPlayerArea');
         $this->notify->all("tokenToPlayerArea", clienttranslate('${tokenSide} played into ${playerName}\'s shore'), [
             "tokenSide" => $token->activeType,
@@ -31,7 +35,8 @@ trait NotificationsTrait
         ]);
     }
 
-    function nfTokenMovesWithinPlayerArea(int $playerId, Token $token, int $fromLocationArgs, int $toLocationArgs) {
+    function nfTokenMovesWithinPlayerArea(int $playerId, Token $token, int $fromLocationArgs, int $toLocationArgs)
+    {
         //$this->debugLog([$playerId, $token, $fromLocationArgs, $toLocationArgs], 'nfTokenMovesWithinPlayerArea');
         $this->notify->all("tokenMovesWithinPlayerArea", clienttranslate('${tokenSide} moves within ${playerName}\'s shore'), [
             "tokenSide" => $token->activeType,
@@ -42,7 +47,8 @@ trait NotificationsTrait
         ]);
     }
 
-    function nfCrabStolen(int $playerId, int $thiefId, Token $token) {
+    function nfCrabStolen(int $playerId, int $thiefId, Token $token)
+    {
         //$this->debugLog([$playerId, $thiefId, $token], 'nfCrabStolen');
         $this->notify->all("crabStolen", clienttranslate('One of ${playerName}\'s CRAB tokens is stolen'), [
             "playerId" => $playerId,
@@ -51,7 +57,8 @@ trait NotificationsTrait
         ]);
     }
 
-    function nfRockGetsCrabs(int $playerId, array $crabs) {
+    function nfRockGetsCrabs(int $playerId, array $crabs)
+    {
         //$this->debugLog([$playerId, $crabs], 'nfRockGetsCrabs');
         $this->notify->all("rockGetsCrabs", clienttranslate('${playerName}\'s ROCK pair attracts ${tokenCount} CRAB tokens'), [
             "playerId" => $playerId,
@@ -60,7 +67,8 @@ trait NotificationsTrait
         ]);
     }
 
-    function nfBeachGetsShells(int $playerId, array $seaShells) {
+    function nfBeachGetsShells(int $playerId, array $seaShells)
+    {
         //$this->debugLog([$playerId, $seaShells], 'nfBeachGetsShells');
         $this->notify->all("beachGetsShells", clienttranslate('${playerName}\'s Beaches find ${tokenCount} buried SHELL tokens'), [
             "playerId" => $playerId,
@@ -69,7 +77,8 @@ trait NotificationsTrait
         ]);
     }
 
-    function nfcreateSandpiperPile(int $playerId, array $tokens) {
+    function nfcreateSandpiperPile(int $playerId, array $tokens)
+    {
         //$this->debugLog([$playerId, $tokens], 'nfcreateSandpiperPile');
         $this->notify->all("createSandpiperPile", clienttranslate('${playerName}\'s SANDPIPER grabs a pile of ${tokenCount} tokens'), [
             "playerId" => $playerId,
@@ -78,7 +87,8 @@ trait NotificationsTrait
         ]);
     }
 
-    function nfSandpiperIsopodsLost(int $playerId, array $pileTokens) {
+    function nfSandpiperIsopodsLost(int $playerId, array $pileTokens)
+    {
         //$this->debugLog([$playerId, $pileTokens], 'nfSandpiperIsopodsLost');
         $this->notify->all("sandpiperIsopodsLost", clienttranslate('${playerName} loses SANDPIPER pile of ${tokenCount} tokens'), [
             "playerId" => $playerId,
@@ -87,7 +97,7 @@ trait NotificationsTrait
         ]);
     }
 
-    function nfBeachFlip(int $playerId, Token $beach) 
+    function nfBeachFlip(int $playerId, Token $beach)
     {
         //$this->debugLog([$playerId, $beach], 'nfBeachFlip');
         $this->notify->all("beachFlip", clienttranslate('${playerName}\'s WAVE washes away a BEACH to reveal a ${otherSideType} token'), [
@@ -97,7 +107,7 @@ trait NotificationsTrait
         ]);
     }
 
-    function nfEndGameWaveBonus(int $playerId, array $seaTokens) 
+    function nfEndGameWaveBonus(int $playerId, array $seaTokens)
     {
         //$this->debugLog([$playerId, $seaTokens], 'nfEndGameWaveBonus');
         $this->notify->all("endGameWaveBonus", clienttranslate('${playerName} has the most waves, so they get the ${tokenCount} leftover sea tokens'), [
@@ -107,7 +117,7 @@ trait NotificationsTrait
         ]);
     }
 
-    function nfEndGameWaveBonusTie(array $playerIdsAndTokens) 
+    function nfEndGameWaveBonusTie(array $playerIdsAndTokens)
     {
         //$this->debugLog($playerIdsAndTokens, 'nfEndGameWaveBonusTie');
         $playerIds = array_keys($playerIdsAndTokens);
@@ -120,21 +130,36 @@ trait NotificationsTrait
         ]);
     }
 
-    function nfPlayAgain(int $playerId) {
+    function nfPlayAgain(int $playerId)
+    {
         //$this->debugLog($playerId, 'nfPlayAgain');
         $this->notify->all("playAgain", clienttranslate('${playerName} must play again'), [
             "playerId" => $playerId
         ]);
     }
 
-    function nfEndGameScoring(array $tokensByPlayer) {
+    function nfEndGameScoring(array $tokensByPlayer)
+    {
         //$this->debugLog($tokensByPlayer, 'nfEndGameScoring');
-        $this->notify->all("endGameScoring", clienttranslate('End game scoring results'), [
-            "tokensByPlayer" => $tokensByPlayer
+        if ($this->isSoloGame()) {
+            $this->notify->all("endGameScoringSolo", clienttranslate('End game scoring results (solo)'), [
+                "tokensByPlayer" => $tokensByPlayer,
+                "resultText" => $this->getSoloGameResultText()
+            ]);
+        } else {
+            $this->notify->all("endGameScoring", clienttranslate('End game scoring results'), [
+                "tokensByPlayer" => $tokensByPlayer
+            ]);
+        }
+    }
+
+    function nfSoloTokenLimitReached(string $tokenType) {
+        $this->notify->all("soloTokenLimitReached", clienttranslate('You have reached 7 ${tokenType} tokens, the game ends immediately.'), [
+            "tokenType" => $tokenType
         ]);
     }
 
-    function addPlayerNameDecorator() 
+    function addPlayerNameDecorator()
     {
         $this->notify->addDecorator(function (string $message, array $args) {
             if (isset($args['playerId']) && !isset($args['playerName']) && str_contains($message, '${playerName}')) {

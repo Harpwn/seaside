@@ -16,6 +16,8 @@ interface SeasidePlayer extends Player {
 interface SeasideGamedatas extends Gamedatas<SeasidePlayer> {
     seaTokens: Record<number, SeasideToken>;
     gameProgression: number;
+    soloResultText?: string;
+    sandPiperWarnings: Record<'EMPTY_SEA' | 'SMALLER_PILE' | 'LARGER_PILE', string>;
 }
 
 interface TokenPlayedNotificationData {
@@ -26,6 +28,11 @@ interface TokenPlayedNotificationData {
 
 interface EndGameScoringNotificationData {
     tokensByPlayer: Record<number, SeasideToken[]>;
+}
+
+interface EndGameScoringSoloNotificationData {
+    tokensByPlayer: Record<number, SeasideToken[]>;
+    resultText: string;
 }
 
 interface TokenToSeaNotificationData {

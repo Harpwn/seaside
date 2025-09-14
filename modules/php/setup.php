@@ -52,6 +52,12 @@ trait SetupTrait
         $result['deckRemainingCount'] = $this->tokens->countCardsInLocation(BAG_LOCATION);
         $result['bagTokens'] = $this->tokens->getCardsInLocation(BAG_LOCATION);
         $result['gameProgression'] = $this->getGameProgression();
+        
+        if($this->isSoloGame() && $this->gamestate->state()['name'] == 'gameEnd') {
+            $result['soloResultText'] = $this->getSoloGameResultText();
+        }
+
+        $result['sandPiperWarnings'] = $this->getSandpiperConfirmationWarnings();
 
         return $result;
     }
@@ -89,6 +95,7 @@ trait SetupTrait
                 // Remove 15-20 tokens
                 $this->removeNoTokens(bga_rand(15, 20));
                 break;
+            case 1:
             case 4:
             case 5:
                 //All Tokens Used

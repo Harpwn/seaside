@@ -5,21 +5,6 @@ GameGui = (function () {
   return GameGui;
 })();
 
-enum SeasideGameNotifications {
-  TokenPlayed = "tokenPlayed",
-  TokenToSea = "tokenToSea",
-  TokenToPlayerArea = "tokenToPlayerArea",
-  TokenMovesWithinPlayerArea = "tokenMovesWithinPlayerArea",
-  CrabStolen = "crabStolen",
-  RockGetsCrabs = "rockGetsCrabs",
-  BeachFlip = "beachFlip",
-  BeachGetsShells = "beachGetsShells",
-  SandpiperGetsIsopods = "sandpiperGetsIsopods",
-  SandpiperIsopodsLost = "sandpiperIsopodsLost",
-  EndGameWaveBonus = "endGameWaveBonus",
-  EndGameWaveBonusTie = "endGameWaveBonusTie",
-}
-
 // @ts-ignore
 declare const BgaAnimations;
 // @ts-ignore
@@ -54,10 +39,10 @@ class Seaside extends GameGui<SeasideGamedatas> implements SeasideGame {
           </div>
           </div>
         </div>
-      </div>
       <div id="seaside-endgame-scoring">
         <div id="seaside-endgame-scoring-title">End Game Scoring</div>
         <div id="seaside-endgame-scoring-stocks" class="flex gap-4 justify-center"></div>
+      </div>
       </div>
       <div class="helpful-buttons flex fixed gap-2">
         <div id="seaside-help"></div>
@@ -79,12 +64,15 @@ class Seaside extends GameGui<SeasideGamedatas> implements SeasideGame {
         </div>`
       );
 
-      document.getElementById("seaside-endgame-scoring-stocks").insertAdjacentHTML(
-        "beforeend",
-        `<div id="seaside-endgame-scoring-stock-${player.id}">
+      document
+        .getElementById("seaside-endgame-scoring-stocks")
+        .insertAdjacentHTML(
+          "beforeend",
+          `<div id="seaside-endgame-scoring-stock-${player.id}">
           <div class="seaside-endgame-scoring-player-name">${player.name}</div>
+          <div id="seaside-endgame-scoring-solo-text"></div>
         </div>`
-      );
+        );
     });
   }
 
@@ -108,7 +96,7 @@ class Seaside extends GameGui<SeasideGamedatas> implements SeasideGame {
   public setDrawBagGuage(percentage: number) {
     const guageBar = document.getElementById("seaside-guage-bar");
     guageBar.style.height = `${100 - percentage}%`;
-    if(percentage > 75) {
+    if (percentage > 75) {
       guageBar.style.backgroundColor = "red";
     }
   }
@@ -206,6 +194,9 @@ class Seaside extends GameGui<SeasideGamedatas> implements SeasideGame {
         break;
       case SeasideGameStates.SelectIsopods:
         this.states.enteringSelectIsopodsState(payload.args);
+        break;
+      case SeasideGameStates.GameEnd:
+        this.states.enteringGameEndState();
         break;
     }
   }
@@ -341,5 +332,13 @@ class Seaside extends GameGui<SeasideGamedatas> implements SeasideGame {
   async notif_endGameScoring(args: EndGameScoringNotificationData) {
     document.getElementById("seaside-endgame-scoring").style.display = "block";
     await this.tokens.performEndGameScoring(args.tokensByPlayer);
+  }
+
+  async notif_endGameScoringSolo(args: EndGameScoringSoloNotificationData) {
+    document.getElementById("seaside-endgame-scoring").style.display = "block";
+    await this.tokens.performEndGameScoring(args.tokensByPlayer);
+    const soloTextElement = document.getElementById("seaside-endgame-scoring-solo-text");
+    soloTextElement.innerHTML = args.resultText;
+    soloTextElement.style.opacity = "1";
   }
 }
