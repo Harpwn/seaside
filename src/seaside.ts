@@ -228,8 +228,6 @@ class Seaside extends GameGui<SeasideGamedatas> implements SeasideGame {
     }
   }
 
-  async notif_tokenPlayed(args: TokenPlayedNotificationData) {}
-
   async notif_tokenToSea(args: TokenToSeaNotificationData) {
     await this.tokens.moveTokenToSea(args.token);
   }
@@ -289,8 +287,6 @@ class Seaside extends GameGui<SeasideGamedatas> implements SeasideGame {
     );
     this.scoreCtrl[args.playerId].incValue(-args.tokenCount);
   }
-
-  async notif_beachFlip(args: BeachFlipNotificationData) {}
 
   async notif_endGameWaveBonusTie(args: EndGameWaveBonusTieNotificationData) {
     for (const playerId of Object.keys(args.playerIdsAndTokens)) {
