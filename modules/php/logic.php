@@ -111,7 +111,7 @@ trait LogicTrait
         $this->nfTokenToPlayerArea($playerId, $rock);
         $this->incStat(1, STAT_NO_ROCK, $playerId);
         $playerRocks = $this->getAllTokensOfTypeForLocation((string)$playerId, ROCK);
-        if (is_array($playerRocks) && count($playerRocks) % 2 === 0) {            
+        if (is_array($playerRocks) && count($playerRocks) % 2 === 0) {
             //Send all crabs in sea to player area
             $seaCrabs = $this->getAllTokensOfTypeForLocation(SEA_LOCATION, CRAB);
 
@@ -251,6 +251,11 @@ trait LogicTrait
         }
 
         $mostWaves = max($playerWaveCounts);
+
+        if($mostWaves == 0) {
+            return;
+        }
+
         $playersWithMostWaves = array_keys($playerWaveCounts, $mostWaves);
 
         if (count($playersWithMostWaves) == 1) {
@@ -316,5 +321,54 @@ trait LogicTrait
     function flipToken(Token $token)
     {
         $this->dbFlipToken($token);
+    }
+
+    function soloGameEndConditionMet(): bool
+    {
+        //check if sea has 7 total tokens
+        $seaTokens = $this->getAllTokensForLocation(SEA_LOCATION);
+        if (count($seaTokens) >= 7) {
+            $this->nfSoloTokenLimitReached('Sea');
+            return true;
+        }
+
+        //check if player has 7 of any non sea-token
+        $playerId = (int)$this->getActivePlayerId();
+        $playerTokens = $this->getAllTokensForLocation((string)$playerId);
+        $filteredTokens = array_filter($playerTokens, function ($token) {
+            return $token->activeType !== SHELL && $token->activeType !== ISOPOD && $token->activeType !== CRAB;
+        });
+        $typeCounts = [];
+        foreach ($filteredTokens as $token) {
+            if (!array_key_exists($token->activeType, $typeCounts)) {
+                $typeCounts[$token->activeType] = 0;
+            }
+            $typeCounts[$token->activeType]++;
+            if ($typeCounts[$token->activeType] >= 7) {
+                $this->nfSoloTokenLimitReached($token->activeType);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    function gameEndOrNextState(callable $toNextState): void
+    {
+        $remainingTokens = $this->tokens->countCardsInLocation(BAG_LOCATION);
+        if ($this->isSoloGame()) {
+            $gameEnds = $this->soloGameEndConditionMet();
+            if ($gameEnds) {
+                $this->gamestate->nextState(TRANSITION_GAME_ENDING);
+            } else if ($remainingTokens == 0) {
+                $this->gamestate->nextState(TRANSITION_GAME_ENDING);
+            } else {
+                $toNextState();
+            }
+        } else if ($remainingTokens == 0) {
+            $this->gamestate->nextState(TRANSITION_GAME_ENDING);
+        } else {
+            $toNextState();
+        }
     }
 }

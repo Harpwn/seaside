@@ -10,7 +10,7 @@
 //define//  dojo,
 //define//  declare,
 //define//  GameGui,
-//define//  counter,
+//define//  Counter,
 //define//  BgaZoom,
 //define//  BgaAnimations,
 //define//  BgaCards

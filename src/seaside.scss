@@ -1,8 +1,9 @@
 @use '../node_modules/bga-zoom/bga-zoom';
 @use '../node_modules/bga-help/bga-help';
 
-#page-content {
+#pagesection_gameview {
   background-color: rgba(0, 0, 0, 0.5);
+  padding: 5px;
 }
 
 #seaside-game-area {
@@ -31,7 +32,7 @@
 }
 
 #seaside-draw-bag {
-  z-index: 100;
+  z-index: 98;
   height: 170px;
   width: 280px;
   bottom: 0;
@@ -59,7 +60,7 @@
 .seaside-player-name {
   position: absolute;
   color: white;
-  z-index: 100;
+  z-index: 98;
   top: 15px;
   left: 50px;
   font-size: 20px;
@@ -70,7 +71,7 @@
 .seaside-token {
 
   &:hover {
-    z-index: 998;
+    z-index: 99;
   }
 
   .seaside-token-face {
@@ -232,7 +233,7 @@
 .helpful-buttons {
   bottom: 20px;
   left: 10px;
-  z-index: 999;
+  z-index: 100;
 }
 
 .seaside-help-button {
@@ -289,45 +290,56 @@
   }
 }
 
-
-
 #seaside-endgame-scoring {
   display: none;
   position: absolute;
-  height: 643px;
-  width: 680px;
-  top: 85px;
-  margin: 10px;
-  background-color: rgba(255, 255, 255, 0.8);
-  z-index: 999;
+  height: 730px;
+  width: 750px;
+  margin-top: 91px;
+  background-color: lightblue;
+  z-index: 99;
+  justify-self: center;
+  border: 10px solid white;
+
+  .bga-cards_card-counter {
+    width: 100%;
+    border-radius: 0;
+    left: 0;
+    font-size: 28px;
+    height: 35px;
+    top: -40px;
+    box-shadow: none;
+  }
+
 
   #seaside-endgame-scoring-title {
     font-size: 24px;
     font-weight: 700;
     text-align: center;
-    margin-top: 20px;
+    background: white;
+    padding: 10px;
   }
 
   .seaside-endgame-scoring-player-name {
     position: absolute;
-    top: -27px;
-    left: 0;
+    bottom: -35px;
     width: 100%;
     text-align: center;
     color: white;
-    background-color: darkblue;
+    background-color: #2F2F89;
     padding-top: 5px;
+    left: 0px;
     padding-bottom: 5px;
     overflow: hidden;
     font-weight: 500;
   }
-
+  
   .card-stock {
     width: 100px;
-    background-color: rgba(255, 255, 255, .5);
-    height: 500px;
+    background-color: rgba(255, 255, 255, 0.5);
+    height: 575px;
     margin-top: 45px;
-    padding: 5px;
+    padding: 10px;
     display: flex;
     flex-direction: column-reverse;
 
@@ -335,7 +347,7 @@
       margin-bottom: -90px;
     }
 
-    :nth-child(3).bga-cards_card {
+    :nth-child(4).bga-cards_card {
       margin-bottom: 0px;
     }
   }

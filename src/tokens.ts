@@ -57,7 +57,10 @@ class TokenManager {
 
   private setupPlayerStocks(player: SeasidePlayer) {
     if(this.game.gamedatas.gamestate.name == "gameEnd") {
-      this.playerEndGameScoringStocks[player.id] = new BgaCards.CardStock(this.cards,document.getElementById(`seaside-endgame-scoring-stock-${player.id}`));
+      this.playerEndGameScoringStocks[player.id] = new BgaCards.CardStock(this.cards,document.getElementById(`seaside-endgame-scoring-stock-${player.id}`),
+    {
+    counter: { show: true, position: "top" }
+  });
       this.playerEndGameScoringStocks[player.id].addCards(Object.values(player.tokens));
       this.cards.addStock(this.playerEndGameScoringStocks[player.id]);
       return;
@@ -102,14 +105,19 @@ class TokenManager {
       });
     }
 
-    this.playerEndGameScoringStocks[player.id] = new BgaCards.CardStock(this.cards,document.getElementById(`seaside-endgame-scoring-stock-${player.id}`));
+    this.playerEndGameScoringStocks[player.id] = new BgaCards.CardStock(this.cards,document.getElementById(`seaside-endgame-scoring-stock-${player.id}`),
+  {
+    counter: { show: true, position: "top" }
+  });
     this.cards.addStock(this.playerEndGameScoringStocks[player.id]);
   }
 
   async performEndGameScoring(tokensByPlayer: Record<number, SeasideToken[]>) {
     for (const playerId of Object.keys(tokensByPlayer)) {
       const tokens = tokensByPlayer[Number(playerId)];
-      await this.playerEndGameScoringStocks[playerId].addCards(tokens, {}, 400);
+      for(const token of tokens) {
+          await this.playerEndGameScoringStocks[playerId].addCard(token, { duration: 100 });
+      }
       await new Promise((resolve) => setTimeout(resolve, 2000));
     };
   }

@@ -77,10 +77,6 @@ class SeasideActions {
     }
   }
 
-  updateActionButtonsPlayAgain(args: SeasidePlayAgainArgs) {}
-
-  updateActionButtonsNextPlayer(args: SeasideNextPlayerArgs) {}
-
   updateActionButtonsStealCrab(args: SeasideStealCrabArgs) {
     if (this.game.isCurrentPlayerActive()) {
       args.playersWithCrabs.forEach((player) => {

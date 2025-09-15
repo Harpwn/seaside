@@ -29,20 +29,22 @@ class Seaside extends GameGui<SeasideGamedatas> implements SeasideGame {
       `<div id="seaside-table" class="bga-zoom-inner">
         <div id="seaside-game-area">
           <div class="seaside-sea-area-wrapper">
+            <div id="seaside-endgame-scoring">
+              <div id="seaside-endgame-scoring-title">End Game Scoring</div>
+              <div id="seaside-endgame-scoring-stocks" class="flex gap-4 justify-center"></div>
+            </div>
             <div id="seaside-draw-bag">
               <div id="seaside-guage-bar-container">
-                <div id="seaside-guage-bar" style="height: 0%"></div>
+                <div id="seaside-guage-bar" style="height: 0%">
+                </div>
               </div>
             </div>
-          <div id="seaside-discard"></div>
-          <div id="seaside-sea-stock"></div>
-          </div>
+            <div id="seaside-discard">
+            </div>
+            <div id="seaside-sea-stock">
+            </div>
           </div>
         </div>
-      <div id="seaside-endgame-scoring">
-        <div id="seaside-endgame-scoring-title">End Game Scoring</div>
-        <div id="seaside-endgame-scoring-stocks" class="flex gap-4 justify-center"></div>
-      </div>
       </div>
       <div class="helpful-buttons flex fixed gap-2">
         <div id="seaside-help"></div>
@@ -69,8 +71,8 @@ class Seaside extends GameGui<SeasideGamedatas> implements SeasideGame {
         .insertAdjacentHTML(
           "beforeend",
           `<div id="seaside-endgame-scoring-stock-${player.id}">
-          <div class="seaside-endgame-scoring-player-name">${player.name}</div>
-          <div id="seaside-endgame-scoring-solo-text"></div>
+          <span class="seaside-endgame-scoring-player-name">${player.name}</span>
+          <span id="seaside-endgame-scoring-solo-text"></span>
         </div>`
         );
     });
@@ -87,6 +89,18 @@ class Seaside extends GameGui<SeasideGamedatas> implements SeasideGame {
         </div>
       </div>`
     );
+  }
+
+  private isSoloGame(): boolean {
+    return Object.keys(this.gamedatas.players).length == 1;
+  }
+
+  private setupEndGameScoring(gamedatas: SeasideGamedatas) {
+    document.getElementById("seaside-endgame-scoring").style.display = "block";
+    if(this.isSoloGame()) {
+      document.getElementById("seaside-endgame-scoring-solo-text").style.opacity = "1";
+      document.getElementById("seaside-endgame-scoring-solo-text").innerHTML = gamedatas.soloResultText;
+    }
   }
 
   public clearMoves() {
@@ -172,6 +186,10 @@ class Seaside extends GameGui<SeasideGamedatas> implements SeasideGame {
 
     this.setDrawBagGuage(gamedatas.gameProgression);
 
+    if(gamedatas.gamestate.name == "gameEnd") {
+      this.setupEndGameScoring(gamedatas);
+    }
+
     this.setupNotifications();
   }
 
@@ -180,49 +198,16 @@ class Seaside extends GameGui<SeasideGamedatas> implements SeasideGame {
       case SeasideGameStates.PlayToken:
         this.states.enteringPlayTokenState(payload.args);
         break;
-      case SeasideGameStates.PlayAgain:
-        this.states.enteringPlayAgainState(payload.args);
-        break;
-      case SeasideGameStates.NextPlayer:
-        this.states.enteringNextPlayerState(payload.args);
-        break;
       case SeasideGameStates.FlipBeach:
         this.states.enteringFlipBeachState(payload.args);
         break;
-      case SeasideGameStates.StealCrab:
-        this.states.enteringStealCrabState(payload.args);
-        break;
       case SeasideGameStates.SelectIsopods:
         this.states.enteringSelectIsopodsState(payload.args);
-        break;
-      case SeasideGameStates.GameEnd:
-        this.states.enteringGameEndState();
         break;
     }
   }
 
   onLeavingState(stateName: string) {
-    switch (stateName) {
-      case SeasideGameStates.PlayToken:
-        this.states.leaveStatePlayToken();
-        break;
-      case SeasideGameStates.PlayAgain:
-        this.states.leaveStatePlayAgain();
-        break;
-      case SeasideGameStates.NextPlayer:
-        this.states.leaveStateNextPlayer();
-        break;
-      case SeasideGameStates.FlipBeach:
-        this.states.leaveStateFlipBeach();
-        break;
-      case SeasideGameStates.StealCrab:
-        this.states.leaveStateStealCrab();
-        break;
-      case SeasideGameStates.SelectIsopods:
-        this.states.leaveStateSelectIsopods();
-        break;
-    }
-
     this.clearMoves();
   }
 
@@ -230,12 +215,6 @@ class Seaside extends GameGui<SeasideGamedatas> implements SeasideGame {
     switch (stateName) {
       case SeasideGameStates.PlayToken:
         this.actions.updateActionButtonsPlayToken(args);
-        break;
-      case SeasideGameStates.PlayAgain:
-        this.actions.updateActionButtonsPlayAgain(args);
-        break;
-      case SeasideGameStates.NextPlayer:
-        this.actions.updateActionButtonsNextPlayer(args);
         break;
       case SeasideGameStates.FlipBeach:
         this.actions.updateActionButtonsFlipBeach(args);
