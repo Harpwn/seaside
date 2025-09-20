@@ -117,6 +117,8 @@ trait UtilsTrait
     {
         return [
             'DRAW_BAG_COUNT' => clienttranslate("There are !TOKEN_COUNT tokens remaining in the draw bag."),
+            'SOLO_TOKEN_WARNING' => clienttranslate("In solo getting 7 !TOKEN_TYPE tokens immediately ends the game."),
+            'SOLO_SEA_TOKEN_WARNING' => clienttranslate("In solo having 7 total tokens in the sea immediately ends the game."),
         ];
     }
 

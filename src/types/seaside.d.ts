@@ -19,7 +19,7 @@ interface SeasideGamedatas extends Gamedatas<SeasidePlayer> {
     soloResultText?: string;
     sandPiperWarnings: Record<'EMPTY_SEA' | 'SMALLER_PILE' | 'LARGER_PILE' | 'NONE_SELECTED_BUT_AVAILABLE', string>;
     tokenDescriptions: Record<SeasideTokenType, string>;
-    miscDescriptions: Record<'DRAW_BAG_COUNT', string>;
+    miscDescriptions: Record<'DRAW_BAG_COUNT' | 'SOLO_TOKEN_WARNING' | 'SOLO_SEA_TOKEN_WARNING', string>;
     bagTokens: Record<number, SeasideToken>;
 }
 
