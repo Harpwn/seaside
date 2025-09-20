@@ -18,6 +18,9 @@ interface SeasideGamedatas extends Gamedatas<SeasidePlayer> {
     gameProgression: number;
     soloResultText?: string;
     sandPiperWarnings: Record<'EMPTY_SEA' | 'SMALLER_PILE' | 'LARGER_PILE' | 'NONE_SELECTED_BUT_AVAILABLE', string>;
+    tokenDescriptions: Record<SeasideTokenType, string>;
+    miscDescriptions: Record<'DRAW_BAG_COUNT', string>;
+    bagTokens: Record<number, SeasideToken>;
 }
 
 interface TokenPlayedNotificationData {
@@ -124,6 +127,7 @@ interface SeasidePlayTokenArgs {
   currentPileSizes: number[];
   selectableIsopods: SeasideToken[];
   gameProgression: number;
+  bagTokenCount: number;
 }
 
 interface SeasideNextPlayerArgs {}

@@ -112,4 +112,25 @@ trait UtilsTrait
             'LARGER_PILE' => clienttranslate("!NEW_PILE_SIZE tokens is your largest pile, all smaller piles will be discarded losing you !OTHER_PILE_TOKEN_COUNTS tokens."),
         ];
     }
+
+    function getMiscDescriptions()
+    {
+        return [
+            'DRAW_BAG_COUNT' => clienttranslate("There are !TOKEN_COUNT tokens remaining in the draw bag."),
+        ];
+    }
+
+    function getTokenDescriptions()
+    {
+        $seaTokenDesc = clienttranslate("Place in sea and play again.");
+        return [
+            ISOPOD => $seaTokenDesc,
+            CRAB => $seaTokenDesc,
+            SHELL => $seaTokenDesc,
+            ROCK => clienttranslate("A pair of rocks take all crabs from the sea, and steals one from another player."),
+            SANDPIPER => clienttranslate("Take with Isopods to form a pile, only retake same size piles."),
+            WAVE => clienttranslate("Flip over a beach, apply the revealed sides effects. Most waves gets leftover sea tokens."),
+            BEACH => clienttranslate("Gain as many shells as you have beaches."),
+        ];
+    }
 }

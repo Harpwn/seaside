@@ -4,10 +4,18 @@ class TokenManager {
   public discardStock: VoidStock<SeasideToken>;
   public hoverTimers;
   public playerAreaStocks: Record<string, SlotStock<SeasideToken>> = {};
-  public playerAreaSandpiperPileStocks: Record<string, SlotStock<SeasideToken>> = {};
-  public playerEndGameScoringStocks: Record<string, CardStock<SeasideToken>> = {};
+  public playerAreaSandpiperPileStocks: Record<
+    string,
+    SlotStock<SeasideToken>
+  > = {};
+  public playerEndGameScoringStocks: Record<string, CardStock<SeasideToken>> =
+    {};
 
-  constructor(public game: SeasideGame, private gameDatas: SeasideGamedatas, private cards: CardManager<SeasideToken>) {
+  constructor(
+    public game: SeasideGame,
+    private gameDatas: SeasideGamedatas,
+    private cards: CardManager<SeasideToken>
+  ) {
     this.setupBagStock();
     this.setupDiscardStock();
 
@@ -56,12 +64,17 @@ class TokenManager {
   }
 
   private setupPlayerStocks(player: SeasidePlayer) {
-    if(this.game.gamedatas.gamestate.name == "gameEnd") {
-      this.playerEndGameScoringStocks[player.id] = new BgaCards.CardStock(this.cards,document.getElementById(`seaside-endgame-scoring-stock-${player.id}`),
-    {
-    counter: { show: true, position: "top" }
-  });
-      this.playerEndGameScoringStocks[player.id].addCards(Object.values(player.tokens));
+    if (this.game.gamedatas.gamestate.name == "gameEnd") {
+      this.playerEndGameScoringStocks[player.id] = new BgaCards.CardStock(
+        this.cards,
+        document.getElementById(`seaside-endgame-scoring-stock-${player.id}`),
+        {
+          counter: { show: true, position: "top" },
+        }
+      );
+      this.playerEndGameScoringStocks[player.id].addCards(
+        Object.values(player.tokens)
+      );
       this.cards.addStock(this.playerEndGameScoringStocks[player.id]);
       return;
     }
@@ -105,21 +118,26 @@ class TokenManager {
       });
     }
 
-    this.playerEndGameScoringStocks[player.id] = new BgaCards.CardStock(this.cards,document.getElementById(`seaside-endgame-scoring-stock-${player.id}`),
-  {
-    counter: { show: true, position: "top" }
-  });
+    this.playerEndGameScoringStocks[player.id] = new BgaCards.CardStock(
+      this.cards,
+      document.getElementById(`seaside-endgame-scoring-stock-${player.id}`),
+      {
+        counter: { show: true, position: "top" },
+      }
+    );
     this.cards.addStock(this.playerEndGameScoringStocks[player.id]);
   }
 
   async performEndGameScoring(tokensByPlayer: Record<number, SeasideToken[]>) {
     for (const playerId of Object.keys(tokensByPlayer)) {
       const tokens = tokensByPlayer[Number(playerId)];
-      for(const token of tokens) {
-          await this.playerEndGameScoringStocks[playerId].addCard(token, { duration: 100 });
+      for (const token of tokens) {
+        await this.playerEndGameScoringStocks[playerId].addCard(token, {
+          duration: 100,
+        });
       }
       await new Promise((resolve) => setTimeout(resolve, 2000));
-    };
+    }
   }
 
   async drawToken(token: SeasideToken) {
@@ -161,9 +179,9 @@ class TokenManager {
       this.game.updateConfirmDisabled(selection.length === 0);
     };
     this.playerAreaSandpiperPileStocks[playerId].getCards().forEach((token) => {
-      this.cards.getCardElement(token).classList.add(
-        this.cards.getUnselectableCardStyle().class
-      );
+      this.cards
+        .getCardElement(token)
+        .classList.add(this.cards.getUnselectableCardStyle().class);
     });
   }
 
@@ -216,9 +234,9 @@ class TokenManager {
       this.playerAreaSandpiperPileStocks[player.id]
         .getCards()
         .forEach((token) => {
-          this.cards.getCardElement(token).classList.remove(
-            this.cards.getUnselectableCardStyle().class
-          );
+          this.cards
+            .getCardElement(token)
+            .classList.remove(this.cards.getUnselectableCardStyle().class);
         });
     });
   }

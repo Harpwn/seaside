@@ -182,6 +182,7 @@
   .seaside-sea-stock-slot {
     .bga-cards_card {
       margin-left: -80px;
+      transition: margin-left 0.3s ease;
     }
   }
 }
@@ -211,6 +212,7 @@
 
     >.bga-cards_card {
       margin-top: -80px;
+      transition: margin-top 0.3s ease;
     }
   }
 }
@@ -333,7 +335,7 @@
     overflow: hidden;
     font-weight: 500;
   }
-  
+
   .card-stock {
     width: 100px;
     background-color: rgba(255, 255, 255, 0.5);
@@ -372,5 +374,48 @@
 
   to {
     opacity: 1;
+  }
+}
+
+
+
+
+.seaside-sea-stock-slot {
+
+  .seaside-token:has(.bga-cards_selectable-card),
+  .seaside-token:has(.bga-cards_selected-card) {
+    margin-left: -50px;
+  }
+}
+
+.seaside-player {
+
+  .seaside-token:has(.bga-cards_selectable-card),
+  .seaside-token:has(.bga-cards_selected-card) {
+    margin-top: -50px;
+  }
+}
+
+.seaside-token-tooltip-contents {
+  display: flex;
+  flex-direction: row;
+  gap: 3px;
+
+  :first-child.seaside-token-tooltip-side {
+    border-right: 2px solid black;
+    margin-left: 0;
+    padding-right: 5px;
+  }
+
+  .seaside-token-tooltip-side {
+    width: 100px;
+    margin-left: 10px;
+    h4 {
+      margin: 0;
+    }
+
+    p {
+      margin-top: 5px;
+    }
   }
 }

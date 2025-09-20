@@ -58,6 +58,8 @@ trait SetupTrait
         }
 
         $result['sandPiperWarnings'] = $this->getSandpiperConfirmationWarnings();
+        $result['tokenDescriptions'] = $this->getTokenDescriptions();
+        $result['miscDescriptions'] = $this->getMiscDescriptions();
 
         return $result;
     }
