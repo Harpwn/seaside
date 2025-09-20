@@ -49,8 +49,6 @@ trait LogicTrait
                 $this->handlePlayWaveToken($playerId, $token);
                 break;
         }
-
-        $this->updatePlayerScore($playerId);
     }
 
     function handlePlayBeachToken(int $playerId, Token $token)
@@ -76,6 +74,7 @@ trait LogicTrait
             $this->incStat($shellsToMoveCount, STAT_NO_SHELL, $playerId);
         }
 
+        $this->updatePlayerScore($playerId);
         //End turn
         $this->gamestate->nextState(TRANSITION_END_TURN);
     }
@@ -91,6 +90,8 @@ trait LogicTrait
         } else {
             $this->handleSelectIsopods($playerId, $sandpiper, []);
         }
+
+        $this->updatePlayerScore($playerId);
     }
 
     function handlePlayIsopodToken(Token $isopod)
@@ -134,6 +135,7 @@ trait LogicTrait
             }
         }
 
+        $this->updatePlayerScore($playerId);
         //next player
         $this->gamestate->nextState(TRANSITION_END_TURN);
     }
@@ -159,6 +161,8 @@ trait LogicTrait
             //No beaches, just end turn
             $this->gamestate->nextState(TRANSITION_END_TURN);
         }
+
+        $this->updatePlayerScore($playerId);
     }
 
     /**
@@ -210,6 +214,7 @@ trait LogicTrait
             $this->incStat(count($pileTokens), STAT_NO_ISOPOD, $playerId);
         }
 
+        $this->updatePlayerScore($playerId);
         //End turn
         $this->gamestate->nextState(TRANSITION_END_TURN);
     }
@@ -224,8 +229,9 @@ trait LogicTrait
         $this->nfCrabStolen($victimId, $playerId, $crabs[0]);
         $this->incStat(1, STAT_NO_CRAB, $playerId);
         $this->incStat(-1, STAT_NO_CRAB, $victimId);
-        $this->updatePlayerScore($victimId);
 
+        $this->updatePlayerScore($playerId);
+        $this->updatePlayerScore($victimId);
         //End turn
         $this->gamestate->nextState(TRANSITION_END_TURN);
     }
@@ -236,6 +242,8 @@ trait LogicTrait
         $this->playToken($beach, $playerId, true);
         $this->nfBeachFlip($playerId, $beach);
         $this->incStat(-1, STAT_NO_BEACH, $playerId);
+
+        $this->updatePlayerScore($playerId);
     }
 
     /**

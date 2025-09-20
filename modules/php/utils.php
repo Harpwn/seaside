@@ -106,6 +106,7 @@ trait UtilsTrait
     function getSandpiperConfirmationWarnings()
     {
         return [
+            'NONE_SELECTED_BUT_AVAILABLE' => clienttranslate("You have not selected any of the !SEA_ISOPOD_COUNT available Isopods to play."),
             'EMPTY_SEA' => clienttranslate("There are no Isopods in the sea and you have an existing pile bigger than one, playing this will cause it to be discarded."),
             'SMALLER_PILE' => clienttranslate("!NEW_PILE_SIZE tokens is less than your current largest pile (!MAX_PILE_SIZE), so this pile will be discarded."),
             'LARGER_PILE' => clienttranslate("!NEW_PILE_SIZE tokens is your largest pile, all smaller piles will be discarded losing you !OTHER_PILE_TOKEN_COUNTS tokens."),
