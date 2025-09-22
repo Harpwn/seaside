@@ -18,6 +18,7 @@ class Seaside extends GameGui<SeasideGamedatas> implements SeasideGame {
   public states: SeasideStateManager;
   public actions: SeasideActions;
   public zoom: ZoomManager;
+  public isSoloGame: boolean;
 
   constructor() {
     super();
@@ -91,13 +92,9 @@ class Seaside extends GameGui<SeasideGamedatas> implements SeasideGame {
     );
   }
 
-  private isSoloGame(): boolean {
-    return Object.keys(this.gamedatas.players).length == 1;
-  }
-
   private setupEndGameScoring(gamedatas: SeasideGamedatas) {
     document.getElementById("seaside-endgame-scoring").style.display = "block";
-    if(this.isSoloGame()) {
+    if(this.isSoloGame) {
       document.getElementById("seaside-endgame-scoring-solo-text").style.opacity = "1";
       document.getElementById("seaside-endgame-scoring-solo-text").innerHTML = gamedatas.soloResultText;
     }
@@ -142,6 +139,7 @@ class Seaside extends GameGui<SeasideGamedatas> implements SeasideGame {
     this.setupBaseGameArea();
     this.setupPlayerAreas(gamedatas);
     this.setupHelpButton();
+    this.isSoloGame = Object.keys(this.gamedatas.players).length == 1;
 
     this.animationManager = new BgaAnimations.Manager();
     const cardsManager = new BgaCards.Manager<SeasideToken>({

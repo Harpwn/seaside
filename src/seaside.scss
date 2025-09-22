@@ -35,16 +35,19 @@
   z-index: 98;
   height: 170px;
   width: 280px;
-  bottom: 0;
+  top: 0;
+  right: 0;
   position: absolute;
   background-image: url(img/draw-bag.png);
   background-size: contain;
   background-repeat: no-repeat;
   background-color: rgba(0, 0, 0, 0.3);
   margin: 20px;
+  background-position-x: 135px;
+  background-position-y: 5px;
 
   .game-card {
-    margin-left: 150px;
+    margin-left: 25px;
     margin-top: 35px;
   }
 }
@@ -54,7 +57,7 @@
   position: relative;
   display: flex;
   flex-direction: column;
-  padding-top: 60px;
+  padding-top: 400px;
 }
 
 .seaside-player-name {
@@ -175,7 +178,7 @@
   width: 800px;
   height: 855px;
   background-color: #2F2F89;
-  background-image: url("img/main-board-background.jpg");
+  background-image: url("img/main-board-background-1.jpg");
   align-items: center;
   position: relative;
 
@@ -267,8 +270,8 @@
 
 #seaside-guage-bar-container {
   background-color: #181818;
-  top: 25%;
-  left: 24%;
+  top: 30%;
+  left: 72%;
   width: 7px;
   height: 60px;
   position: absolute;
@@ -410,6 +413,7 @@
   .seaside-token-tooltip-side {
     width: 100px;
     margin-left: 10px;
+
     h4 {
       margin: 0;
     }

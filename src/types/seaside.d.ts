@@ -156,6 +156,7 @@ interface SeasideGame extends GameGui<SeasideGamedatas> {
   states: SeasideStateManager;
   actions: SeasideActions;
   zoom: ZoomManager;
+  isSoloGame: boolean;
 
   setTooltip(id: string, html: string): void;
   onUpdateActionButtons(stateName: string, args: any): void;
