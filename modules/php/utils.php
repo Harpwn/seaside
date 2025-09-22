@@ -73,10 +73,12 @@ trait UtilsTrait
         }, $cards));
     }
 
-    function updatePlayerScore(int $playerId): void
+    function updatePlayerScores(): void
     {
-        $totalPlayerTokens = count($this->tokens->getCardsInLocation((string)$playerId));
-        $this->dbSetNewScore($playerId, $totalPlayerTokens);
+        foreach ($this->getPlayersIds() as $playerId) {
+            $totalPlayerTokens = count($this->tokens->getCardsInLocation((string)$playerId));
+            $this->dbSetNewScore($playerId, $totalPlayerTokens);
+        }
     }
 
     function isSoloGame(): bool

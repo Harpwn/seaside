@@ -35,6 +35,7 @@ trait StatesTrait
 
     function stEndGameScoring()
     {
+        $this->updatePlayerScores();
         $tokensByPlayer = [];
         foreach ($this->getPlayersIds() as $playerId) {
             $tokensByPlayer[$playerId] = $this->getAllTokensForLocation((string)$playerId);
@@ -47,6 +48,7 @@ trait StatesTrait
     {
         // Retrieve the active player ID.
         $playerId = (int)$this->getActivePlayerId();
+        $this->updatePlayerScores();
 
         // Give some extra time to the active player when he completed an action
         $this->giveExtraTime($playerId);

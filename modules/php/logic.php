@@ -73,8 +73,6 @@ trait LogicTrait
             $this->nfBeachGetsShells($playerId, $shellsToMove);
             $this->incStat($shellsToMoveCount, STAT_NO_SHELL, $playerId);
         }
-
-        $this->updatePlayerScore($playerId);
         //End turn
         $this->gamestate->nextState(TRANSITION_END_TURN);
     }
@@ -90,8 +88,6 @@ trait LogicTrait
         } else {
             $this->handleSelectIsopods($playerId, $sandpiper, []);
         }
-
-        $this->updatePlayerScore($playerId);
     }
 
     function handlePlayIsopodToken(Token $isopod)
@@ -134,8 +130,6 @@ trait LogicTrait
                 }
             }
         }
-
-        $this->updatePlayerScore($playerId);
         //next player
         $this->gamestate->nextState(TRANSITION_END_TURN);
     }
@@ -161,8 +155,6 @@ trait LogicTrait
             //No beaches, just end turn
             $this->gamestate->nextState(TRANSITION_END_TURN);
         }
-
-        $this->updatePlayerScore($playerId);
     }
 
     /**
@@ -214,7 +206,6 @@ trait LogicTrait
             $this->incStat(count($pileTokens), STAT_NO_ISOPOD, $playerId);
         }
 
-        $this->updatePlayerScore($playerId);
         //End turn
         $this->gamestate->nextState(TRANSITION_END_TURN);
     }
@@ -229,9 +220,6 @@ trait LogicTrait
         $this->nfCrabStolen($victimId, $playerId, $crabs[0]);
         $this->incStat(1, STAT_NO_CRAB, $playerId);
         $this->incStat(-1, STAT_NO_CRAB, $victimId);
-
-        $this->updatePlayerScore($playerId);
-        $this->updatePlayerScore($victimId);
         //End turn
         $this->gamestate->nextState(TRANSITION_END_TURN);
     }
@@ -242,8 +230,6 @@ trait LogicTrait
         $this->playToken($beach, $playerId, true);
         $this->nfBeachFlip($playerId, $beach);
         $this->incStat(-1, STAT_NO_BEACH, $playerId);
-
-        $this->updatePlayerScore($playerId);
     }
 
     /**
@@ -270,7 +256,6 @@ trait LogicTrait
             $this->sendTokensToPlayerArea($seaTokens, $playersWithMostWaves[0]);
             $this->nfEndGameWaveBonus($playersWithMostWaves[0], $seaTokens);
             $this->incStat(count($seaTokens), STAT_NO_SEATOKENS, $playersWithMostWaves[0]);
-            $this->updatePlayerScore($playersWithMostWaves[0]);
         } else if (count($playersWithMostWaves) > 1) {
             //split up sea tokens equally
             $playerIdsAndTokens = [];
@@ -280,7 +265,6 @@ trait LogicTrait
                 $this->sendTokensToPlayerArea($tokensForPlayer, (int)$playerId);
                 $playerIdsAndTokens[$playerId] = $tokensForPlayer;
                 $this->incStat(count($tokensForPlayer), STAT_NO_SEATOKENS, $playerId);
-                $this->updatePlayerScore($playerId);
             }
             $this->nfEndGameWaveBonusTie($playerIdsAndTokens);
         }
