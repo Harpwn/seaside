@@ -19,6 +19,7 @@ class Seaside extends GameGui<SeasideGamedatas> implements SeasideGame {
   public actions: SeasideActions;
   public zoom: ZoomManager;
   public isSoloGame: boolean;
+  private playerScoreTypeCounters: Record<string, Record<string, Counter>> = {};
 
   constructor() {
     super();
@@ -76,7 +77,10 @@ class Seaside extends GameGui<SeasideGamedatas> implements SeasideGame {
           <span id="seaside-endgame-scoring-solo-text"></span>
         </div>`
         );
+
+        this.setupPlayerOverallBoardStats(gamedatas, playerId.toString());
     });
+
   }
 
   private setupHelpButton() {
@@ -240,6 +244,7 @@ class Seaside extends GameGui<SeasideGamedatas> implements SeasideGame {
       args.token,
       args.playerId.toString()
     );
+    this.playerScoreTypeCounters[args.playerId][args.token.activeType].incValue(1);
     this.scoreCtrl[args.playerId].incValue(1);
   }
 
@@ -257,14 +262,25 @@ class Seaside extends GameGui<SeasideGamedatas> implements SeasideGame {
       args.token,
       args.thiefId.toString()
     );
+
+    this.playerScoreTypeCounters[args.playerId][args.token.activeType].incValue(-1);
     this.scoreCtrl[args.playerId].incValue(-1);
+
+    this.playerScoreTypeCounters[args.thiefId][args.token.activeType].incValue(1);
     this.scoreCtrl[args.thiefId].incValue(1);
+  }
+
+  async notif_beachFlip(args: BeachFlipNotificationData) {
+    this.playerScoreTypeCounters[args.playerId]['BEACH'].incValue(-1);
+    this.scoreCtrl[args.playerId].incValue(-1);
   }
 
   async notif_rockGetsCrabs(args: RockGetsCrabsNotificationData) {
     for (const token of args.tokens) {
       await this.tokens.moveTokenToPlayerArea(token, args.playerId.toString());
     }
+
+    this.playerScoreTypeCounters[args.playerId][args.tokens[0].activeType].incValue(args.tokenCount);
     this.scoreCtrl[args.playerId].incValue(args.tokenCount);
   }
 
@@ -272,6 +288,8 @@ class Seaside extends GameGui<SeasideGamedatas> implements SeasideGame {
     for (const token of args.tokens) {
       await this.tokens.moveTokenToPlayerArea(token, args.playerId.toString());
     }
+
+    this.playerScoreTypeCounters[args.playerId][args.tokens[0].activeType].incValue(args.tokenCount);
     this.scoreCtrl[args.playerId].incValue(args.tokenCount);
   }
 
@@ -280,6 +298,9 @@ class Seaside extends GameGui<SeasideGamedatas> implements SeasideGame {
       args.tokens,
       args.playerId.toString()
     );
+    for(const token of args.tokens) {
+      this.playerScoreTypeCounters[args.playerId][token.activeType].incValue(1);
+    }
     this.scoreCtrl[args.playerId].incValue(args.tokenCount);
   }
 
@@ -288,6 +309,9 @@ class Seaside extends GameGui<SeasideGamedatas> implements SeasideGame {
       args.tokens,
       args.playerId.toString()
     );
+    for(const token of args.tokens) {
+      this.playerScoreTypeCounters[args.playerId][token.activeType].incValue(-1);
+    }
     this.scoreCtrl[args.playerId].incValue(-args.tokenCount);
   }
 
@@ -295,6 +319,9 @@ class Seaside extends GameGui<SeasideGamedatas> implements SeasideGame {
     for (const playerId of Object.keys(args.playerIdsAndTokens)) {
       const tokens = args.playerIdsAndTokens[playerId];
       await this.tokens.moveEndGameBonusTokens(tokens, playerId);
+      for(const token of tokens) {
+        this.playerScoreTypeCounters[playerId][token.activeType].incValue(1);
+      }
       this.scoreCtrl[playerId].incValue(tokens.length);
     }
   }
@@ -304,6 +331,9 @@ class Seaside extends GameGui<SeasideGamedatas> implements SeasideGame {
       args.tokens,
       args.playerId.toString()
     );
+    for(const token of args.tokens) {
+      this.playerScoreTypeCounters[args.playerId][token.activeType].incValue(1);
+    }
     this.scoreCtrl[args.playerId].incValue(args.tokenCount);
   }
 
@@ -318,5 +348,35 @@ class Seaside extends GameGui<SeasideGamedatas> implements SeasideGame {
     const soloTextElement = document.getElementById("seaside-endgame-scoring-solo-text");
     soloTextElement.innerHTML = args.resultText;
     soloTextElement.style.opacity = "1";
+  }
+
+  setupPlayerOverallBoardStats(gamedatas: SeasideGamedatas, playerId: string) {
+    this.playerScoreTypeCounters[playerId] = {};
+    const playerBoard = document.getElementById(`player_board_${playerId}`)
+                                .querySelector('.player-board-game-specific-content');
+    const tokenTypes = ['CRAB', 'ISOPOD', 'BEACH', 'SHELL', 'SANDPIPER', 'WAVE', 'ROCK'];
+    tokenTypes.forEach(tokenType => {
+      const html = this.setupPlayerOverallBoardTokenHtml(tokenType as SeasideTokenType, gamedatas, playerId);
+      playerBoard.insertAdjacentHTML('beforeend', html);
+      this.setupPlayerOverallBoardTokenHtmlCounters(tokenType as SeasideTokenType, gamedatas, playerId)
+    });
+
+  }
+
+  setupPlayerOverallBoardTokenHtml(tokenType: SeasideTokenType, gamedatas: SeasideGamedatas, playerId: string): string {
+    return `
+      <div class="player-token-score" data-type="${tokenType}">
+        <div class="seaside-token"><div class="seaside-token-face" data-type="${tokenType}"></div></div>
+        <span id="player_${playerId}_token_${tokenType}_counter" class="score-text"></span>
+      </div>
+    `;
+  }
+
+  setupPlayerOverallBoardTokenHtmlCounters(tokenType: SeasideTokenType, gamedatas: SeasideGamedatas, playerId: string) {
+    const tokenCount = Object.values(gamedatas.players[parseInt(playerId)].tokens).filter(t => t.activeType === tokenType).length;
+    const counter = new Counter();
+    counter.create(`player_${playerId}_token_${tokenType}_counter`)
+    counter.setValue(tokenCount)
+    this.playerScoreTypeCounters[playerId][tokenType] = counter;
   }
 }

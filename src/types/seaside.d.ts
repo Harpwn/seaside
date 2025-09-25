@@ -28,6 +28,12 @@ interface TokenPlayedNotificationData {
     tokenSide: SeasideTokenType;
 }
 
+interface BeachFlippedNotificationData {
+  playerId: number;
+  token: SeasideToken;
+  otherSideType: string
+}
+
 interface EndGameScoringNotificationData {
     tokensByPlayer: Record<number, SeasideToken[]>;
 }
