@@ -160,7 +160,6 @@ interface SeasideGame extends GameGui<SeasideGamedatas> {
   states: SeasideStateManager;
   actions: SeasideActions;
   zoom: ZoomManager;
-  isSoloGame: boolean;
 
   onUpdateActionButtons(stateName: string, args: any): void;
   updateConfirmDisabled(disabled: boolean): void;

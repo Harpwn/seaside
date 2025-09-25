@@ -8,6 +8,7 @@ $rock-x-offset: 17%;
 $beach-x-offset: 99.5%;
 $sandpiper-x-offset: 83%;
 $shell-x-offset: 50%;
+$seaside-blue: #2F2F89;
 
 #pagesection_gameview {
   background-color: rgba(0, 0, 0, 0.5);
@@ -143,7 +144,6 @@ $shell-x-offset: 50%;
   font-weight: 500;
 }
 
-
 .seaside-token {
 
   &:hover {
@@ -184,13 +184,19 @@ $shell-x-offset: 50%;
     &[data-type="BEACH"] {
       background-position-x: $beach-x-offset;
     }
+
+    &[data-type="SEA"] {
+      background-color: $seaside-blue;
+      background-image: none;
+      border-radius: 50%;
+    }
   }
 }
 
 .seaside-sea-area-wrapper {
   width: 800px;
   height: 855px;
-  background-color: #2F2F89;
+  background-color: $seaside-blue;
   background-image: url("img/main-board-background-1.jpg");
   align-items: center;
   position: relative;
@@ -344,7 +350,7 @@ $shell-x-offset: 50%;
     width: 100%;
     text-align: center;
     color: white;
-    background-color: #2F2F89;
+    background-color: $seaside-blue;
     padding-top: 5px;
     left: 0px;
     padding-bottom: 5px;
@@ -451,6 +457,10 @@ $shell-x-offset: 50%;
       width: 20px;
       height: 20px;
       margin-right: 8px;
+    }
+
+    .solo-text {
+      font-size: small;
     }
   }
 }

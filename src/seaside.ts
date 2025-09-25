@@ -18,7 +18,7 @@ class Seaside extends GameGui<SeasideGamedatas> implements SeasideGame {
   public states: SeasideStateManager;
   public actions: SeasideActions;
   public zoom: ZoomManager;
-  public isSoloGame: boolean;
+  public soloPlayerId: string | null;
   private playerScoreTypeCounters: Record<string, Record<string, Counter>> = {};
 
   constructor() {
@@ -98,7 +98,7 @@ class Seaside extends GameGui<SeasideGamedatas> implements SeasideGame {
 
   private setupEndGameScoring(gamedatas: SeasideGamedatas) {
     document.getElementById("seaside-endgame-scoring").style.display = "block";
-    if(this.isSoloGame) {
+    if(this.soloPlayerId) {
       document.getElementById("seaside-endgame-scoring-solo-text").style.opacity = "1";
       document.getElementById("seaside-endgame-scoring-solo-text").innerHTML = gamedatas.soloResultText;
     }
@@ -136,10 +136,16 @@ class Seaside extends GameGui<SeasideGamedatas> implements SeasideGame {
   }
 
   setup(gamedatas: SeasideGamedatas) {
+    if(Object.keys(this.gamedatas.players).length == 1) {
+      this.soloPlayerId = Object.keys(this.gamedatas.players)[0];
+    }
     this.setupBaseGameArea();
     this.setupPlayerAreas(gamedatas);
     this.setupHelpButton();
-    this.isSoloGame = Object.keys(this.gamedatas.players).length == 1;
+
+    if(this.soloPlayerId) {
+      this.playerScoreTypeCounters[this.soloPlayerId]["SEA"].setValue(Object.values(gamedatas.seaTokens).length);
+    }
 
     this.animationManager = new BgaAnimations.Manager();
     const cardsManager = new BgaCards.Manager<SeasideToken>({
@@ -237,6 +243,9 @@ class Seaside extends GameGui<SeasideGamedatas> implements SeasideGame {
 
   async notif_tokenToSea(args: TokenToSeaNotificationData) {
     await this.tokens.moveTokenToSea(args.token);
+    if(this.soloPlayerId) {
+      this.playerScoreTypeCounters[this.soloPlayerId]["SEA"].incValue(1);
+    }
   }
 
   async notif_tokenToPlayerArea(args: TokenToPlayerAreaNotificationData) {
@@ -281,6 +290,9 @@ class Seaside extends GameGui<SeasideGamedatas> implements SeasideGame {
     }
 
     this.playerScoreTypeCounters[args.playerId][args.tokens[0].activeType].incValue(args.tokenCount);
+    if(this.soloPlayerId) {
+      this.playerScoreTypeCounters[this.soloPlayerId]['SEA'].incValue(-args.tokenCount);
+    }
     this.scoreCtrl[args.playerId].incValue(args.tokenCount);
   }
 
@@ -290,6 +302,9 @@ class Seaside extends GameGui<SeasideGamedatas> implements SeasideGame {
     }
 
     this.playerScoreTypeCounters[args.playerId][args.tokens[0].activeType].incValue(args.tokenCount);
+    if(this.soloPlayerId) {
+      this.playerScoreTypeCounters[this.soloPlayerId]['SEA'].incValue(-args.tokenCount);
+    }
     this.scoreCtrl[args.playerId].incValue(args.tokenCount);
   }
 
@@ -300,6 +315,9 @@ class Seaside extends GameGui<SeasideGamedatas> implements SeasideGame {
     );
     for(const token of args.tokens) {
       this.playerScoreTypeCounters[args.playerId][token.activeType].incValue(1);
+      if(this.soloPlayerId && token.activeType == "ISOPOD") {
+          this.playerScoreTypeCounters[this.soloPlayerId]['SEA'].incValue(-1);
+      }
     }
     this.scoreCtrl[args.playerId].incValue(args.tokenCount);
   }
@@ -333,6 +351,9 @@ class Seaside extends GameGui<SeasideGamedatas> implements SeasideGame {
     );
     for(const token of args.tokens) {
       this.playerScoreTypeCounters[args.playerId][token.activeType].incValue(1);
+      if(this.soloPlayerId) {
+          this.playerScoreTypeCounters[this.soloPlayerId]['SEA'].incValue(-1);
+        }
     }
     this.scoreCtrl[args.playerId].incValue(args.tokenCount);
   }
@@ -354,20 +375,20 @@ class Seaside extends GameGui<SeasideGamedatas> implements SeasideGame {
     this.playerScoreTypeCounters[playerId] = {};
     const playerBoard = document.getElementById(`player_board_${playerId}`)
                                 .querySelector('.player-board-game-specific-content');
-    const tokenTypes = ['CRAB', 'ISOPOD', 'BEACH', 'SHELL', 'SANDPIPER', 'WAVE', 'ROCK'];
+    const tokenTypes = ['CRAB', 'ISOPOD', 'BEACH', 'SHELL', 'SANDPIPER', 'WAVE', 'ROCK', 'SEA'];
     tokenTypes.forEach(tokenType => {
-      const html = this.setupPlayerOverallBoardTokenHtml(tokenType as SeasideTokenType, gamedatas, playerId);
+      const html = this.setupPlayerOverallBoardTokenHtml(tokenType as SeasideTokenType, playerId);
       playerBoard.insertAdjacentHTML('beforeend', html);
       this.setupPlayerOverallBoardTokenHtmlCounters(tokenType as SeasideTokenType, gamedatas, playerId)
     });
-
   }
 
-  setupPlayerOverallBoardTokenHtml(tokenType: SeasideTokenType, gamedatas: SeasideGamedatas, playerId: string): string {
+  setupPlayerOverallBoardTokenHtml(tokenType: SeasideTokenType, playerId: string): string {
     return `
-      <div class="player-token-score" data-type="${tokenType}">
+      <div style="display: ${this.shouldDisplayTypeCounter(tokenType) ? 'inline-flex' : 'none'};" class="player-token-score" data-type="${tokenType}">
         <div class="seaside-token"><div class="seaside-token-face" data-type="${tokenType}"></div></div>
         <span id="player_${playerId}_token_${tokenType}_counter" class="score-text"></span>
+        ${this.soloPlayerId ? '<span class="solo-text">/7</span>' : ''}
       </div>
     `;
   }
@@ -378,5 +399,16 @@ class Seaside extends GameGui<SeasideGamedatas> implements SeasideGame {
     counter.create(`player_${playerId}_token_${tokenType}_counter`)
     counter.setValue(tokenCount)
     this.playerScoreTypeCounters[playerId][tokenType] = counter;
+  }
+
+  shouldDisplayTypeCounter(tokenType: string): boolean {
+    if(!this.soloPlayerId) {
+      if(tokenType == "SEA") {
+        return false;
+      }
+      return true;
+    }
+
+    return ['BEACH', 'SANDPIPER', 'WAVE', 'ROCK', 'SEA'].includes(tokenType);
   }
 }
