@@ -85,6 +85,10 @@ trait SetupTrait
         //}
         $this->tokens->shuffle(BAG_LOCATION);
 
+        if($this->isFullBagGame()) {
+            return;
+        }
+
         // get number of players
         $numPlayers = count($this->getPlayersIds());
         switch ($numPlayers) {

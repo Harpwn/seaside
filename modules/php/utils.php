@@ -136,4 +136,8 @@ trait UtilsTrait
             BEACH => clienttranslate("Gain as many shells as you have beaches."),
         ];
     }
+
+    function isFullBagGame(): bool {
+        return (int)$this->tableOptions->get(100) > 0;
+    }
 }

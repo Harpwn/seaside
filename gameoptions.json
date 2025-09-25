@@ -1,1 +1,10 @@
-{}
+{
+  "100": {
+    "name": "Use full bag",
+    "values":  {
+        "0":{"name":"Disabled", "tmdisplay":"(Classic) Varied Token Game", "description":"Bag size will depend on number of players"},
+        "1":{"name":"Enabled",  "tmdisplay":"70 Token game", "description":"Bag size will be 70 in all games"}
+    },
+    "default": 1
+  }
+}
