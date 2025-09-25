@@ -19,20 +19,12 @@ class TokenManager {
     Object.values(gameDatas.players).forEach(async (player) => {
       this.setupPlayerStocks(player);
     });
-
-    document
-      .getElementById("seaside-draw-bag")
-      .addEventListener("click", () => {
-        if (this.game.isCurrentPlayerActive()) {
-          this.cards.flipCard(this.bagStock.getCards()[0]);
-        }
-      });
   }
 
   private setupBagStock() {
     this.bagStock = new BgaCards.CardStock(
       this.cards,
-      document.getElementById("seaside-draw-bag")
+      document.getElementById("seaside-draw-bag"),
     );
     this.cards.addStock(this.bagStock);
   }

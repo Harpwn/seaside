@@ -19,7 +19,6 @@ trait ArgsTrait {
             "currentPileSizes" => $this->getCurrentPileSizes(),
             "selectableIsopods" => $this->getSelectableIsopods(),
             "gameProgression" => $this->getGameProgression(),
-            "bagTokenCount" => $this->tokens->countCardsInLocation(BAG_LOCATION)
         ];
     }
 

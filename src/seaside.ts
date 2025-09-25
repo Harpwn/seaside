@@ -127,10 +127,6 @@ class Seaside extends GameGui<SeasideGamedatas> implements SeasideGame {
     }
   }
 
-  public setTooltip(id: string, html: string) {
-    this.addTooltipHtml(id, html);
-  }
-
   setupNotifications() {
     this.bgaSetupPromiseNotifications();
   }
@@ -158,32 +154,26 @@ class Seaside extends GameGui<SeasideGamedatas> implements SeasideGame {
         const tooltipHtml = `
           <div class="seaside-token-tooltip-contents">
             <div class="seaside-token-tooltip-side">
-              <h4>${token.side1}</h4>
-              <p>${side1Desc}</p>
-            </div>
-            <div class="seaside-token-tooltip-side">
               <h4>${token.side2}</h4>
               <p>${side2Desc}</p>
             </div>
+            <div class="seaside-token-tooltip-side">
+              <h4>${token.side1}</h4>
+              <p>${side1Desc}</p>
+            </div>
           </div>
           `;
-        this.setTooltip(div.id, tooltipHtml);
+        this.addTooltipHtml(div.id, tooltipHtml);
       },
       setupBackDiv: (token: SeasideToken, div: HTMLElement) => {
         div.setAttribute("data-type", token.side1);
+        div.setAttribute("data-type-back", token.side2);
         div.classList.add("seaside-token-face");
-        const child = document.createElement("div");
-        child.setAttribute("data-type", token.side2);
-        child.classList.add("seaside-token-back-icon");
-        div.replaceChildren(child);
       },
       setupFrontDiv: (token: SeasideToken, div: HTMLElement) => {
         div.setAttribute("data-type", token.side2);
+        div.setAttribute("data-type-back", token.side1);
         div.classList.add("seaside-token-face");
-        const child = document.createElement("div");
-        child.setAttribute("data-type", token.side1);
-        child.classList.add("seaside-token-back-icon");
-        div.replaceChildren(child);
       },
     });
     this.tokens = new TokenManager(this, gamedatas, cardsManager);
@@ -204,13 +194,11 @@ class Seaside extends GameGui<SeasideGamedatas> implements SeasideGame {
     }
 
     this.setupNotifications();
-    this.setDrawBagTooltip(Object.values(gamedatas.bagTokens).length);
   }
 
   onEnteringState(stateName: string, payload: any) {
     switch (stateName) {
       case SeasideGameStates.PlayToken:
-        this.setDrawBagTooltip(payload.args.bagTokenCount);
         this.states.enteringPlayTokenState(payload.args);
         break;
       case SeasideGameStates.FlipBeach:
@@ -330,9 +318,5 @@ class Seaside extends GameGui<SeasideGamedatas> implements SeasideGame {
     const soloTextElement = document.getElementById("seaside-endgame-scoring-solo-text");
     soloTextElement.innerHTML = args.resultText;
     soloTextElement.style.opacity = "1";
-  }
-
-  setDrawBagTooltip(count: number) {
-    this.setTooltip('seaside-draw-bag', this.gamedatas.miscDescriptions['DRAW_BAG_COUNT'].replace('!TOKEN_COUNT', count.toString()));
   }
 }

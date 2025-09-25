@@ -1,6 +1,14 @@
 @use '../node_modules/bga-zoom/bga-zoom';
 @use '../node_modules/bga-help/bga-help';
 
+$isopod-x-offset: 34%;
+$crab-x-offset: 66.5%;
+$wave-x-offset: 1%;
+$rock-x-offset: 17%;
+$beach-x-offset: 99.5%;
+$sandpiper-x-offset: 83%;
+$shell-x-offset: 50%;
+
 #pagesection_gameview {
   background-color: rgba(0, 0, 0, 0.5);
   padding: 5px;
@@ -49,6 +57,71 @@
   .game-card {
     margin-left: 25px;
     margin-top: 35px;
+
+    .bga-cards_card-side {
+      &::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: url("img/tokens.png");
+        background-repeat: no-repeat;
+        background-size: 765%;
+        background-position-y: 75%;
+        -webkit-clip-path: inset(0 50% 0 0);
+        clip-path: inset(0 50% 0 0);
+      }
+
+      &[data-type-back="ROCK"] {
+        &::before {
+          background-position-x: 17%;
+        }
+      }
+
+      &[data-type-back="WAVE"] {
+        &::before {
+          background-position-x: $wave-x-offset;
+        }
+      }
+
+      &[data-type-back="ROCK"] {
+        &::before {
+          background-position-x: $rock-x-offset;
+        }
+      }
+
+      &[data-type-back="ISOPOD"] {
+        &::before {
+          background-position-x: $isopod-x-offset;
+        }
+      }
+
+      &[data-type-back="SHELL"] {
+        &::before {
+          background-position-x: $shell-x-offset;
+        }
+      }
+
+      &[data-type-back="CRAB"] {
+        &::before {
+          background-position-x: $crab-x-offset;
+        }
+      }
+
+      &[data-type-back="SANDPIPER"] {
+        &::before {
+          background-position-x: $sandpiper-x-offset;
+        }
+      }
+
+      &[data-type-back="BEACH"] {
+        &::before {
+          background-position-x: $beach-x-offset;
+        }
+      }
+    }
   }
 }
 
@@ -84,92 +157,32 @@
     background-size: 765%;
     background-position-y: 75%;
 
-    .seaside-token-back-icon {
-      background-image: url(img/icons-white.png);
-      width: 20px;
-      height: 20px;
-      position: absolute;
-      bottom: 21%;
-      left: 69%;
-      display: block;
-      background-size: 130px;
-      background-position-y: 1px;
-      background-repeat: no-repeat;
-      border-radius: 50%;
-      background-color: #2F2F89;
-
-      &[data-type="WAVE"] {
-        background-position-x: -1%;
-        background-size: 120px;
-      }
-
-      &[data-type="ROCK"] {
-        background-position-x: 18%;
-        background-size: 115px;
-        background-position-y: 0px;
-      }
-
-      &[data-type="ISOPOD"] {
-        background-position-x: 38%;
-        background-size: 125px;
-        background-position-y: 1px;
-      }
-
-      &[data-type="SHELL"] {
-        background-position-x: 53.9%;
-        background-size: 120px;
-      }
-
-      &[data-type="CRAB"] {
-        background-position-x: 70.8%;
-      }
-
-      &[data-type="SANDPIPER"] {
-        background-position-x: 85%;
-      }
-
-      &[data-type="BEACH"] {
-        background-position-x: 101.2%;
-        background-size: 139px;
-        background-position-y: 0px;
-      }
-    }
-
-    &[data-type="SHELL"],
-    &[data-type="CRAB"],
-    &[data-type="ISOPOD"] {
-      .seaside-token-back-icon {
-        background-image: url(img/icons-blue.png);
-        background-color: white;
-      }
-    }
-
     &[data-type="WAVE"] {
-      background-position-x: 1%;
+      background-position-x: $wave-x-offset;
     }
 
     &[data-type="ROCK"] {
-      background-position-x: 17%;
+      background-position-x: $rock-x-offset;
     }
 
     &[data-type="ISOPOD"] {
-      background-position-x: 33%;
+      background-position-x: $isopod-x-offset;
     }
 
     &[data-type="SHELL"] {
-      background-position-x: 50%;
+      background-position-x: $shell-x-offset;
     }
 
     &[data-type="CRAB"] {
-      background-position-x: 66.5%;
+      background-position-x: $crab-x-offset;
     }
 
     &[data-type="SANDPIPER"] {
-      background-position-x: 83%;
+      background-position-x: $sandpiper-x-offset;
     }
 
     &[data-type="BEACH"] {
-      background-position-x: 99.5%;
+      background-position-x: $beach-x-offset;
     }
   }
 }

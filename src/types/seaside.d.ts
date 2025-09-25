@@ -19,8 +19,7 @@ interface SeasideGamedatas extends Gamedatas<SeasidePlayer> {
     soloResultText?: string;
     sandPiperWarnings: Record<'EMPTY_SEA' | 'SMALLER_PILE' | 'LARGER_PILE' | 'NONE_SELECTED_BUT_AVAILABLE', string>;
     tokenDescriptions: Record<SeasideTokenType, string>;
-    miscDescriptions: Record<'DRAW_BAG_COUNT' | 'SOLO_TOKEN_WARNING' | 'SOLO_SEA_TOKEN_WARNING', string>;
-    bagTokens: Record<number, SeasideToken>;
+    miscDescriptions: Record<'SOLO_TOKEN_WARNING' | 'SOLO_SEA_TOKEN_WARNING', string>;
 }
 
 interface TokenPlayedNotificationData {
@@ -127,7 +126,6 @@ interface SeasidePlayTokenArgs {
   currentPileSizes: number[];
   selectableIsopods: SeasideToken[];
   gameProgression: number;
-  bagTokenCount: number;
 }
 
 interface SeasideNextPlayerArgs {}
@@ -158,7 +156,6 @@ interface SeasideGame extends GameGui<SeasideGamedatas> {
   zoom: ZoomManager;
   isSoloGame: boolean;
 
-  setTooltip(id: string, html: string): void;
   onUpdateActionButtons(stateName: string, args: any): void;
   updateConfirmDisabled(disabled: boolean): void;
   setupNotifications(): void;
