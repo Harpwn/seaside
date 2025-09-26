@@ -115,14 +115,6 @@ trait UtilsTrait
         ];
     }
 
-    function getMiscDescriptions()
-    {
-        return [
-            'SOLO_TOKEN_WARNING' => clienttranslate("In solo getting 7 !TOKEN_TYPE tokens immediately ends the game."),
-            'SOLO_SEA_TOKEN_WARNING' => clienttranslate("In solo having 7 total tokens in the sea immediately ends the game."),
-        ];
-    }
-
     function getTokenDescriptions()
     {
         $seaTokenDesc = clienttranslate("Place in sea and play again.");

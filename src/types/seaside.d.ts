@@ -19,7 +19,6 @@ interface SeasideGamedatas extends Gamedatas<SeasidePlayer> {
     soloResultText?: string;
     sandPiperWarnings: Record<'EMPTY_SEA' | 'SMALLER_PILE' | 'LARGER_PILE' | 'NONE_SELECTED_BUT_AVAILABLE', string>;
     tokenDescriptions: Record<SeasideTokenType, string>;
-    miscDescriptions: Record<'SOLO_TOKEN_WARNING' | 'SOLO_SEA_TOKEN_WARNING', string>;
 }
 
 interface TokenPlayedNotificationData {
