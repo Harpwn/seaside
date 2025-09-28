@@ -1,12 +1,12 @@
 @use '../node_modules/bga-zoom/bga-zoom';
 @use '../node_modules/bga-help/bga-help';
 
-$isopod-x-offset: 34%;
-$crab-x-offset: 66.5%;
-$wave-x-offset: 1%;
+$isopod-x-offset: 33.4%;
+$crab-x-offset: 66.6%;
+$wave-x-offset: 0.3%;
 $rock-x-offset: 17%;
-$beach-x-offset: 99.5%;
-$sandpiper-x-offset: 83%;
+$beach-x-offset: 99.8%;
+$sandpiper-x-offset: 83.2%;
 $shell-x-offset: 50%;
 $seaside-blue: #2F2F89;
 
@@ -56,73 +56,37 @@ $seaside-blue: #2F2F89;
   background-position-y: 5px;
 
   .game-card {
-    margin-left: 25px;
-    margin-top: 35px;
+    margin-left: 37px;
+    margin-top: 18px;
+  }
 
-    .bga-cards_card-side {
-      &::before {
-        content: "";
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-image: url("img/tokens.png");
-        background-repeat: no-repeat;
-        background-size: 765%;
-        background-position-y: 75%;
-        -webkit-clip-path: inset(0 50% 0 0);
-        clip-path: inset(0 50% 0 0);
-      }
+  .bga-cards_card-side {
+    overflow: visible;
+  }
 
-      &[data-type-back="ROCK"] {
-        &::before {
-          background-position-x: 17%;
-        }
-      }
+  .seaside-token-face,
+  .seaside-token-backface {
+    position: absolute;
+    top: 0;
+    display: block;
+    width: 100%;
+  }
 
-      &[data-type-back="WAVE"] {
-        &::before {
-          background-position-x: $wave-x-offset;
-        }
-      }
+  .seaside-token-face {
+    z-index: 100;
+  }
 
-      &[data-type-back="ROCK"] {
-        &::before {
-          background-position-x: $rock-x-offset;
-        }
-      }
+  [data-side="front"] .back .seaside-token-backface,
+  [data-side="back"] .front .seaside-token-backface {
+    display: none;
+  }
 
-      &[data-type-back="ISOPOD"] {
-        &::before {
-          background-position-x: $isopod-x-offset;
-        }
-      }
-
-      &[data-type-back="SHELL"] {
-        &::before {
-          background-position-x: $shell-x-offset;
-        }
-      }
-
-      &[data-type-back="CRAB"] {
-        &::before {
-          background-position-x: $crab-x-offset;
-        }
-      }
-
-      &[data-type-back="SANDPIPER"] {
-        &::before {
-          background-position-x: $sandpiper-x-offset;
-        }
-      }
-
-      &[data-type-back="BEACH"] {
-        &::before {
-          background-position-x: $beach-x-offset;
-        }
-      }
-    }
+  .seaside-token-backface {
+    z-index: 99;
+    left: -30px;
+    top: 40px;
+    transform: scale(0.8);
+    filter: opacity(0.7);
   }
 }
 
@@ -150,12 +114,18 @@ $seaside-blue: #2F2F89;
     z-index: 99;
   }
 
-  .seaside-token-face {
+  .seaside-token-backface {
+    display: none;
+  }
+
+  .seaside-token-face,
+  .seaside-token-backface {
 
     background-image: url("img/tokens.png");
     background-repeat: no-repeat;
-    background-size: 765%;
-    background-position-y: 75%;
+    background-size: 710% 106px;
+    background-position-y: 60%;
+    height: 100%;
 
     &[data-type="WAVE"] {
       background-position-x: $wave-x-offset;
@@ -447,16 +417,19 @@ $seaside-blue: #2F2F89;
 .player-board-game-specific-content {
   display: flex;
   flex-wrap: wrap;
+
   .player-token-score {
     min-width: 17%;
     display: inline-flex;
     margin: 3px 3px;
     background-color: rgba(0, 0, 0, .2);
     padding: 3px;
+
     .seaside-token-face {
       width: 20px;
       height: 20px;
       margin-right: 8px;
+      background-size: 710% 20px;
     }
 
     .solo-text {

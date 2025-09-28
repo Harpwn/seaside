@@ -176,14 +176,28 @@ class Seaside extends GameGui<SeasideGamedatas> implements SeasideGame {
         this.addTooltipHtml(div.id, tooltipHtml);
       },
       setupBackDiv: (token: SeasideToken, div: HTMLElement) => {
-        div.setAttribute("data-type", token.side1);
-        div.setAttribute("data-type-back", token.side2);
-        div.classList.add("seaside-token-face");
+        const faceChild = document.createElement("div");
+        faceChild.classList.add("seaside-token-face");
+        faceChild.setAttribute("data-type", token.side1);
+        const otherFaceChild = document.createElement("div");
+        otherFaceChild.setAttribute("data-type", token.side2);
+        otherFaceChild.classList.add("seaside-token-backface");
+        //replace children  of div
+        div.innerHTML = "";
+        div.appendChild(faceChild);
+        div.appendChild(otherFaceChild);
       },
       setupFrontDiv: (token: SeasideToken, div: HTMLElement) => {
-        div.setAttribute("data-type", token.side2);
-        div.setAttribute("data-type-back", token.side1);
-        div.classList.add("seaside-token-face");
+        const faceChild = document.createElement("div");
+        faceChild.classList.add("seaside-token-face");
+        faceChild.setAttribute("data-type", token.side2);
+        const otherFaceChild = document.createElement("div");
+        otherFaceChild.setAttribute("data-type", token.side1);
+        otherFaceChild.classList.add("seaside-token-backface");
+        //replace children  of div
+        div.innerHTML = "";
+        div.appendChild(faceChild);
+        div.appendChild(otherFaceChild);
       },
     });
     this.tokens = new TokenManager(this, gamedatas, cardsManager);
