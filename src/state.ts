@@ -17,7 +17,6 @@ class SeasideStateManager {
   }
 
   enteringPlayTokenState(args: SeasidePlayTokenArgs) {
-    this.tokens.drawToken(args.token);
     this.game.setDrawBagGuage(args.gameProgression);
   }
 
@@ -28,7 +27,6 @@ class SeasideStateManager {
   }
 
   enteringSelectIsopodsState(args: SeasideSelectIsopodsArgs) {
-    this.tokens.drawToken(args.sandpiper);
     if (this.game.isCurrentPlayerActive()) {
       this.tokens.setSelectableIsopods(args.selectableIsopods);
     }

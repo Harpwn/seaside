@@ -5,17 +5,26 @@ use Bga\GameFramework\StateType;
 
 
 $machinestates = [
-    GAME_STATE_GAME_SETUP => GameStateBuilder::gameSetup(GAME_STATE_PLAYER_PLAY_TOKEN)->build(), 
+    GAME_STATE_GAME_SETUP => GameStateBuilder::gameSetup(GAME_STATE_GAME_DRAW_TOKEN)->build(), 
 
+    GAME_STATE_GAME_DRAW_TOKEN => GameStateBuilder::create()
+        ->name('drawToken')
+        ->type(StateType::GAME)
+        ->action('stDrawToken')
+        ->transitions([
+            TRANSITION_PLAY_TOKEN => GAME_STATE_PLAYER_PLAY_TOKEN,
+        ]) 
+        ->build(),
     GAME_STATE_PLAYER_PLAY_TOKEN => GameStateBuilder::create()
         ->name('playToken')
         ->description(clienttranslate('${actplayer} must choose a side to play'))
         ->descriptionmyturn(clienttranslate('${you} must choose a side to play'))
         ->type(StateType::ACTIVE_PLAYER)
-        ->args('argPlayToken')
         ->possibleactions([
             'actPlayToken',
         ])
+        ->action('stPlayToken')
+        ->args(args: 'argPlayToken')
         ->transitions([
             TRANSITION_END_TURN => GAME_STATE_NEXT_PLAYER,
             TRANSITION_PLAY_AGAIN => GAME_STATE_PLAYER_PLAY_AGAIN,
@@ -33,9 +42,11 @@ $machinestates = [
         ->args('argStealCrab')
         ->possibleactions([
             'actStealCrab',
+            'actUndo'
         ])
         ->transitions([
             TRANSITION_END_TURN => GAME_STATE_NEXT_PLAYER,
+            TRANSITION_UNDO => GAME_STATE_PLAYER_PLAY_TOKEN
         ]) 
         ->build(),
 
@@ -47,6 +58,7 @@ $machinestates = [
         ->args('argFlipBeach')
         ->possibleactions([
             'actFlipBeach',
+            'actUndo'
         ])
         ->transitions([
             TRANSITION_END_TURN => GAME_STATE_NEXT_PLAYER,
@@ -54,6 +66,7 @@ $machinestates = [
             TRANSITION_STEAL_CRAB => GAME_STATE_PLAYER_ROCK_STEAL_CRAB,
             TRANSITION_FLIP_BEACH => GAME_STATE_PLAYER_WAVE_FLIP_BEACH,
             TRANSITION_SELECT_ISOPODS => GAME_STATE_PLAYER_SANDPIPER_SELECT_ISOPODS,
+            TRANSITION_UNDO => GAME_STATE_PLAYER_PLAY_TOKEN
         ]) 
         ->build(),
 
@@ -65,9 +78,11 @@ $machinestates = [
         ->args('argSelectIsopods')
         ->possibleactions([
             'actSelectIsopods',
+            'actUndo'
         ])
         ->transitions([
             TRANSITION_END_TURN => GAME_STATE_NEXT_PLAYER,
+            TRANSITION_UNDO => GAME_STATE_PLAYER_PLAY_TOKEN
         ]) 
         ->build(),
 
@@ -79,7 +94,7 @@ $machinestates = [
         ->updateGameProgression(true)
         ->transitions([
             TRANSITION_GAME_ENDING => GAME_STATE_PRE_END_GAME,
-            TRANSITION_NEXT_PLAYER => GAME_STATE_PLAYER_PLAY_TOKEN
+            TRANSITION_NEXT_PLAYER => GAME_STATE_GAME_DRAW_TOKEN
         ]) 
         ->build(),
 
@@ -90,7 +105,7 @@ $machinestates = [
         ->type(StateType::ACTIVE_PLAYER)
         ->action('stPlayAgain')
         ->transitions([
-            TRANSITION_PLAY_TOKEN => GAME_STATE_PLAYER_PLAY_TOKEN,
+            TRANSITION_NEXT_DRAW => GAME_STATE_GAME_DRAW_TOKEN,
             TRANSITION_GAME_ENDING => GAME_STATE_PRE_END_GAME,
         ])
         ->build(),

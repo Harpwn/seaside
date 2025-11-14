@@ -48,6 +48,7 @@ trait SetupTrait
             $player['tokens'] = $this->getAllTokensForLocation((string)$playerId);
         }
 
+        $result['bagToken'] = $this->getTokenInPlay();
         $result['seaTokens'] = $this->getAllTokensForLocation(SEA_LOCATION);
         $result['deckRemainingCount'] = $this->tokens->countCardsInLocation(BAG_LOCATION);
         $result['gameProgression'] = $this->getGameProgression();

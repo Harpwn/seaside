@@ -4,6 +4,7 @@ enum SeasideGameActions {
   FlipBeach = "actFlipBeach",
   StealCrab = "actStealCrab",
   SelectIsopods = "actSelectIsopods",
+  Undo = "actUndo",
 }
 
 class SeasideActions {
@@ -20,6 +21,10 @@ class SeasideActions {
     } else {
       this.game.bgaPerformAction(SeasideGameActions.PlayToken, data);
     }
+  }
+
+  actUndo() {
+    this.game.bgaPerformAction(SeasideGameActions.Undo, {});
   }
 
   handlePlaySandpiper(args: SeasidePlayTokenArgs) {
@@ -84,6 +89,7 @@ class SeasideActions {
           this.actStealCrab(player.id)
         );
       });
+      this.game.statusBar.addActionButton(`Undo`, () => this.actUndo(), { color: "alert" } );
     }
   }
 
@@ -101,6 +107,7 @@ class SeasideActions {
           disabled: true,
         }
       );
+      this.game.statusBar.addActionButton(`Undo`, () => this.actUndo(), { color: "alert" } );
     }
   }
 
@@ -192,6 +199,7 @@ class SeasideActions {
           disabled: false,
         }
       );
+      this.game.statusBar.addActionButton(`Undo`, () => this.actUndo(), { color: "alert" } );
     }
   }
 }

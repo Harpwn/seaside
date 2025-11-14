@@ -34,7 +34,7 @@ trait ActionTrait
         }
 
         if ($inputArgs['token']->id != $tokenId) {
-            throw new \BgaUserException("Token ID mismatch: expected {$tokenId}, got {$token->id}");
+            throw new \BgaUserException("Token ID mismatch: expected {$tokenId}, got {$inputArgs['token']->id}");
         }
 
         if ($token->activeType !== $tokenType) {
@@ -42,6 +42,11 @@ trait ActionTrait
         } else {
             $this->playToken($token, $playerId);
         }
+    }
+
+    public function actUndo() {
+        $this->undoRestorePoint();
+        $this->gamestate->nextState(TRANSITION_UNDO);
     }
 
     public function actStealCrab(int $victimId) 

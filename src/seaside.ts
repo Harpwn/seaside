@@ -385,6 +385,10 @@ class Seaside extends GameGui<SeasideGamedatas> implements SeasideGame {
     soloTextElement.style.opacity = "1";
   }
 
+  async notif_tokenDrawn(args: { token: SeasideToken }) {
+    await this.tokens.drawToken(args.token);
+  }
+
   setupPlayerOverallBoardStats(gamedatas: SeasideGamedatas, playerId: string) {
     this.playerScoreTypeCounters[playerId] = {};
     const playerBoard = document.getElementById(`player_board_${playerId}`)

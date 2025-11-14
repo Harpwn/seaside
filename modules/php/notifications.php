@@ -4,6 +4,13 @@ declare(strict_types=1);
 
 trait NotificationsTrait
 {
+    function nfTokenDrawn(Token $token)
+    {
+        $this->notify->all("tokenDrawn", clienttranslate('A new token is drawn'), [
+            "token" => $token,
+        ]);
+    }
+    
     function nfTokenPlayed(int $playerId, Token $token)
     {
         //$this->debugLog([$playerId, $token], 'nfTokenPlayed');

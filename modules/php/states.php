@@ -17,10 +17,22 @@ trait StatesTrait
         $this->giveExtraTime((int)$this->getActivePlayerId());
     }
 
+    function stDrawToken()
+    {
+        $this->drawRandomToken();
+        $this->nfTokenDrawn($this->getTokenInPlay());
+        $this->gamestate->nextState(TRANSITION_PLAY_TOKEN);
+    }
+
+    function stPlayToken()
+    {
+        $this->undoSavepoint();
+    }
+
     function triggerPlayAgain(): void
     {
         $this->nfPlayAgain((int)$this->getActivePlayerId());
-        $this->gamestate->nextState(TRANSITION_PLAY_TOKEN);
+        $this->gamestate->nextState(TRANSITION_NEXT_DRAW);
     }
 
     function stPreEndGame()

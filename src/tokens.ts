@@ -4,15 +4,19 @@ class TokenManager {
   public discardStock: VoidStock<SeasideToken>;
   public hoverTimers;
   public playerAreaStocks: Record<string, SlotStock<SeasideToken>> = {};
-  public playerAreaSandpiperPileStocks: Record<string,SlotStock<SeasideToken>> = {};
-  public playerEndGameScoringStocks: Record<string, CardStock<SeasideToken>> = {};
+  public playerAreaSandpiperPileStocks: Record<
+    string,
+    SlotStock<SeasideToken>
+  > = {};
+  public playerEndGameScoringStocks: Record<string, CardStock<SeasideToken>> =
+    {};
 
   constructor(
     public game: SeasideGame,
     private gameDatas: SeasideGamedatas,
     private cards: CardManager<SeasideToken>
   ) {
-    this.setupBagStock();
+    this.setupBagStock(gameDatas);
     this.setupDiscardStock();
 
     this.setupSeaStock(gameDatas);
@@ -21,11 +25,14 @@ class TokenManager {
     });
   }
 
-  private setupBagStock() {
+  private setupBagStock(gamedatas: SeasideGamedatas) {
     this.bagStock = new BgaCards.CardStock(
       this.cards,
-      document.getElementById("seaside-draw-bag"),
+      document.getElementById("seaside-draw-bag")
     );
+    if (!!gamedatas.bagToken) {
+      this.bagStock.addCard(gamedatas.bagToken);
+    }
     this.cards.addStock(this.bagStock);
   }
 
@@ -188,7 +195,11 @@ class TokenManager {
       if (isSetup) {
         this.playerAreaSandpiperPileStocks[playerId].addCards(isopods);
       } else {
-        await this.playerAreaSandpiperPileStocks[playerId].addCards(isopods, {}, 100);
+        await this.playerAreaSandpiperPileStocks[playerId].addCards(
+          isopods,
+          {},
+          100
+        );
       }
     }
     if (sandpiper) {
@@ -224,5 +235,4 @@ class TokenManager {
         });
     });
   }
-
 }

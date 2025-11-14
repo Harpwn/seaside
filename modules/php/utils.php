@@ -14,7 +14,17 @@ trait UtilsTrait
     function drawRandomToken(): Token
     {
         $topToken = $this->tokens->getCardOnTop(BAG_LOCATION);
+        $this->tokens->moveCard($topToken['id'], DRAWN_LOCATION);
         return new Token($topToken, false);
+    }
+
+    function getTokenInPlay(): Token | null
+    {
+        $topToken = $this->tokens->getCardOnTop(DRAWN_LOCATION);
+        if($topToken != null) {
+            return new Token($topToken, false);
+        }
+        return null;
     }
 
     function removeNoTokens(int $n): void

@@ -15,7 +15,7 @@ trait ArgsTrait {
     public function argPlayToken(): array
     {
         return [
-            "token" => $this->drawRandomToken(),
+            "token" => $this->getTokenInPlay(),
             "currentPileSizes" => $this->getCurrentPileSizes(),
             "selectableIsopods" => $this->getSelectableIsopods(),
             "gameProgression" => $this->getGameProgression(),
