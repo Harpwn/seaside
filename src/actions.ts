@@ -89,7 +89,9 @@ class SeasideActions {
           this.actStealCrab(player.id)
         );
       });
-      this.game.statusBar.addActionButton(`Undo`, () => this.actUndo(), { color: "alert" } );
+      this.game.statusBar.addActionButton(`Undo`, () => this.actUndo(), {
+        color: "alert",
+      });
     }
   }
 
@@ -107,7 +109,9 @@ class SeasideActions {
           disabled: true,
         }
       );
-      this.game.statusBar.addActionButton(`Undo`, () => this.actUndo(), { color: "alert" } );
+      this.game.statusBar.addActionButton(`Undo`, () => this.actUndo(), {
+        color: "alert",
+      });
     }
   }
 
@@ -115,91 +119,102 @@ class SeasideActions {
     if (this.game.isCurrentPlayerActive()) {
       this.game.statusBar.addActionButton(
         `Confirm`,
-        () => {
-          const seaIsopodTokens = args.selectableIsopods;
-          const selectedIsopodTokenIds = this.tokens.seaStock.getSelection().map((t) => t.id);
-          const newPileSize = selectedIsopodTokenIds.length + 1;
-          const playerDidntSelectAnyButCouldHave = selectedIsopodTokenIds.length == 0 && seaIsopodTokens.length > 0;
-          const playerHasNoExistingPiles = args.currentPileSizes.length == 0;
-
-          if (playerHasNoExistingPiles) {
-            if (!playerDidntSelectAnyButCouldHave) {
-              this.actSelectIsopods(selectedIsopodTokenIds);
-            } else {
-              this.game.confirmationDialog(
-                this.game.gamedatas.sandPiperWarnings[
-                  "NONE_SELECTED_BUT_AVAILABLE"
-                ].replace(
-                  "!SEA_ISOPOD_COUNT",
-                  seaIsopodTokens.length.toString()
-                ),
-                () => {
-                  this.actSelectIsopods(selectedIsopodTokenIds);
-                }
-              );
-            }
-            return;
-          }
-
-          const largerPiles = args.currentPileSizes.filter((size) => size > newPileSize);
-          const smallerPiles = args.currentPileSizes.filter((size) => size < newPileSize);
-
-          const playerPlayingSmallerPile = largerPiles.length > 0;
-          const playerPlayingLargestPile = smallerPiles.length > 0;
-
-          if (playerPlayingSmallerPile) {
-            this.game.confirmationDialog(
-              this.game.gamedatas.sandPiperWarnings["SMALLER_PILE"]
-                .replace("!NEW_PILE_SIZE", newPileSize.toString())
-                .replace(
-                  "!MAX_PILE_SIZE",
-                  Math.max(...args.currentPileSizes).toString()
-                ),
-              () => {
-                this.actSelectIsopods(selectedIsopodTokenIds);
-              }
-            );
-            return;
-          }
-
-          if (playerPlayingLargestPile) {
-            this.game.confirmationDialog(
-              this.game.gamedatas.sandPiperWarnings["LARGER_PILE"]
-                .replace("!NEW_PILE_SIZE", newPileSize.toString())
-                .replace(
-                  "!OTHER_PILE_TOKEN_COUNTS",
-                  smallerPiles.reduce((a, b) => a + b, 0).toString()
-                ),
-              () => {
-                this.actSelectIsopods(selectedIsopodTokenIds);
-              }
-            );
-            return;
-          }
-
-          if(playerDidntSelectAnyButCouldHave) {
-            this.game.confirmationDialog(
-                this.game.gamedatas.sandPiperWarnings[
-                  "NONE_SELECTED_BUT_AVAILABLE"
-                ].replace(
-                  "!SEA_ISOPOD_COUNT",
-                  seaIsopodTokens.length.toString()
-                ),
-                () => {
-                  this.actSelectIsopods(selectedIsopodTokenIds);
-                }
-              );
-              return;
-          }
-
-          this.actSelectIsopods(selectedIsopodTokenIds);
-        },
+        () => this.handleSelectIsopodsConfirm(args),
         {
           id: `seaside-confirm`,
           disabled: false,
         }
       );
-      this.game.statusBar.addActionButton(`Undo`, () => this.actUndo(), { color: "alert" } );
+      this.game.statusBar.addActionButton(`Take all`, () => {
+        args.selectableIsopods.forEach((token) => {
+          this.tokens.seaStock.selectCard(token);
+        });
+        this.handleSelectIsopodsConfirm(args);
+      });
+      this.game.statusBar.addActionButton(`Undo`, () => this.actUndo(), {
+        color: "alert",
+      });
     }
+  }
+
+  handleSelectIsopodsConfirm(args: SeasideSelectIsopodsArgs) {
+    const seaIsopodTokens = args.selectableIsopods;
+    const selectedIsopodTokenIds = this.tokens.seaStock
+      .getSelection()
+      .map((t) => t.id);
+    const newPileSize = selectedIsopodTokenIds.length + 1;
+    const playerDidntSelectAnyButCouldHave =
+      selectedIsopodTokenIds.length == 0 && seaIsopodTokens.length > 0;
+    const playerHasNoExistingPiles = args.currentPileSizes.length == 0;
+
+    if (playerHasNoExistingPiles) {
+      if (!playerDidntSelectAnyButCouldHave) {
+        this.actSelectIsopods(selectedIsopodTokenIds);
+      } else {
+        this.game.confirmationDialog(
+          this.game.gamedatas.sandPiperWarnings[
+            "NONE_SELECTED_BUT_AVAILABLE"
+          ].replace("!SEA_ISOPOD_COUNT", seaIsopodTokens.length.toString()),
+          () => {
+            this.actSelectIsopods(selectedIsopodTokenIds);
+          }
+        );
+      }
+      return;
+    }
+
+    const largerPiles = args.currentPileSizes.filter(
+      (size) => size > newPileSize
+    );
+    const smallerPiles = args.currentPileSizes.filter(
+      (size) => size < newPileSize
+    );
+
+    const playerPlayingSmallerPile = largerPiles.length > 0;
+    const playerPlayingLargestPile = smallerPiles.length > 0;
+
+    if (playerPlayingSmallerPile) {
+      this.game.confirmationDialog(
+        this.game.gamedatas.sandPiperWarnings["SMALLER_PILE"]
+          .replace("!NEW_PILE_SIZE", newPileSize.toString())
+          .replace(
+            "!MAX_PILE_SIZE",
+            Math.max(...args.currentPileSizes).toString()
+          ),
+        () => {
+          this.actSelectIsopods(selectedIsopodTokenIds);
+        }
+      );
+      return;
+    }
+
+    if (playerPlayingLargestPile) {
+      this.game.confirmationDialog(
+        this.game.gamedatas.sandPiperWarnings["LARGER_PILE"]
+          .replace("!NEW_PILE_SIZE", newPileSize.toString())
+          .replace(
+            "!OTHER_PILE_TOKEN_COUNTS",
+            smallerPiles.reduce((a, b) => a + b, 0).toString()
+          ),
+        () => {
+          this.actSelectIsopods(selectedIsopodTokenIds);
+        }
+      );
+      return;
+    }
+
+    if (playerDidntSelectAnyButCouldHave) {
+      this.game.confirmationDialog(
+        this.game.gamedatas.sandPiperWarnings[
+          "NONE_SELECTED_BUT_AVAILABLE"
+        ].replace("!SEA_ISOPOD_COUNT", seaIsopodTokens.length.toString()),
+        () => {
+          this.actSelectIsopods(selectedIsopodTokenIds);
+        }
+      );
+      return;
+    }
+
+    this.actSelectIsopods(selectedIsopodTokenIds);
   }
 }

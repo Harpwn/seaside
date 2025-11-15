@@ -58,6 +58,7 @@ $seaside-blue: #2F2F89;
   .game-card {
     margin-left: 37px;
     margin-top: 18px;
+    transform: scale(0.8);
   }
 
   .bga-cards_card-side {
@@ -83,10 +84,8 @@ $seaside-blue: #2F2F89;
 
   .seaside-token-backface {
     z-index: 99;
-    left: -30px;
-    top: 40px;
-    transform: scale(0.8);
-    filter: opacity(0.7);
+    left: -41px;
+    top: 42px;
   }
 }
 
