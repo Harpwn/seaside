@@ -31,7 +31,7 @@ class TokenManager {
       document.getElementById("seaside-draw-bag")
     );
     if (!!gamedatas.bagToken) {
-      this.bagStock.addCard(gamedatas.bagToken);
+      this.addToBagStock(gamedatas.bagToken);
     }
     this.cards.addStock(this.bagStock);
   }
@@ -56,6 +56,16 @@ class TokenManager {
     );
     this.cards.addStock(this.seaStock);
     this.seaStock.addCards(Object.values(gameDatas.seaTokens));
+  }
+
+  private addToBagStock(token: SeasideToken) {
+    const flippedToken = {
+      ...token,
+      flipped: true,
+      activeType: token.side2,
+      id: token.id + 1000,
+    };
+    this.bagStock.addCards([token, flippedToken]);
   }
 
   private setupPlayerStocks(player: SeasidePlayer) {
@@ -136,9 +146,8 @@ class TokenManager {
   }
 
   async drawToken(token: SeasideToken) {
-    if (!this.bagStock.getCards().includes(token)) {
-      await this.bagStock.addCard(token);
-    }
+    this.bagStock.removeAll();
+    this.addToBagStock(token);
   }
 
   async moveTokenToSea(token: SeasideToken) {
@@ -159,6 +168,13 @@ class TokenManager {
     if (otherTokens.length > 0) {
       await this.playerAreaStocks[playerId].addCards(otherTokens);
     }
+  }
+
+  setBagTokenSelectable(args: SeasidePlayTokenArgs) {
+    this.bagStock.setSelectionMode("single");
+    this.bagStock.onCardClick = (card: SeasideToken) => {
+      this.game.actions.actPlayToken(args, card.activeType);
+    };
   }
 
   setSelectableIsopods(tokens: SeasideToken[]) {
@@ -223,6 +239,7 @@ class TokenManager {
   }
 
   clearSelectedTokens() {
+    this.bagStock.setSelectionMode("none");
     this.seaStock.setSelectionMode("none");
     Object.values(this.gameDatas.players).forEach((player) => {
       this.playerAreaStocks[player.id].setSelectionMode("none");

@@ -11,18 +11,23 @@ enum SeasideGameStates {
 }
 
 class SeasideStateManager {
-
   constructor(private game: SeasideGame, private tokens: TokenManager) {
     this.game = game;
   }
 
   enteringPlayTokenState(args: SeasidePlayTokenArgs) {
     this.game.setDrawBagGuage(args.gameProgression);
+    if (this.game.isCurrentPlayerActive()) {
+      this.tokens.setBagTokenSelectable(args);
+    }
   }
 
   enteringFlipBeachState(args: SeasideFlipBeachArgs) {
     if (this.game.isCurrentPlayerActive()) {
-      this.tokens.setSelectableBeaches(this.game.player_id.toString(), args.flippableBeachs);
+      this.tokens.setSelectableBeaches(
+        this.game.player_id.toString(),
+        args.flippableBeachs
+      );
     }
   }
 
