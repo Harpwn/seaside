@@ -265,10 +265,10 @@ class Seaside extends GameGui<SeasideGamedatas> implements SeasideGame {
   async notif_tokenToPlayerArea(args: TokenToPlayerAreaNotificationData) {
     await this.tokens.moveTokenToPlayerArea(
       args.token,
-      args.playerId.toString()
+      args.player_id.toString()
     );
-    this.playerScoreTypeCounters[args.playerId][args.token.activeType].incValue(1);
-    this.scoreCtrl[args.playerId].incValue(1);
+    this.playerScoreTypeCounters[args.player_id][args.token.activeType].incValue(1);
+    this.scoreCtrl[args.player_id].incValue(1);
   }
 
   async notif_tokenMovesWithinPlayerArea(
@@ -276,7 +276,7 @@ class Seaside extends GameGui<SeasideGamedatas> implements SeasideGame {
   ) {
     await this.tokens.moveTokenToPlayerArea(
       args.token,
-      args.playerId.toString()
+      args.player_id.toString()
     );
   }
 
@@ -286,65 +286,65 @@ class Seaside extends GameGui<SeasideGamedatas> implements SeasideGame {
       args.thiefId.toString()
     );
 
-    this.playerScoreTypeCounters[args.playerId][args.token.activeType].incValue(-1);
-    this.scoreCtrl[args.playerId].incValue(-1);
+    this.playerScoreTypeCounters[args.player_id][args.token.activeType].incValue(-1);
+    this.scoreCtrl[args.player_id].incValue(-1);
 
     this.playerScoreTypeCounters[args.thiefId][args.token.activeType].incValue(1);
     this.scoreCtrl[args.thiefId].incValue(1);
   }
 
   async notif_beachFlip(args: BeachFlipNotificationData) {
-    this.playerScoreTypeCounters[args.playerId]['BEACH'].incValue(-1);
-    this.scoreCtrl[args.playerId].incValue(-1);
+    this.playerScoreTypeCounters[args.player_id]['BEACH'].incValue(-1);
+    this.scoreCtrl[args.player_id].incValue(-1);
   }
 
   async notif_rockGetsCrabs(args: RockGetsCrabsNotificationData) {
     for (const token of args.tokens) {
-      await this.tokens.moveTokenToPlayerArea(token, args.playerId.toString());
+      await this.tokens.moveTokenToPlayerArea(token, args.player_id.toString());
     }
 
-    this.playerScoreTypeCounters[args.playerId][args.tokens[0].activeType].incValue(args.tokenCount);
+    this.playerScoreTypeCounters[args.player_id][args.tokens[0].activeType].incValue(args.tokenCount);
     if(this.soloPlayerId) {
       this.playerScoreTypeCounters[this.soloPlayerId]['SEA'].incValue(-args.tokenCount);
     }
-    this.scoreCtrl[args.playerId].incValue(args.tokenCount);
+    this.scoreCtrl[args.player_id].incValue(args.tokenCount);
   }
 
   async notif_beachGetsShells(args: BeachGetsShellsNotificationData) {
     for (const token of args.tokens) {
-      await this.tokens.moveTokenToPlayerArea(token, args.playerId.toString());
+      await this.tokens.moveTokenToPlayerArea(token, args.player_id.toString());
     }
 
-    this.playerScoreTypeCounters[args.playerId][args.tokens[0].activeType].incValue(args.tokenCount);
+    this.playerScoreTypeCounters[args.player_id][args.tokens[0].activeType].incValue(args.tokenCount);
     if(this.soloPlayerId) {
       this.playerScoreTypeCounters[this.soloPlayerId]['SEA'].incValue(-args.tokenCount);
     }
-    this.scoreCtrl[args.playerId].incValue(args.tokenCount);
+    this.scoreCtrl[args.player_id].incValue(args.tokenCount);
   }
 
   async notif_createSandpiperPile(args: CreateSandpiperPileNotificationData) {
     await this.tokens.createSandpiperPile(
       args.tokens,
-      args.playerId.toString()
+      args.player_id.toString()
     );
     for(const token of args.tokens) {
-      this.playerScoreTypeCounters[args.playerId][token.activeType].incValue(1);
+      this.playerScoreTypeCounters[args.player_id][token.activeType].incValue(1);
       if(this.soloPlayerId && token.activeType == "ISOPOD") {
           this.playerScoreTypeCounters[this.soloPlayerId]['SEA'].incValue(-1);
       }
     }
-    this.scoreCtrl[args.playerId].incValue(args.tokenCount);
+    this.scoreCtrl[args.player_id].incValue(args.tokenCount);
   }
 
   async notif_sandpiperIsopodsLost(args: SandpiperIsopodsLostNotificationData) {
     await this.tokens.discardSandpiperPile(
       args.tokens,
-      args.playerId.toString()
+      args.player_id.toString()
     );
     for(const token of args.tokens) {
-      this.playerScoreTypeCounters[args.playerId][token.activeType].incValue(-1);
+      this.playerScoreTypeCounters[args.player_id][token.activeType].incValue(-1);
     }
-    this.scoreCtrl[args.playerId].incValue(-args.tokenCount);
+    this.scoreCtrl[args.player_id].incValue(-args.tokenCount);
   }
 
   async notif_endGameWaveBonusTie(args: EndGameWaveBonusTieNotificationData) {
@@ -361,15 +361,15 @@ class Seaside extends GameGui<SeasideGamedatas> implements SeasideGame {
   async notif_endGameWaveBonus(args: EndGameWaveBonusNotificationData) {
     await this.tokens.moveEndGameBonusTokens(
       args.tokens,
-      args.playerId.toString()
+      args.player_id.toString()
     );
     for(const token of args.tokens) {
-      this.playerScoreTypeCounters[args.playerId][token.activeType].incValue(1);
+      this.playerScoreTypeCounters[args.player_id][token.activeType].incValue(1);
       if(this.soloPlayerId) {
           this.playerScoreTypeCounters[this.soloPlayerId]['SEA'].incValue(-1);
         }
     }
-    this.scoreCtrl[args.playerId].incValue(args.tokenCount);
+    this.scoreCtrl[args.player_id].incValue(args.tokenCount);
   }
 
   async notif_endGameScoring(args: EndGameScoringNotificationData) {

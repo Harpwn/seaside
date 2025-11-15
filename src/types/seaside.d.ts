@@ -23,13 +23,13 @@ interface SeasideGamedatas extends Gamedatas<SeasidePlayer> {
 }
 
 interface TokenPlayedNotificationData {
-    playerId: number;
+    player_id: number;
     token: SeasideToken;
     tokenSide: SeasideTokenType;
 }
 
 interface BeachFlippedNotificationData {
-  playerId: number;
+  player_id: number;
   token: SeasideToken;
   otherSideType: string
 }
@@ -50,14 +50,14 @@ interface TokenToSeaNotificationData {
 }
 
 interface TokenToPlayerAreaNotificationData {
-    playerId: number;
+    player_id: number;
     token: SeasideToken;
     tokenSide: SeasideTokenType;
     tokenLocationArgs: number;
 }
 
 interface TokenMovesWithinPlayerAreaNotificationData {
-    playerId: number;
+    player_id: number;
     token: SeasideToken;
     tokenSide: SeasideTokenType;
     fromLocationArgs: number;
@@ -66,36 +66,36 @@ interface TokenMovesWithinPlayerAreaNotificationData {
 
 interface CrabStolenNotificationData {
     thiefId: number;
-    playerId: number;
+    player_id: number;
     token: SeasideToken;
 }
 
 interface RockGetsCrabsNotificationData {
-    playerId: number;
+    player_id: number;
     tokenCount: number;
     tokens: SeasideToken[];
 }
 
 interface BeachGetsShellsNotificationData {
-    playerId: number;
+    player_id: number;
     tokenCount: number;
     tokens: SeasideToken[];
 }
 
 interface CreateSandpiperPileNotificationData {
-    playerId: number;
+    player_id: number;
     tokenCount: number;
     tokens: SeasideToken[];
 }
 
 interface SandpiperIsopodsLostNotificationData {
-    playerId: number;
+    player_id: number;
     tokenCount: number;
     tokens: SeasideToken[];
 }
 
 interface BeachFlipNotificationData {
-    playerId: number;
+    player_id: number;
     token: SeasideToken;
 }
 
@@ -105,7 +105,7 @@ interface EndGameWaveBonusTieNotificationData {
 }
 
 interface EndGameWaveBonusNotificationData {
-    playerId: number;
+    player_id: number;
     tokenCount: number;
     tokens: SeasideToken[];
 }

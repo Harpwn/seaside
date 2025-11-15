@@ -72,8 +72,8 @@ $machinestates = [
 
     GAME_STATE_PLAYER_SANDPIPER_SELECT_ISOPODS => GameStateBuilder::create()
         ->name('selectIsopods')
-        ->description(clienttranslate('${actplayer} may take isopods from the sea'))
-        ->descriptionmyturn(clienttranslate('${you} may take isopods from the sea'))
+        ->description(clienttranslate('${actplayer} may select isopods from the sea'))
+        ->descriptionmyturn(clienttranslate('${you} may select isopods from the sea'))
         ->type(StateType::ACTIVE_PLAYER)
         ->args('argSelectIsopods')
         ->possibleactions([
