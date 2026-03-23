@@ -18,6 +18,7 @@ class Seaside extends GameGui<SeasideGamedatas> implements SeasideGame {
   public states: SeasideStateManager;
   public actions: SeasideActions;
   public zoom: ZoomManager;
+  public playerScrollmaps: Record<string, ScrollmapWithZoomNS.ScrollmapWithZoom> = {};
   public soloPlayerId: string | null;
   private playerScoreTypeCounters: Record<string, Record<string, Counter>> = {};
 
@@ -28,23 +29,27 @@ class Seaside extends GameGui<SeasideGamedatas> implements SeasideGame {
   private setupBaseGameArea() {
     this.getGameAreaElement().insertAdjacentHTML(
       "beforeend",
-      `<div id="seaside-table" class="bga-zoom-inner">
-        <div id="seaside-game-area">
-          <div class="seaside-sea-area-wrapper">
-            <div id="seaside-endgame-scoring">
-              <div id="seaside-endgame-scoring-title">End Game Scoring</div>
-              <div id="seaside-endgame-scoring-stocks" class="flex gap-4 justify-center"></div>
-            </div>
-            <div id="seaside-draw-bag">
-              <div id="seaside-guage-bar-container">
-                <div id="seaside-guage-bar" style="height: 0%">
+      `<div id="seaside-table">
+        <div id="bga-zoom-inner">
+          <div id="seaside-game-area">
+            <div id="seaside-players-left" class="seaside-players-column"></div>
+            <div class="seaside-sea-area-wrapper">
+              <div id="seaside-endgame-scoring">
+                <div id="seaside-endgame-scoring-title">End Game Scoring</div>
+                <div id="seaside-endgame-scoring-stocks" class="flex gap-4 justify-center"></div>
+              </div>
+              <div id="seaside-draw-bag">
+                <div id="seaside-guage-bar-container">
+                  <div id="seaside-guage-bar" style="height: 0%">
+                  </div>
                 </div>
               </div>
+              <div id="seaside-discard">
+              </div>
+              <div id="seaside-sea-stock">
+              </div>
             </div>
-            <div id="seaside-discard">
-            </div>
-            <div id="seaside-sea-stock">
-            </div>
+            <div id="seaside-players-right" class="seaside-players-column"></div>
           </div>
         </div>
       </div>
@@ -53,20 +58,57 @@ class Seaside extends GameGui<SeasideGamedatas> implements SeasideGame {
       </div>
       `
     );
+
+    this.zoom = new BgaZoom.Manager({
+      element: document.getElementById("bga-zoom-inner"),
+      smooth: false,
+      zoomControls: { color: "white" },
+      localStorageZoomKey: "seaside-zoom",
+    });
   }
 
   private setupPlayerAreas(gamedatas: SeasideGamedatas) {
-    Object.values(gamedatas.playerorder).forEach((playerId) => {
+    const playerIds = Object.values(gamedatas.playerorder) as string[];
+    const playerCount = playerIds.length;
+
+    // Left count per player count: 1->1, 2->1, 3->2, 4->2, 5->3
+    const leftCounts: Record<number, number> = { 1: 1, 2: 1, 3: 2, 4: 2, 5: 3 };
+    const leftCount = leftCounts[playerCount] ?? Math.ceil(playerCount / 2);
+
+    playerIds.forEach((playerId, index) => {
       const player = gamedatas.players[playerId];
-      document.getElementById("seaside-game-area").insertAdjacentHTML(
+      const column = index < leftCount ? "seaside-players-left" : "seaside-players-right";
+
+      document.getElementById(column).insertAdjacentHTML(
         "beforeend",
         `<div class="seaside-player-wrapper">
           <div class="seaside-player-name">${player.name}</div>
           <div id="seaside-player-${player.id}" class="seaside-player">
-            <div id="seaside-player-${playerId}-sandpiper-pile" class="seaside-player-area-stock-sandpiper"></div>
+            <div id="seaside-player-scrollmap-container-${player.id}" class="seaside-scrollmap-container seaside-player-scrollmap-container">
+              <div id="seaside-player-inner-${player.id}"></div>
+              <div id="seaside-player-scrollmap-surface-${player.id}"></div>
+              <div id="seaside-player-scrollmap-oversurface-${player.id}"></div>
+            </div>
           </div>
         </div>`
       );
+
+      const playerScrollmap: ScrollmapWithZoomNS.ScrollmapWithZoom = new (ebg as any).scrollmapWithZoom();
+      playerScrollmap.defaultHeight = 395;
+      playerScrollmap.bRestoreScrollPosition = false;
+      playerScrollmap.bRestoreZoom = false;
+      playerScrollmap.bEnableZooming = false;
+      playerScrollmap.create(
+        document.getElementById(`seaside-player-scrollmap-container-${player.id}`),
+        document.getElementById(`seaside-player-inner-${player.id}`),
+        document.getElementById(`seaside-player-scrollmap-surface-${player.id}`),
+        document.getElementById(`seaside-player-scrollmap-oversurface-${player.id}`)
+      );
+      playerScrollmap.setupOnScreenArrows(110);
+      playerScrollmap.hideEnlargeReduceButtons();
+      playerScrollmap.hideInfoButton();
+      playerScrollmap.hideOnScreenArrows();
+      this.playerScrollmaps[player.id] = playerScrollmap;
 
       document
         .getElementById("seaside-endgame-scoring-stocks")
@@ -80,7 +122,6 @@ class Seaside extends GameGui<SeasideGamedatas> implements SeasideGame {
 
         this.setupPlayerOverallBoardStats(gamedatas, playerId.toString());
     });
-
   }
 
   private setupHelpButton() {
@@ -100,7 +141,7 @@ class Seaside extends GameGui<SeasideGamedatas> implements SeasideGame {
     document.getElementById("seaside-endgame-scoring").style.display = "block";
     if(this.soloPlayerId) {
       document.getElementById("seaside-endgame-scoring-solo-text").style.opacity = "1";
-      document.getElementById("seaside-endgame-scoring-solo-text").innerHTML = gamedatas.soloResultText;
+      document.getElementById("seaside-endgame-scoring-solo-text").innerHTML = _(gamedatas.soloResultText);
     }
   }
 
@@ -160,16 +201,16 @@ class Seaside extends GameGui<SeasideGamedatas> implements SeasideGame {
       },
       setupDiv: (token: SeasideToken, div: HTMLElement) => {
         div.classList.add("seaside-token");
-        const side1Desc = this.gamedatas.tokenDescriptions[token.side1];
-        const side2Desc = this.gamedatas.tokenDescriptions[token.side2];
+        const side1Desc = _(this.gamedatas.tokenDescriptions[token.side1]);
+        const side2Desc = _(this.gamedatas.tokenDescriptions[token.side2]);
         const tooltipHtml = `
           <div class="seaside-token-tooltip-contents">
             <div class="seaside-token-tooltip-side">
-              <h4>${token.side2}</h4>
+              <h4>${_(token.side2)}</h4>
               <p>${side2Desc}</p>
             </div>
             <div class="seaside-token-tooltip-side">
-              <h4>${token.side1}</h4>
+              <h4>${_(token.side1)}</h4>
               <p>${side1Desc}</p>
             </div>
           </div>
@@ -196,14 +237,6 @@ class Seaside extends GameGui<SeasideGamedatas> implements SeasideGame {
     this.tokens = new TokenManager(this, gamedatas, cardsManager);
     this.states = new SeasideStateManager(this, this.tokens);
     this.actions = new SeasideActions(this, this.tokens);
-    this.zoom = new BgaZoom.Manager({
-      element: document.getElementById("seaside-table"),
-      localStorageZoomKey: "mygame-zoom",
-      zoomControls: {
-        color: "white",
-      },
-    });
-
     this.setDrawBagGuage(gamedatas.gameProgression);
 
     if(gamedatas.gamestate.name == "gameEnd") {
@@ -253,6 +286,13 @@ class Seaside extends GameGui<SeasideGamedatas> implements SeasideGame {
     if(this.soloPlayerId) {
       this.playerScoreTypeCounters[this.soloPlayerId]["SEA"].incValue(1);
     }
+    this.scrollAllPlayerScrollmapsToCenter();
+  }
+
+  private scrollAllPlayerScrollmapsToCenter() {
+    Object.values(this.playerScrollmaps).forEach((scrollmap) =>
+      scrollmap.scrollToCenter()
+    );
   }
 
   async notif_tokenToPlayerArea(args: TokenToPlayerAreaNotificationData) {
@@ -262,6 +302,7 @@ class Seaside extends GameGui<SeasideGamedatas> implements SeasideGame {
     );
     this.playerScoreTypeCounters[args.player_id][args.token.activeType].incValue(1);
     this.scoreCtrl[args.player_id].incValue(1);
+    this.scrollAllPlayerScrollmapsToCenter();
   }
 
   async notif_tokenMovesWithinPlayerArea(
@@ -374,7 +415,7 @@ class Seaside extends GameGui<SeasideGamedatas> implements SeasideGame {
     document.getElementById("seaside-endgame-scoring").style.display = "block";
     await this.tokens.performEndGameScoring(args.tokensByPlayer);
     const soloTextElement = document.getElementById("seaside-endgame-scoring-solo-text");
-    soloTextElement.innerHTML = args.resultText;
+    soloTextElement.innerHTML = _(args.resultText);
     soloTextElement.style.opacity = "1";
   }
 

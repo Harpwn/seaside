@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Bga\Games\Seaside\States;
 
+use Bga\Games\Seaside\Token;
+
 /**
  * Shared token-play dispatch logic used by PlayToken, FlipBeach, and SelectIsopods states.
  *
@@ -11,7 +13,7 @@ namespace Bga\Games\Seaside\States;
  */
 trait TokenPlayMixin
 {
-    protected function playToken(\Token $token, int $playerId, bool $flip = false): string
+    protected function playToken(Token $token, int $playerId, bool $flip = false): string
     {
         if ($flip) {
             $this->game->flipToken($token);
@@ -32,7 +34,7 @@ trait TokenPlayMixin
         };
     }
 
-    private function handlePlayBeachToken(int $playerId, \Token $token): string
+    private function handlePlayBeachToken(int $playerId, Token $token): string
     {
         $this->game->sendTokenToPlayerArea($token, $playerId);
         $this->nfTokenToPlayerArea($playerId, $token);
@@ -49,34 +51,34 @@ trait TokenPlayMixin
             $this->nfBeachGetsShells($playerId, $shellsToMove);
             $this->game->incStat($shellsToMoveCount, STAT_NO_SHELL, $playerId);
         }
-        return TRANSITION_END_TURN;
+        return NextPlayer::class;
     }
 
-    private function handlePlaySandpiperToken(int $playerId, \Token $sandpiper): string
+    private function handlePlaySandpiperToken(int $playerId, Token $sandpiper): string
     {
         $this->game->sendTokenToPlayArea($sandpiper);
 
         $availIsopods = array_column($this->game->getAllTokensOfTypeForLocation(SEA_LOCATION, ISOPOD), 'id');
         if (count($availIsopods) > 0) {
-            return TRANSITION_SELECT_ISOPODS;
+            return SelectIsopods::class;
         } else {
             return $this->handleSelectIsopods($playerId, $sandpiper, []);
         }
     }
 
-    private function handlePlayIsopodToken(\Token $isopod): string
+    private function handlePlayIsopodToken(Token $isopod): string
     {
         $this->game->sendTokenToSea($isopod);
-        return TRANSITION_PLAY_AGAIN;
+        return PlayAgain::class;
     }
 
-    private function handlePlayCrabToken(\Token $crab): string
+    private function handlePlayCrabToken(Token $crab): string
     {
         $this->game->sendTokenToSea($crab);
-        return TRANSITION_PLAY_AGAIN;
+        return PlayAgain::class;
     }
 
-    private function handlePlayRockToken(int $playerId, \Token $rock): string
+    private function handlePlayRockToken(int $playerId, Token $rock): string
     {
         $this->game->sendTokenToPlayerArea($rock, $playerId);
         $this->nfTokenToPlayerArea($playerId, $rock);
@@ -95,21 +97,21 @@ trait TokenPlayMixin
                 if ($otherPlayerId != $playerId) {
                     $enemyCrabs = $this->game->getAllTokensOfTypeForLocation((string)$otherPlayerId, CRAB);
                     if (count($enemyCrabs) > 0) {
-                        return TRANSITION_STEAL_CRAB;
+                        return StealCrab::class;
                     }
                 }
             }
         }
-        return TRANSITION_END_TURN;
+        return NextPlayer::class;
     }
 
-    private function handlePlayShellToken(\Token $shell): string
+    private function handlePlayShellToken(Token $shell): string
     {
         $this->game->sendTokenToSea($shell);
-        return TRANSITION_PLAY_AGAIN;
+        return PlayAgain::class;
     }
 
-    private function handlePlayWaveToken(int $playerId, \Token $wave): string
+    private function handlePlayWaveToken(int $playerId, Token $wave): string
     {
         $this->game->sendTokenToPlayerArea($wave, $playerId);
         $this->nfTokenToPlayerArea($playerId, $wave);
@@ -117,13 +119,13 @@ trait TokenPlayMixin
 
         $playerBeaches = $this->game->getAllTokensOfTypeForLocation((string)$playerId, BEACH);
         if (count($playerBeaches) !== 0) {
-            return TRANSITION_FLIP_BEACH;
+            return FlipBeach::class;
         } else {
-            return TRANSITION_END_TURN;
+            return NextPlayer::class;
         }
     }
 
-    protected function handleSelectIsopods(int $playerId, \Token $sandpiper, array $isopods): string
+    protected function handleSelectIsopods(int $playerId, Token $sandpiper, array $isopods): string
     {
         $playerSandpipers = $this->game->getAllTokensOfTypeForLocation((string)$playerId, SANDPIPER);
         $newSandpiperPileId = SANDPIPER_PILE_INIT;
@@ -166,12 +168,13 @@ trait TokenPlayMixin
             $this->game->incStat(count($pileTokens), STAT_NO_ISOPOD, $playerId);
         }
 
-        return TRANSITION_END_TURN;
+        return NextPlayer::class;
     }
 
-    private function nfTokenPlayed(int $playerId, \Token $token): void
+    private function nfTokenPlayed(int $playerId, Token $token): void
     {
         $this->game->notify->all("tokenPlayed", clienttranslate('▶️ ${player_name} plays ${tokenSideEmoji} ${tokenSide}'), [
+            'i18n' => ['tokenSide'],
             "player_id" => $playerId,
             "tokenSide" => $token->activeType,
             "tokenSideEmoji" => $this->game->getEmojiForType($token->activeType),
@@ -179,9 +182,10 @@ trait TokenPlayMixin
         ]);
     }
 
-    private function nfTokenToPlayerArea(int $playerId, \Token $token, int $tokenLocationArgs = 0): void
+    private function nfTokenToPlayerArea(int $playerId, Token $token, int $tokenLocationArgs = 0): void
     {
         $this->game->notify->all("tokenToPlayerArea", clienttranslate('${tokenSideEmoji} ${tokenSide} played into ${player_name}\'s shore'), [
+            'i18n' => ['tokenSide'],
             "tokenSide" => $token->activeType,
             "tokenSideEmoji" => $this->game->getEmojiForType($token->activeType),
             "token" => $token,

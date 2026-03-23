@@ -22,10 +22,7 @@ class SelectIsopods extends GameState
             name: 'selectIsopods',
             description: clienttranslate('${actplayer} may select isopods from the sea'),
             descriptionMyTurn: clienttranslate('${you} may select isopods from the sea'),
-            transitions: [
-                TRANSITION_END_TURN => GAME_STATE_NEXT_PLAYER,
-                TRANSITION_UNDO => GAME_STATE_PLAYER_PLAY_TOKEN,
-            ],
+
         );
     }
 
@@ -56,7 +53,7 @@ class SelectIsopods extends GameState
 
         foreach ($isopodIdList as $id) {
             if (!in_array($id, array_column($selectableIsopods, 'id'))) {
-                throw new \BgaUserException("Invalid isopod ID: {$id}");
+                throw new \BgaSystemException("Invalid isopod ID: {$id}");
             }
         }
 
@@ -70,7 +67,7 @@ class SelectIsopods extends GameState
     public function actUndo(int $activePlayerId): string
     {
         $this->game->undoRestorePoint();
-        return TRANSITION_UNDO;
+        return PlayToken::class;
     }
 
     public function zombie(int $playerId): string

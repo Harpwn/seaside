@@ -8,6 +8,7 @@ use Bga\GameFramework\StateType;
 use Bga\GameFramework\States\GameState;
 use Bga\GameFramework\States\PossibleAction;
 use Bga\Games\Seaside\Game;
+use Bga\Games\Seaside\Token;
 
 class FlipBeach extends GameState
 {
@@ -22,14 +23,7 @@ class FlipBeach extends GameState
             name: 'flipBeach',
             description: clienttranslate('${actplayer} must flip a beach'),
             descriptionMyTurn: clienttranslate('${you} must flip a beach'),
-            transitions: [
-                TRANSITION_END_TURN => GAME_STATE_NEXT_PLAYER,
-                TRANSITION_PLAY_AGAIN => GAME_STATE_PLAYER_PLAY_AGAIN,
-                TRANSITION_STEAL_CRAB => GAME_STATE_PLAYER_ROCK_STEAL_CRAB,
-                TRANSITION_FLIP_BEACH => GAME_STATE_PLAYER_WAVE_FLIP_BEACH,
-                TRANSITION_SELECT_ISOPODS => GAME_STATE_PLAYER_SANDPIPER_SELECT_ISOPODS,
-                TRANSITION_UNDO => GAME_STATE_PLAYER_PLAY_TOKEN,
-            ],
+
         );
     }
 
@@ -44,7 +38,7 @@ class FlipBeach extends GameState
     public function actFlipBeach(int $beachId, int $activePlayerId, array $args): string
     {
         if (!in_array($beachId, array_column($args['flippableBeachs'], 'id'))) {
-            throw new \BgaUserException("Invalid Beach ID: {$beachId}");
+            throw new \BgaSystemException("Invalid Beach ID: {$beachId}");
         }
 
         $beach = $this->game->getToken($beachId);
@@ -58,7 +52,7 @@ class FlipBeach extends GameState
     public function actUndo(int $activePlayerId): string
     {
         $this->game->undoRestorePoint();
-        return TRANSITION_UNDO;
+        return PlayToken::class;
     }
 
     public function zombie(int $playerId): string
@@ -71,12 +65,13 @@ class FlipBeach extends GameState
             $this->game->incStat(-1, STAT_NO_BEACH, $playerId);
             return $transition;
         }
-        return TRANSITION_END_TURN;
+        return NextPlayer::class;
     }
 
-    private function nfBeachFlip(int $playerId, \Token $beach): void
+    private function nfBeachFlip(int $playerId, Token $beach): void
     {
         $this->game->notify->all("beachFlip", clienttranslate('🔃 ${player_name}\'s ${waveEmoji} WAVE washes away a ${beachEmoji} BEACH to reveal a ${otherSideEmoji} ${otherSideType} token'), [
+            'i18n' => ['otherSideType'],
             "player_id" => $playerId,
             "token" => $beach,
             "otherSideType" => $beach->inactiveType,

@@ -22,13 +22,7 @@ class PlayToken extends GameState
             name: 'playToken',
             description: clienttranslate('${actplayer} must choose a side to play'),
             descriptionMyTurn: clienttranslate('${you} must choose a side to play'),
-            transitions: [
-                TRANSITION_END_TURN => GAME_STATE_NEXT_PLAYER,
-                TRANSITION_PLAY_AGAIN => GAME_STATE_PLAYER_PLAY_AGAIN,
-                TRANSITION_STEAL_CRAB => GAME_STATE_PLAYER_ROCK_STEAL_CRAB,
-                TRANSITION_FLIP_BEACH => GAME_STATE_PLAYER_WAVE_FLIP_BEACH,
-                TRANSITION_SELECT_ISOPODS => GAME_STATE_PLAYER_SANDPIPER_SELECT_ISOPODS,
-            ],
+
         );
     }
 
@@ -63,11 +57,11 @@ class PlayToken extends GameState
         $token = $this->game->getToken($tokenId);
 
         if ($token->side1 !== $tokenType && $token->side2 !== $tokenType) {
-            throw new \BgaUserException("Invalid token type: {$tokenType}");
+            throw new \BgaSystemException("Invalid token type: {$tokenType}");
         }
 
         if ($args['token']->id != $tokenId) {
-            throw new \BgaUserException("Token ID mismatch: expected {$tokenId}, got {$args['token']->id}");
+            throw new \BgaSystemException("Token ID mismatch: expected {$tokenId}, got {$args['token']->id}");
         }
 
         if ($token->activeType !== $tokenType) {
@@ -81,7 +75,7 @@ class PlayToken extends GameState
     {
         $token = $this->game->getTokenInPlay();
         if ($token === null) {
-            return TRANSITION_END_TURN;
+            return NextPlayer::class;
         }
         return $this->playToken($token, $playerId);
     }

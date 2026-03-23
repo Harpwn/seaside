@@ -160,6 +160,7 @@ interface SeasideGame extends GameGui<SeasideGamedatas> {
   states: SeasideStateManager;
   actions: SeasideActions;
   zoom: ZoomManager;
+  playerScrollmaps: Record<string, ScrollmapWithZoomNS.ScrollmapWithZoom>;
 
   onUpdateActionButtons(stateName: string, args: any): void;
   updateConfirmDisabled(disabled: boolean): void;

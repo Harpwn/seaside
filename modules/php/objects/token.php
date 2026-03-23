@@ -1,5 +1,7 @@
 <?php
 
+namespace Bga\Games\Seaside;
+
 class Token
 {
     public int $id;

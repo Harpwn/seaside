@@ -18,13 +18,11 @@ class EndGameScoring extends GameState
             type: StateType::GAME,
             name: 'endGameScoring',
             description: clienttranslate('End of game: final scoring'),
-            transitions: [
-                TRANSITION_SCORING_FINISHED => GAME_STATE_END_GAME,
-            ],
+
         );
     }
 
-    public function onEnteringState(): string
+    public function onEnteringState(): string|int
     {
         $this->game->updatePlayerScores();
         $tokensByPlayer = [];
@@ -32,7 +30,7 @@ class EndGameScoring extends GameState
             $tokensByPlayer[$playerId] = $this->game->getAllTokensForLocation((string)$playerId);
         }
         $this->nfEndGameScoring($tokensByPlayer);
-        return TRANSITION_SCORING_FINISHED;
+        return GAME_STATE_END_GAME;
     }
 
     private function nfEndGameScoring(array $tokensByPlayer): void

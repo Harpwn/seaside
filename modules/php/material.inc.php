@@ -395,19 +395,30 @@ $this->SOLO_RESULT_TEXTS = [
 ];
 
 $this->SANDPIPER_WARNINGS = [
-    'NONE_SELECTED_BUT_AVAILABLE' => clienttranslate("You have not selected any of the !SEA_ISOPOD_COUNT available Isopods to play."),
-    'EMPTY_SEA' => clienttranslate("There are no Isopods in the sea and you have an existing pile bigger than one, playing this will cause it to be discarded."),
-    'SMALLER_PILE' => clienttranslate("!NEW_PILE_SIZE tokens is less than your current largest pile (!MAX_PILE_SIZE), so this pile will be discarded."),
-    'LARGER_PILE' => clienttranslate("!NEW_PILE_SIZE tokens is your largest pile, all smaller piles will be discarded losing you !OTHER_PILE_TOKEN_COUNTS tokens."),
+    'NONE_SELECTED_BUT_AVAILABLE' => clienttranslate('You have not selected any of the ${seaIsopodCount} available Isopods to play.'),
+    'EMPTY_SEA' => clienttranslate('There are no Isopods in the sea and you have an existing pile bigger than one, playing this will cause it to be discarded.'),
+    'SMALLER_PILE' => clienttranslate('${newPileSize} tokens is less than your current largest pile (${maxPileSize}), so this pile will be discarded.'),
+    'LARGER_PILE' => clienttranslate('${newPileSize} tokens is your largest pile, all smaller piles will be discarded losing you ${otherPileTokenCounts} tokens.'),
 ];
 
-$seaTokenDesc = clienttranslate("Place in sea and play again.");
+// Standalone token type name declarations for client-side i18n translation of notification args.
+$this->TOKEN_NAMES = [
+    ROCK      => clienttranslate('ROCK'),
+    WAVE      => clienttranslate('WAVE'),
+    BEACH     => clienttranslate('BEACH'),
+    CRAB      => clienttranslate('CRAB'),
+    SHELL     => clienttranslate('SHELL'),
+    SANDPIPER => clienttranslate('SANDPIPER'),
+    ISOPOD    => clienttranslate('ISOPOD'),
+];
+
+$seaTokenDesc = clienttranslate('Place in sea and play again.');
 $this->TOKEN_DESCRIPTIONS = [
     ISOPOD => $seaTokenDesc,
     CRAB => $seaTokenDesc,
     SHELL => $seaTokenDesc,
-    ROCK => clienttranslate("A pair of rocks take all crabs from the sea, and steals one from another player."),
-    SANDPIPER => clienttranslate("Take with Isopods to form a pile, only retake same size piles."),
-    WAVE => clienttranslate("Flip over a beach, apply the revealed sides effects. Most waves gets leftover sea tokens."),
-    BEACH => clienttranslate("Gain as many shells as you have beaches."),
+    ROCK => clienttranslate('A pair of rocks take all crabs from the sea, and steals one from another player.'),
+    SANDPIPER => clienttranslate('Take with Isopods to form a pile, only retake same size piles.'),
+    WAVE => clienttranslate('Flip over a beach, apply the revealed sides effects. Most waves gets leftover sea tokens.'),
+    BEACH => clienttranslate('Gain as many shells as you have beaches.'),
 ];

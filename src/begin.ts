@@ -3,6 +3,7 @@
 //define//  "dojo/_base/declare",
 //define//  "ebg/core/gamegui",
 //define//  "ebg/counter",
+//define//  "./modules/js/scrollMapWithZoom/index",
 //define//  getLibUrl("bga-zoom", "1.x"),
 //define//  getLibUrl("bga-animations", "1.x"),
 //define//  getLibUrl("bga-cards", "1.x"),
@@ -11,6 +12,7 @@
 //define//  declare,
 //define//  GameGui,
 //define//  Counter,
+//define//  scrollMap,
 //define//  BgaZoom,
 //define//  BgaAnimations,
 //define//  BgaCards

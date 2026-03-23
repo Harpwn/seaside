@@ -7,6 +7,7 @@ namespace Bga\Games\Seaside\States;
 use Bga\GameFramework\StateType;
 use Bga\GameFramework\States\GameState;
 use Bga\Games\Seaside\Game;
+use Bga\Games\Seaside\Token;
 
 class DrawToken extends GameState
 {
@@ -17,9 +18,6 @@ class DrawToken extends GameState
             id: GAME_STATE_GAME_DRAW_TOKEN,
             type: StateType::GAME,
             name: 'drawToken',
-            transitions: [
-                TRANSITION_PLAY_TOKEN => GAME_STATE_PLAYER_PLAY_TOKEN,
-            ],
         );
     }
 
@@ -27,12 +25,13 @@ class DrawToken extends GameState
     {
         $this->game->drawRandomToken();
         $this->nfTokenDrawn($this->game->getTokenInPlay());
-        return TRANSITION_PLAY_TOKEN;
+        return PlayToken::class;
     }
 
-    private function nfTokenDrawn(\Token $token): void
+    private function nfTokenDrawn(Token $token): void
     {
         $this->game->notify->all("tokenDrawn", clienttranslate('🆕 A new ${tokenSide1Emoji}/${tokenSide2Emoji} ${tokenSide1Type}/${tokenSide2Type} token is drawn'), [
+            'i18n' => ['tokenSide1Type', 'tokenSide2Type'],
             "token" => $token,
             "tokenSide1Type" => $token->side1,
             "tokenSide1Emoji" => $this->game->getEmojiForType($token->side1),

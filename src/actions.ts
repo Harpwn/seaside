@@ -37,7 +37,7 @@ class SeasideActions {
       args.currentPileSizes.some((size) => size > 1)
     ) {
       this.game.confirmationDialog(
-        this.game.gamedatas.sandPiperWarnings["EMPTY_SEA"],
+        _(this.game.gamedatas.sandPiperWarnings["EMPTY_SEA"]),
         () => {
           this.game.bgaPerformAction(SeasideGameActions.PlayToken, data);
         }
@@ -73,11 +73,13 @@ class SeasideActions {
 
   updateActionButtonsPlayToken(args: SeasidePlayTokenArgs) {
     if (this.game.isCurrentPlayerActive()) {
-      this.game.statusBar.addActionButton(`Play ${args.token.side1} Side`, () =>
-        this.actPlayToken(args, args.token.side1)
+      this.game.statusBar.addActionButton(
+        dojo.string.substitute(_("Play ${side} Side"), { side: _(args.token.side1) }),
+        () => this.actPlayToken(args, args.token.side1)
       );
-      this.game.statusBar.addActionButton(`Play ${args.token.side2} Side`, () =>
-        this.actPlayToken(args, args.token.side2)
+      this.game.statusBar.addActionButton(
+        dojo.string.substitute(_("Play ${side} Side"), { side: _(args.token.side2) }),
+        () => this.actPlayToken(args, args.token.side2)
       );
     }
   }
@@ -89,7 +91,7 @@ class SeasideActions {
           this.actStealCrab(player.id)
         );
       });
-      this.game.statusBar.addActionButton(`Undo`, () => this.actUndo(), {
+      this.game.statusBar.addActionButton(_("Undo"), () => this.actUndo(), {
         color: "alert",
       });
     }
@@ -98,7 +100,7 @@ class SeasideActions {
   updateActionButtonsFlipBeach(args: SeasideFlipBeachArgs) {
     if (this.game.isCurrentPlayerActive()) {
       this.game.statusBar.addActionButton(
-        `Confirm`,
+        _("Confirm"),
         () => {
           const beachToken =
             this.tokens.playerAreaStocks[this.game.player_id].getSelection()[0];
@@ -109,7 +111,7 @@ class SeasideActions {
           disabled: true,
         }
       );
-      this.game.statusBar.addActionButton(`Undo`, () => this.actUndo(), {
+      this.game.statusBar.addActionButton(_("Undo"), () => this.actUndo(), {
         color: "alert",
       });
     }
@@ -118,20 +120,20 @@ class SeasideActions {
   updateActionButtonsSelectIsopods(args: SeasideSelectIsopodsArgs) {
     if (this.game.isCurrentPlayerActive()) {
       this.game.statusBar.addActionButton(
-        `Confirm`,
+        _("Confirm"),
         () => this.handleSelectIsopodsConfirm(args),
         {
           id: `seaside-confirm`,
           disabled: false,
         }
       );
-      this.game.statusBar.addActionButton(`Take all`, () => {
+      this.game.statusBar.addActionButton(_("Take all"), () => {
         args.selectableIsopods.forEach((token) => {
           this.tokens.seaStock.selectCard(token);
         });
         this.handleSelectIsopodsConfirm(args);
       });
-      this.game.statusBar.addActionButton(`Undo`, () => this.actUndo(), {
+      this.game.statusBar.addActionButton(_("Undo"), () => this.actUndo(), {
         color: "alert",
       });
     }
@@ -152,9 +154,10 @@ class SeasideActions {
         this.actSelectIsopods(selectedIsopodTokenIds);
       } else {
         this.game.confirmationDialog(
-          this.game.gamedatas.sandPiperWarnings[
-            "NONE_SELECTED_BUT_AVAILABLE"
-          ].replace("!SEA_ISOPOD_COUNT", seaIsopodTokens.length.toString()),
+          dojo.string.substitute(
+            _(this.game.gamedatas.sandPiperWarnings["NONE_SELECTED_BUT_AVAILABLE"]),
+            { seaIsopodCount: seaIsopodTokens.length.toString() }
+          ),
           () => {
             this.actSelectIsopods(selectedIsopodTokenIds);
           }
@@ -175,12 +178,13 @@ class SeasideActions {
 
     if (playerPlayingSmallerPile) {
       this.game.confirmationDialog(
-        this.game.gamedatas.sandPiperWarnings["SMALLER_PILE"]
-          .replace("!NEW_PILE_SIZE", newPileSize.toString())
-          .replace(
-            "!MAX_PILE_SIZE",
-            Math.max(...args.currentPileSizes).toString()
-          ),
+        dojo.string.substitute(
+          _(this.game.gamedatas.sandPiperWarnings["SMALLER_PILE"]),
+          {
+            newPileSize: newPileSize.toString(),
+            maxPileSize: Math.max(...args.currentPileSizes).toString(),
+          }
+        ),
         () => {
           this.actSelectIsopods(selectedIsopodTokenIds);
         }
@@ -190,12 +194,15 @@ class SeasideActions {
 
     if (playerPlayingLargestPile) {
       this.game.confirmationDialog(
-        this.game.gamedatas.sandPiperWarnings["LARGER_PILE"]
-          .replace("!NEW_PILE_SIZE", newPileSize.toString())
-          .replace(
-            "!OTHER_PILE_TOKEN_COUNTS",
-            smallerPiles.reduce((a, b) => a + b, 0).toString()
-          ),
+        dojo.string.substitute(
+          _(this.game.gamedatas.sandPiperWarnings["LARGER_PILE"]),
+          {
+            newPileSize: newPileSize.toString(),
+            otherPileTokenCounts: smallerPiles
+              .reduce((a, b) => a + b, 0)
+              .toString(),
+          }
+        ),
         () => {
           this.actSelectIsopods(selectedIsopodTokenIds);
         }
@@ -205,9 +212,10 @@ class SeasideActions {
 
     if (playerDidntSelectAnyButCouldHave) {
       this.game.confirmationDialog(
-        this.game.gamedatas.sandPiperWarnings[
-          "NONE_SELECTED_BUT_AVAILABLE"
-        ].replace("!SEA_ISOPOD_COUNT", seaIsopodTokens.length.toString()),
+        dojo.string.substitute(
+          _(this.game.gamedatas.sandPiperWarnings["NONE_SELECTED_BUT_AVAILABLE"]),
+          { seaIsopodCount: seaIsopodTokens.length.toString() }
+        ),
         () => {
           this.actSelectIsopods(selectedIsopodTokenIds);
         }

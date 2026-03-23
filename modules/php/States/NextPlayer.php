@@ -18,10 +18,7 @@ class NextPlayer extends GameState
             type: StateType::GAME,
             name: 'nextPlayer',
             updateGameProgression: true,
-            transitions: [
-                TRANSITION_GAME_ENDING => GAME_STATE_PRE_END_GAME,
-                TRANSITION_NEXT_PLAYER => GAME_STATE_GAME_DRAW_TOKEN,
-            ],
+
         );
     }
 
@@ -31,6 +28,6 @@ class NextPlayer extends GameState
         $this->game->updatePlayerScores();
         $this->game->giveExtraTime($playerId);
         $this->game->activeNextPlayer();
-        return $this->game->gameEndOrNextState(fn() => TRANSITION_NEXT_PLAYER);
+        return $this->game->gameEndOrNextState(fn() => DrawToken::class);
     }
 }

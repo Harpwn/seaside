@@ -19,10 +19,7 @@ class PlayAgain extends GameState
             name: 'playAgain',
             description: clienttranslate('${actplayer} must play again'),
             descriptionMyTurn: clienttranslate('${you} must play again'),
-            transitions: [
-                TRANSITION_NEXT_DRAW => GAME_STATE_GAME_DRAW_TOKEN,
-                TRANSITION_GAME_ENDING => GAME_STATE_PRE_END_GAME,
-            ],
+
         );
     }
 
@@ -31,7 +28,7 @@ class PlayAgain extends GameState
         $this->game->giveExtraTime($activePlayerId);
         return $this->game->gameEndOrNextState(function () use ($activePlayerId) {
             $this->nfPlayAgain($activePlayerId);
-            return TRANSITION_NEXT_DRAW;
+            return DrawToken::class;
         });
     }
 
@@ -39,7 +36,7 @@ class PlayAgain extends GameState
     {
         return $this->game->gameEndOrNextState(function () use ($playerId) {
             $this->nfPlayAgain($playerId);
-            return TRANSITION_NEXT_DRAW;
+            return DrawToken::class;
         });
     }
 

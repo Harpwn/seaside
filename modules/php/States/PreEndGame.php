@@ -19,9 +19,7 @@ class PreEndGame extends GameState
             name: 'preEndGame',
             description: clienttranslate('Prepare for end of game'),
             updateGameProgression: true,
-            transitions: [
-                TRANSITION_SCORING_STARTED => GAME_STATE_END_GAME_SCORING,
-            ],
+
         );
     }
 
@@ -31,7 +29,7 @@ class PreEndGame extends GameState
         if (count($seaTokens) > 0) {
             $this->handleEndGameWaveBonus($seaTokens);
         }
-        return TRANSITION_SCORING_STARTED;
+        return EndGameScoring::class;
     }
 
     private function handleEndGameWaveBonus(array $seaTokens): void
@@ -69,7 +67,7 @@ class PreEndGame extends GameState
 
     private function nfEndGameWaveBonus(int $playerId, array $seaTokens): void
     {
-        $this->game->notify->all("endGameWaveBonus", clienttranslate('🏅 ${player_name} has the most ${waveEmoji} waves, so they get the ${tokenCount} leftover sea tokens'), [
+        $this->game->notify->all("endGameWaveBonus", clienttranslate('🏅 ${player_name} has the most ${waveEmoji} waves and gets the ${tokenCount} leftover sea tokens'), [
             "player_id" => $playerId,
             "tokenCount" => count($seaTokens),
             "tokens" => $seaTokens,

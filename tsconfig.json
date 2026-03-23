@@ -10,6 +10,7 @@
     "downlevelIteration": true
   },
   "files": [
+    "src/types/bga-scrollMapWithZoom.d.ts",
     "bga-framework.d.ts",
     "src/types/bga-cards.d.ts",
     "src/types/seaside.d.ts",

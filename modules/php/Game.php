@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Bga\Games\Seaside;
 
 require_once __DIR__ . "/constants.inc.php";
+require_once __DIR__ . "/objects/token.php";
 
 class Game extends \Bga\GameFramework\Table
 {
@@ -227,6 +228,7 @@ class Game extends \Bga\GameFramework\Table
     {
         //$this->debugLog([$token, $tokenLocationArgs], 'nfTokenToSea');
         $this->notify->all("tokenToSea", clienttranslate('🔵 ${tokenSideEmoji} ${tokenSide} played into the sea'), [
+            'i18n' => ['tokenSide'],
             "tokenSide" => $token->activeType,
             "tokenSideEmoji" => $this->getEmojiForType($token->activeType),
             "token" => $token,
@@ -237,6 +239,7 @@ class Game extends \Bga\GameFramework\Table
     function nfSoloTokenLimitReached(string $tokenType)
     {
         $this->notify->all("soloTokenLimitReached", clienttranslate('🏁 You have reached 7 ${tokenType} tokens, the game ends immediately.'), [
+            'i18n' => ['tokenType'],
             "tokenType" => $tokenType
         ]);
     }
@@ -310,7 +313,12 @@ class Game extends \Bga\GameFramework\Table
             'playAgain'     => (new \Bga\Games\Seaside\States\PlayAgain($this))->zombie($playerId),
             default         => throw new \feException("Zombie mode not supported at state: \"{$stateName}\"."),
         };
-        $this->gamestate->nextState($transition);
+        // Zombie methods now return class names — resolve to state ID and jump
+        if (class_exists($transition)) {
+            $this->gamestate->jumpToState((new $transition($this))->id);
+        } else {
+            $this->gamestate->nextState($transition);
+        }
     }
 
     private function createPlayers($players, $defaultColors)
@@ -424,14 +432,65 @@ class Game extends \Bga\GameFramework\Table
         if ($this->isSoloGame()) {
             $gameEnds = $this->soloGameEndConditionMet();
             if ($gameEnds || $remainingTokens == 0) {
-                return TRANSITION_GAME_ENDING;
+                return \Bga\Games\Seaside\States\PreEndGame::class;
             } else {
                 return $toNextState();
             }
         } else if ($remainingTokens == 0) {
-            return TRANSITION_GAME_ENDING;
+            return \Bga\Games\Seaside\States\PreEndGame::class;
         } else {
             return $toNextState();
         }
+    }
+
+    // ---- Debug functions (Studio only) ----
+
+    function debug_dumpGameState(): void
+    {
+        $this->dump('bagCount', $this->tokens->countCardsInLocation(BAG_LOCATION));
+        $this->dump('drawnToken', $this->getTokenInPlay());
+        $this->dump('seaTokens', $this->getAllTokensForLocation(SEA_LOCATION));
+        foreach ($this->getPlayersIds() as $playerId) {
+            $this->dump("player_{$playerId}_tokens", $this->getAllTokensForLocation((string)$playerId));
+        }
+    }
+
+    function debug_drawTokenOfType(string $type): void
+    {
+        $allInBag = $this->tokens->getCardsInLocation(BAG_LOCATION);
+        foreach ($allInBag as $card) {
+            $parts = explode('/', $card['type']);
+            if (in_array(strtoupper($type), array_map('strtoupper', $parts))) {
+                $this->tokens->moveCard($card['id'], DRAWN_LOCATION);
+                $token = new Token($card, false);
+                $this->notify->all("tokenDrawn", "DEBUG: Drew {$token->side1}/{$token->side2} token", [
+                    "token" => $token,
+                    "tokenSide1Type" => $token->side1,
+                    "tokenSide1Emoji" => $this->getEmojiForType($token->side1),
+                    "tokenSide2Type" => $token->side2,
+                    "tokenSide2Emoji" => $this->getEmojiForType($token->side2),
+                ]);
+                return;
+            }
+        }
+        $this->dump('debug_drawTokenOfType', "No token of type '$type' found in bag");
+    }
+
+    function debug_skipToEndGame(): void
+    {
+        $this->tokens->moveAllCardsInLocation(BAG_LOCATION, EXCLUDED_LOCATION);
+        $this->gamestate->jumpToState(GAME_STATE_PRE_END_GAME);
+    }
+
+    function debug_playNMoves(int $n = 5): void
+    {
+        for ($i = 0; $i < $n; $i++) {
+            $state = $this->gamestate->state();
+            if ($state['type'] !== 'activeplayer') {
+                break;
+            }
+            $this->zombieTurn($state, (int)$this->getActivePlayerId());
+        }
+        $this->notify->all("message", "DEBUG: Played {$n} moves", []);
     }
 }

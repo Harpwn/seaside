@@ -1,4 +1,3 @@
-@use '../node_modules/bga-zoom/bga-zoom';
 @use '../node_modules/bga-help/bga-help';
 
 $isopod-x-offset: 33.4%;
@@ -15,7 +14,15 @@ $seaside-blue: #2F2F89;
   padding: 5px;
 }
 
+#bga-zoom-inner {
+  display: inline-flex;
+}
+
 #seaside-game-area {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 8px;
 
   //direct child token selector
   >.seaside-token {
@@ -25,11 +32,43 @@ $seaside-blue: #2F2F89;
     height: 75px;
     width: 75px;
   }
+}
 
-  >div {
-    display: inline-block;
-    float: left;
-  }
+.seaside-players-column {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: stretch;
+  flex-shrink: 0;
+}
+
+.seaside-player-scrollmap-container {
+  position: relative;
+  width: 100%;
+  border-radius: 10px;
+  margin-top: -35px;
+}
+
+[id^="seaside-player-inner-"] {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: flex-start;
+}
+
+.scrollmap_icon {
+  padding: 5px;
+}
+
+.info.scrollmap_button_wrapper,
+.toogle_buttons_visibility.scrollmap_button_wrapper,
+.zoomtofit.scrollmap_button_wrapper,
+.show_settings.scrollmap_button_wrapper {
+  display: none !important;
+}
+
+.scrollmap_btns_flex {
+  flex-direction: row-reverse;
 }
 
 #seaside-discard {
@@ -42,30 +81,29 @@ $seaside-blue: #2F2F89;
 
 #seaside-draw-bag {
   z-index: 98;
-  height: 170px;
-  width: 330px;
+  height: 275px;
+  width: 100%;
   top: 0;
   right: 0;
   position: absolute;
   background-image: url(img/draw-bag.png);
   background-size: contain;
   background-repeat: no-repeat;
-  background-color: rgba(0, 0, 0, 0.3);
-  margin: 20px;
-  background-position-x: 173px;
+  background-position-x: 341px;
   background-position-y: 5px;
 
   .seaside-token {
     position: absolute;
+    transform: scale(1.5);
 
     &[data-side="back"] {
-      top: 13px;
-      left: 77px;
+      top: 123px;
+      left: 150px;
     }
 
     &[data-side="front"] {
-      top: 58px;
-      left: 12px;
+      top: 45px;
+      left: 50px;
     }
 
   }
@@ -81,11 +119,11 @@ $seaside-blue: #2F2F89;
 
 .seaside-player-name {
   position: absolute;
-  color: white;
+  color: #2F2F89;
   z-index: 98;
-  top: 15px;
-  left: 50px;
-  font-size: 20px;
+  top: 8px;
+  left: 12px;
+  font-size: 26px;
   font-weight: 500;
 }
 
@@ -140,12 +178,17 @@ $seaside-blue: #2F2F89;
 }
 
 .seaside-sea-area-wrapper {
-  width: 800px;
-  height: 855px;
-  background-color: $seaside-blue;
-  background-image: url("img/main-board-background-1.jpg");
+  width: 600px;
+  flex: 0 0 600px;
+  height: 910px;
+  background-color: white;
+  background-image: url(img/main-board-background.jpg);
   align-items: center;
   position: relative;
+  background-repeat: no-repeat;
+  background-size: 115%;
+  background-position: bottom;
+  border-radius: 25px;
 
   .seaside-sea-stock-slot {
     .bga-cards_card {
@@ -156,38 +199,49 @@ $seaside-blue: #2F2F89;
 }
 
 .seaside-player-wrapper {
-  margin-left: 20px;
   position: relative;
 }
 
 .seaside-player {
-  background-image: url('img/player-background.jpg');
+  background-image: url(img/player-background.jpg);
   background-size: cover;
-  min-height: 400px;
-  width: 750px;
-  margin: 10px;
+  height: 350px;
+  width: 660px;
   padding-top: 90px;
   padding-bottom: 10px;
+  border-radius: 25px;
+  overflow: hidden;
+
+  .seaside-player-area-slot:empty,
+  .seaside-player-area-slot-sandpiper:empty {
+    width: 0 !important;
+    min-width: 0 !important;
+    margin-left: 0;
+  }
 
   .seaside-player-area-slot,
   .seaside-player-area-slot-sandpiper {
-    flex-direction: column;
-    align-self: start;
+    flex-direction: column-reverse;
+    align-self: end;
+    margin-left: 20px;
 
     >:first-child.bga-cards_card {
-      margin-top: -0px;
+      margin-bottom: 0;
     }
 
     >.bga-cards_card {
-      margin-top: -80px;
-      transition: margin-top 0.3s ease;
+      margin-bottom: -80px;
+      transition: margin-bottom 0.3s ease;
     }
+  }
+
+  .seaside-player-area-slot-sandpiper {
+    flex-direction: column-reverse;
+    align-self: end;
   }
 }
 
 .seaside-player-area-stock-sandpiper {
-  align-self: start;
-
   [data-slot-id="0"] {
     order: 100;
   }
@@ -234,24 +288,25 @@ $seaside-blue: #2F2F89;
 }
 
 #seaside-guage-bar-container {
-  background-color: #181818;
-  top: 30%;
-  left: 72%;
-  width: 7px;
-  height: 60px;
+  background-color: white;
+  top: 21%;
+  left: 74.5%;
+  width: 18px;
+  height: 172px;
   position: absolute;
   border: white 3px solid;
+  border-radius: 6px;
 }
 
 #seaside-guage-bar {
-  background-color: #9BC9C7;
+  background-color: $seaside-blue;
   position: absolute;
   bottom: 0;
   width: 100%;
-  //border-top: 6px solid #FFF;
   box-sizing: border-box;
   animation: grow 1.5s ease-out forwards;
   transform-origin: bottom;
+  border-radius: 5px;
 }
 
 @keyframes grow {

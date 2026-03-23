@@ -86,11 +86,13 @@ class TokenManager {
 
     this.playerAreaStocks[player.id] = new BgaCards.SlotStock(
       this.cards,
-      document.getElementById(`seaside-player-${player.id}`),
+      document.getElementById(`seaside-player-inner-${player.id}`),
       {
         slotsIds: ["SHELL", "CRAB", "ROCK", "WAVE", "BEACH"],
         mapCardToSlot: (token: SeasideToken) => token.activeType.toUpperCase(),
         slotClasses: ["seaside-player-area-slot"],
+        wrap: "nowrap",
+        gap: '0'
       }
     );
     this.cards.addStock(this.playerAreaStocks[player.id]);
@@ -103,12 +105,14 @@ class TokenManager {
 
     this.playerAreaSandpiperPileStocks[player.id] = new BgaCards.SlotStock(
       this.cards,
-      document.getElementById(`seaside-player-${player.id}-sandpiper-pile`),
+      document.getElementById(`seaside-player-inner-${player.id}`),
       {
         slotsIds: [0],
         mapCardToSlot: (token: SeasideToken) => token.locationArg ?? 0,
         slotClasses: ["seaside-player-area-slot-sandpiper"],
-        direction: "column",
+        direction: "row",
+        wrap: "nowrap",
+        gap: '0'
       }
     );
     this.cards.addStock(this.playerAreaSandpiperPileStocks[player.id]);
