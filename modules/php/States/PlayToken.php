@@ -20,8 +20,8 @@ class PlayToken extends GameState
             id: GAME_STATE_PLAYER_PLAY_TOKEN,
             type: StateType::ACTIVE_PLAYER,
             name: 'playToken',
-            description: clienttranslate('${actplayer} must choose a side to play'),
-            descriptionMyTurn: clienttranslate('${you} must choose a side to play'),
+            description: clienttranslate('${actplayer} must choose a side of the token to play.'),
+            descriptionMyTurn: clienttranslate('${you} must choose a side of the token to play.'),
 
         );
     }

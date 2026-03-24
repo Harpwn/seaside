@@ -205,6 +205,21 @@ class TokenManager {
     this.playerAreaStocks[playerId].onSelectionChange = (selection) => {
       this.game.updateConfirmDisabled(selection.length === 0);
     };
+
+    // Show faded preview of the other side (side2) on each selectable beach
+    tokens.forEach((token) => {
+      const el = this.cards.getCardElement(token);
+      if (el) {
+        const overlay = document.createElement("div");
+        overlay.classList.add("seaside-beach-flip-preview");
+        const face = document.createElement("div");
+        face.classList.add("seaside-token-face");
+        face.setAttribute("data-type", token.side2);
+        overlay.appendChild(face);
+        el.appendChild(overlay);
+      }
+    });
+
     this.playerAreaSandpiperPileStocks[playerId].getCards().forEach((token) => {
       this.cards
         .getCardElement(token)
@@ -257,6 +272,8 @@ class TokenManager {
   clearSelectedTokens() {
     this.bagStock.setSelectionMode("none");
     this.seaStock.setSelectionMode("none");
+    // Remove any beach flip preview overlays
+    document.querySelectorAll(".seaside-beach-flip-preview").forEach((el) => el.remove());
     Object.values(this.gameDatas.players).forEach((player) => {
       this.playerAreaStocks[player.id].setSelectionMode("none");
       this.playerAreaSandpiperPileStocks[player.id]

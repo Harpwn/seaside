@@ -1,8 +1,8 @@
 @use '../node_modules/bga-help/bga-help';
 
-$isopod-x-offset: 33.4%;
+$isopod-x-offset: 33.9%;
 $crab-x-offset: 66.6%;
-$wave-x-offset: 0.3%;
+$wave-x-offset: 0.5%;
 $rock-x-offset: 17%;
 $beach-x-offset: 99.8%;
 $sandpiper-x-offset: 83.2%;
@@ -167,7 +167,7 @@ $seaside-blue: #2F2F89;
 
     background-image: url("img/tokens.png");
     background-repeat: no-repeat;
-    background-size: 710% 106px;
+    background-size: 750% 110px;
     background-position-y: 60%;
     height: 100%;
 
@@ -261,7 +261,7 @@ $seaside-blue: #2F2F89;
     }
 
     >.bga-cards_card {
-      margin-bottom: -80px;
+      margin-bottom: -70px;
       transition: margin-bottom 0.3s ease;
     }
   }
@@ -270,11 +270,39 @@ $seaside-blue: #2F2F89;
     flex-direction: column-reverse;
     align-self: end;
   }
+
+  // Rocks: split into pairs with a gap between each pair
+  // column-reverse means nth-last-child(even) = bottom card of each pair from top
+  .seaside-player-area-slot[data-slot-id="ROCK"] {
+    > .bga-cards_card:nth-last-child(odd) {
+      margin-top: 45px;
+    }
+  }
+
+  .seaside-player-area-slot[data-slot-id="BEACH"] {
+    > .bga-cards_card {
+      margin-top: 30px;
+    }
+  }
 }
 
 .seaside-player-area-stock-sandpiper {
   [data-slot-id="0"] {
     order: 100;
+  }
+}
+
+.seaside-beach-flip-preview {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  overflow: hidden;
+  opacity: 0.6;
+  pointer-events: none;
+
+  .seaside-token-face {
+    width: 100%;
+    height: 100%;
   }
 }
 
@@ -356,6 +384,7 @@ $seaside-blue: #2F2F89;
   z-index: 99;
   justify-self: center;
   border: 10px solid white;
+  border-radius: 25px;
 
   .bga-cards_card-counter {
     width: 100%;
@@ -446,7 +475,7 @@ $seaside-blue: #2F2F89;
 
   .seaside-token:has(.bga-cards_selectable-card),
   .seaside-token:has(.bga-cards_selected-card) {
-    margin-top: -50px;
+    margin-top: -30px;
   }
 }
 
@@ -498,4 +527,8 @@ $seaside-blue: #2F2F89;
       font-size: small;
     }
   }
+}
+
+.bga-cards_card>.bga-cards_card-sides>.bga-cards_card-side {
+  box-shadow: 3px 5px 5px 0px rgb(0, 0, 0, .5) !important;
 }
