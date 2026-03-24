@@ -28,8 +28,20 @@ class TokenManager {
   private setupBagStock(gamedatas: SeasideGamedatas) {
     this.bagStock = new BgaCards.CardStock(
       this.cards,
-      document.getElementById("seaside-draw-bag")
+      document.getElementById("seaside-draw-bag"),
     );
+    this.bagStock.onCardAdded = (token: SeasideToken) => {
+      const el = this.cards.getCardElement(token);
+      if (el) {
+        el.style.transform = "scale(1.5)";
+      }
+    };
+    this.bagStock.onCardRemoved = (token: SeasideToken) => {
+      const el = this.cards.getCardElement(token);
+      if (el) {
+        el.style.transform = "";
+      }
+    };
     if (!!gamedatas.bagToken) {
       this.addToBagStock(gamedatas.bagToken);
     }
