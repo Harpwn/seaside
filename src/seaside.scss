@@ -34,12 +34,44 @@ $seaside-blue: #2F2F89;
   }
 }
 
+#seaside-players-left-column {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
 .seaside-players-column {
   display: flex;
   flex-direction: column;
   gap: 8px;
   align-items: stretch;
   flex-shrink: 0;
+}
+
+.mobile_version {
+  #seaside-game-area {
+    flex-direction: column;
+  }
+
+  // Unwrap the left column so its children join the parent flex flow
+  #seaside-players-left-column {
+    display: contents;
+  }
+
+  // Order: current player first, sea second, all others last
+  #seaside-players-me {
+    order: 1;
+  }
+
+  .seaside-sea-area-wrapper {
+    order: 2;
+    flex: none;
+  }
+
+  #seaside-players-left,
+  #seaside-players-right {
+    order: 3;
+  }
 }
 
 .seaside-player-scrollmap-container {
@@ -83,8 +115,6 @@ $seaside-blue: #2F2F89;
   z-index: 98;
   height: 275px;
   width: 100%;
-  top: 0;
-  right: 0;
   position: absolute;
   background-image: url(img/draw-bag.png);
   background-size: contain;
@@ -98,12 +128,12 @@ $seaside-blue: #2F2F89;
 
     &[data-side="back"] {
       top: 123px;
-      left: 150px;
+      left: 200px;
     }
 
     &[data-side="front"] {
       top: 45px;
-      left: 50px;
+      left: 125px;
     }
 
   }
@@ -178,8 +208,8 @@ $seaside-blue: #2F2F89;
 }
 
 .seaside-sea-area-wrapper {
-  width: 600px;
-  flex: 0 0 600px;
+  width: 660px;
+  flex: 0 0 660px;
   height: 910px;
   background-color: white;
   background-image: url(img/main-board-background.jpg);
@@ -187,8 +217,9 @@ $seaside-blue: #2F2F89;
   position: relative;
   background-repeat: no-repeat;
   background-size: 115%;
-  background-position: bottom;
   border-radius: 25px;
+  background-position-x: 50%;
+  background-position-y: 200px;
 
   .seaside-sea-stock-slot {
     .bga-cards_card {
@@ -290,7 +321,7 @@ $seaside-blue: #2F2F89;
 #seaside-guage-bar-container {
   background-color: white;
   top: 21%;
-  left: 74.5%;
+  left: 68%;
   width: 18px;
   height: 172px;
   position: absolute;

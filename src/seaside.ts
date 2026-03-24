@@ -32,7 +32,10 @@ class Seaside extends GameGui<SeasideGamedatas> implements SeasideGame {
       `<div id="seaside-table">
         <div id="bga-zoom-inner">
           <div id="seaside-game-area">
-            <div id="seaside-players-left" class="seaside-players-column"></div>
+            <div id="seaside-players-left-column">
+              <div id="seaside-players-me" class="seaside-players-column"></div>
+              <div id="seaside-players-left" class="seaside-players-column"></div>
+            </div>
             <div class="seaside-sea-area-wrapper">
               <div id="seaside-endgame-scoring">
                 <div id="seaside-endgame-scoring-title">End Game Scoring</div>
@@ -69,15 +72,15 @@ class Seaside extends GameGui<SeasideGamedatas> implements SeasideGame {
 
   private setupPlayerAreas(gamedatas: SeasideGamedatas) {
     const playerIds = Object.values(gamedatas.playerorder) as string[];
-    const playerCount = playerIds.length;
 
-    // Left count per player count: 1->1, 2->1, 3->2, 4->2, 5->3
-    const leftCounts: Record<number, number> = { 1: 1, 2: 1, 3: 2, 4: 2, 5: 3 };
-    const leftCount = leftCounts[playerCount] ?? Math.ceil(playerCount / 2);
+    // Layout: index 0 (current player) → me; indices 1,4 → left; 2,3 → right
+    const leftIndices = new Set([1, 4]);
 
     playerIds.forEach((playerId, index) => {
       const player = gamedatas.players[playerId];
-      const column = index < leftCount ? "seaside-players-left" : "seaside-players-right";
+      const column = index === 0 ? "seaside-players-me"
+        : leftIndices.has(index) ? "seaside-players-left"
+        : "seaside-players-right";
 
       document.getElementById(column).insertAdjacentHTML(
         "beforeend",
