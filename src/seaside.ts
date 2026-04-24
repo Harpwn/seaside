@@ -433,7 +433,7 @@ class Seaside extends GameGui<SeasideGamedatas> implements SeasideGame {
 
   setupPlayerOverallBoardStats(gamedatas: SeasideGamedatas, playerId: string) {
     this.playerScoreTypeCounters[playerId] = {};
-    const playerBoard = document.getElementById(`player_board_${playerId}`).querySelector(".player-board-game-specific-content");
+    const playerBoard = (this as any).bga.playerPanels.getElement(playerId);
     const tokenTypes = ["CRAB", "ISOPOD", "BEACH", "SHELL", "SANDPIPER", "WAVE", "ROCK", "SEA"];
     tokenTypes.forEach((tokenType) => {
       const html = this.setupPlayerOverallBoardTokenHtml(tokenType as SeasideTokenType, playerId);
