@@ -144,6 +144,29 @@ class Seaside extends GameGui<SeasideGamedatas> implements SeasideGame {
     }
   }
 
+  public buildTokenTooltipHtml(token: SeasideToken, showBothSides: boolean = false): string {
+    const activeDesc = _(this.gamedatas.tokenDescriptions[token.activeType]);
+    if (!showBothSides || !token.inactiveType) {
+      return `<div class="seaside-token-tooltip-contents">
+        <div class="seaside-token-tooltip-side">
+          <h4>${_(token.activeType)}</h4>
+          <p>${activeDesc}</p>
+        </div>
+      </div>`;
+    }
+    const inactiveDesc = _(this.gamedatas.tokenDescriptions[token.inactiveType]);
+    return `<div class="seaside-token-tooltip-contents">
+      <div class="seaside-token-tooltip-side">
+        <h4>${_(token.activeType)}</h4>
+        <p>${activeDesc}</p>
+      </div>
+      <div class="seaside-token-tooltip-side">
+        <h4>${_(token.inactiveType)}</h4>
+        <p>${inactiveDesc}</p>
+      </div>
+    </div>`;
+  }
+
   public clearMoves() {
     this.tokens.clearSelectedTokens();
     this.tokens.bagStock.onCardClick = null;
@@ -202,21 +225,7 @@ class Seaside extends GameGui<SeasideGamedatas> implements SeasideGame {
       },
       setupDiv: (token: SeasideToken, div: HTMLElement) => {
         div.classList.add("seaside-token");
-        const side1Desc = _(this.gamedatas.tokenDescriptions[token.side1]);
-        const side2Desc = _(this.gamedatas.tokenDescriptions[token.side2]);
-        const tooltipHtml = `
-          <div class="seaside-token-tooltip-contents">
-            <div class="seaside-token-tooltip-side">
-              <h4>${_(token.side2)}</h4>
-              <p>${side2Desc}</p>
-            </div>
-            <div class="seaside-token-tooltip-side">
-              <h4>${_(token.side1)}</h4>
-              <p>${side1Desc}</p>
-            </div>
-          </div>
-          `;
-        this.addTooltipHtml(div.id, tooltipHtml);
+        this.addTooltipHtml(div.id, this.buildTokenTooltipHtml(token));
       },
       setupBackDiv: (token: SeasideToken, div: HTMLElement) => {
         const faceChild = document.createElement("div");
@@ -261,7 +270,7 @@ class Seaside extends GameGui<SeasideGamedatas> implements SeasideGame {
     }
 
     setTimeout(() => {
-      Object.values(this.playerScrollmaps).forEach((scrollmap) => scrollmap.zoomToFitAndScrollToCenter("", 0, 0));
+      this.scrollAllPlayerScrollmapsToCenter();
     }, 1000);
   }
 
@@ -291,18 +300,21 @@ class Seaside extends GameGui<SeasideGamedatas> implements SeasideGame {
     if (this.soloPlayerId) {
       this.playerScoreTypeCounters[this.soloPlayerId]["SEA"].incValue(1);
     }
-    this.scrollAllPlayerScrollmapsToCenter();
   }
 
   private scrollAllPlayerScrollmapsToCenter() {
-    Object.values(this.playerScrollmaps).forEach((scrollmap) => scrollmap.zoomToFitAndScrollToCenter());
+    Object.values(this.playerScrollmaps).forEach((scrollmap) => {
+      scrollmap.zoomToFit();
+      const targetZoom = scrollmap.zoom * 0.85;
+      scrollmap.setMapZoom(targetZoom);
+      scrollmap.scrollToCenter("", 0, 0);
+    });
   }
 
   async notif_tokenToPlayerArea(args: TokenToPlayerAreaNotificationData) {
     await this.tokens.moveTokenToPlayerArea(args.token, args.player_id.toString());
     this.playerScoreTypeCounters[args.player_id][args.token.activeType].incValue(1);
     this.scoreCtrl[args.player_id].incValue(1);
-    this.scrollAllPlayerScrollmapsToCenter();
   }
 
   async notif_tokenMovesWithinPlayerArea(args: TokenMovesWithinPlayerAreaNotificationData) {

@@ -484,7 +484,7 @@ $seaside-blue: #2F2F89;
   flex-direction: row;
   gap: 3px;
 
-  :first-child.seaside-token-tooltip-side {
+  :first-child:not(:last-child).seaside-token-tooltip-side {
     border-right: 2px solid black;
     margin-left: 0;
     padding-right: 5px;

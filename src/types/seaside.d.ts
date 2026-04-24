@@ -164,6 +164,7 @@ interface SeasideGame extends GameGui<SeasideGamedatas> {
 
   onUpdateActionButtons(stateName: string, args: any): void;
   updateConfirmDisabled(disabled: boolean): void;
+  buildTokenTooltipHtml(token: SeasideToken, showBothSides?: boolean): string;
   setupNotifications(): void;
   setDrawBagGuage(percentage: number): void;
 }

@@ -20,8 +20,8 @@ class SelectIsopods extends GameState
             id: GAME_STATE_PLAYER_SANDPIPER_SELECT_ISOPODS,
             type: StateType::ACTIVE_PLAYER,
             name: 'selectIsopods',
-            description: clienttranslate('${actplayer} may select isopods from the sea'),
-            descriptionMyTurn: clienttranslate('${you} may select isopods from the sea'),
+            description: clienttranslate('${actplayer} is choosing how many Isopods to take from the Sea'),
+            descriptionMyTurn: clienttranslate('Choose how many Isopods to take from the Sea'),
 
         );
     }
