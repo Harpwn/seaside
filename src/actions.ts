@@ -18,6 +18,8 @@ class SeasideActions {
 
     if (tokenType == "SANDPIPER") {
       this.handlePlaySandpiper(args);
+    } else if (tokenType == "WAVE") {
+      this.handlePlayWave(data);
     } else {
       this.game.bgaPerformAction(SeasideGameActions.PlayToken, data);
     }
@@ -38,6 +40,23 @@ class SeasideActions {
     ) {
       this.game.confirmationDialog(
         _(this.game.gamedatas.sandPiperWarnings["EMPTY_SEA"]),
+        () => {
+          this.game.bgaPerformAction(SeasideGameActions.PlayToken, data);
+        }
+      );
+    } else {
+      this.game.bgaPerformAction(SeasideGameActions.PlayToken, data);
+    }
+  }
+
+  handlePlayWave(data: PlayTokenActionData) {
+    const beaches = this.tokens.playerAreaStocks[this.game.player_id]
+      .getCards()
+      .filter((t) => t.activeType === "BEACH");
+
+    if (beaches.length === 0) {
+      this.game.confirmationDialog(
+        _(this.game.gamedatas.waveWarning),
         () => {
           this.game.bgaPerformAction(SeasideGameActions.PlayToken, data);
         }

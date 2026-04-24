@@ -401,6 +401,8 @@ $this->SANDPIPER_WARNINGS = [
     'LARGER_PILE' => clienttranslate('${newPileSize} tokens is your largest pile, all smaller piles will be discarded losing you ${otherPileTokenCounts} tokens.'),
 ];
 
+$this->WAVE_WARNING = clienttranslate('You have no Beach tokens to flip. Playing the Wave side will have no effect.');
+
 // Standalone token type name declarations for client-side i18n translation of notification args.
 $this->TOKEN_NAMES = [
     ROCK      => clienttranslate('ROCK'),

@@ -19,6 +19,7 @@ interface SeasideGamedatas extends Gamedatas<SeasidePlayer> {
     gameProgression: number;
     soloResultText?: string;
     sandPiperWarnings: Record<'EMPTY_SEA' | 'SMALLER_PILE' | 'LARGER_PILE' | 'NONE_SELECTED_BUT_AVAILABLE', string>;
+    waveWarning: string;
     tokenDescriptions: Record<SeasideTokenType, string>;
 }
 

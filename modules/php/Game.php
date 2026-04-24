@@ -71,6 +71,7 @@ class Game extends \Bga\GameFramework\Table
         }
 
         $result['sandPiperWarnings'] = $this->SANDPIPER_WARNINGS;
+        $result['waveWarning'] = $this->WAVE_WARNING;
         $result['tokenDescriptions'] = $this->TOKEN_DESCRIPTIONS;
 
         return $result;
