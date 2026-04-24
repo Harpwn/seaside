@@ -150,15 +150,17 @@ class TokenManager {
   }
 
   async performEndGameScoring(tokensByPlayer: Record<number, SeasideToken[]>) {
-    for (const playerId of Object.keys(tokensByPlayer)) {
-      const tokens = tokensByPlayer[Number(playerId)];
-      for (const token of tokens) {
-        await this.playerEndGameScoringStocks[playerId].addCard(token, {
-          duration: 100,
-        });
-      }
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-    }
+    await Promise.all(
+      Object.keys(tokensByPlayer).map(async (playerId) => {
+        const tokens = tokensByPlayer[Number(playerId)];
+        for (const token of tokens) {
+          await this.playerEndGameScoringStocks[playerId].addCard(token, {
+            duration: 500,
+          });
+        }
+      })
+    );
+    await new Promise((resolve) => setTimeout(resolve, 2000));
   }
 
   async drawToken(token: SeasideToken) {
