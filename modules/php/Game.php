@@ -18,8 +18,7 @@ class Game extends \Bga\GameFramework\Table
         $this->initGameStateLabels([]);
         $this->addPlayerNameDecorator();
 
-        $this->tokens = $this->getNew("module.common.deck");
-        $this->tokens->init("card");
+        $this->tokens = $this->bga->deckFactory->createDeck("card");
     }
 
     protected function setupNewGame($players, $options = [])
@@ -66,7 +65,7 @@ class Game extends \Bga\GameFramework\Table
         $result['deckRemainingCount'] = $this->tokens->countCardsInLocation(BAG_LOCATION);
         $result['gameProgression'] = $this->getGameProgression();
 
-        if ($this->isSoloGame() && $this->gamestate->state()['name'] == 'gameEnd') {
+        if ($this->isSoloGame() && $this->gamestate->getCurrentMainState()['name'] == 'gameEnd') {
             $result['soloResultText'] = $this->getSoloGameResultText();
         }
 
@@ -356,7 +355,7 @@ class Game extends \Bga\GameFramework\Table
 
     private function dbSetNewScore(int $playerId, int $newScore)
     {
-        $this->DbQuery("UPDATE `player` SET `player_score` = $newScore WHERE `player_id` = $playerId");
+        $this->bga->playerScore->set($playerId, $newScore);
     }
 
     function sendTokenToSea(Token $token)
@@ -491,7 +490,7 @@ class Game extends \Bga\GameFramework\Table
     function debug_playNMoves(int $n = 5): void
     {
         for ($i = 0; $i < $n; $i++) {
-            $state = $this->gamestate->state();
+            $state = $this->gamestate->getCurrentMainState();
             if ($state['type'] !== 'activeplayer') {
                 break;
             }

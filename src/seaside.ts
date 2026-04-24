@@ -315,7 +315,7 @@ class Seaside extends GameGui<SeasideGamedatas> implements SeasideGame {
   async notif_tokenToPlayerArea(args: TokenToPlayerAreaNotificationData) {
     await this.tokens.moveTokenToPlayerArea(args.token, args.player_id.toString());
     this.playerScoreTypeCounters[args.player_id][args.token.activeType].incValue(1);
-    this.scoreCtrl[args.player_id].incValue(1);
+    (this as any).bga.playerPanels.getScoreCounter(args.player_id).incValue(1);
   }
 
   async notif_tokenMovesWithinPlayerArea(args: TokenMovesWithinPlayerAreaNotificationData) {
@@ -326,15 +326,15 @@ class Seaside extends GameGui<SeasideGamedatas> implements SeasideGame {
     await this.tokens.moveTokenToPlayerArea(args.token, args.thiefId.toString());
 
     this.playerScoreTypeCounters[args.player_id][args.token.activeType].incValue(-1);
-    this.scoreCtrl[args.player_id].incValue(-1);
+    (this as any).bga.playerPanels.getScoreCounter(args.player_id).incValue(-1);
 
     this.playerScoreTypeCounters[args.thiefId][args.token.activeType].incValue(1);
-    this.scoreCtrl[args.thiefId].incValue(1);
+    (this as any).bga.playerPanels.getScoreCounter(args.thiefId).incValue(1);
   }
 
   async notif_beachFlip(args: BeachFlipNotificationData) {
     this.playerScoreTypeCounters[args.player_id]["BEACH"].incValue(-1);
-    this.scoreCtrl[args.player_id].incValue(-1);
+    (this as any).bga.playerPanels.getScoreCounter(args.player_id).incValue(-1);
   }
 
   async notif_rockGetsCrabs(args: RockGetsCrabsNotificationData) {
@@ -346,7 +346,7 @@ class Seaside extends GameGui<SeasideGamedatas> implements SeasideGame {
     if (this.soloPlayerId) {
       this.playerScoreTypeCounters[this.soloPlayerId]["SEA"].incValue(-args.tokenCount);
     }
-    this.scoreCtrl[args.player_id].incValue(args.tokenCount);
+    (this as any).bga.playerPanels.getScoreCounter(args.player_id).incValue(args.tokenCount);
   }
 
   async notif_beachGetsShells(args: BeachGetsShellsNotificationData) {
@@ -358,7 +358,7 @@ class Seaside extends GameGui<SeasideGamedatas> implements SeasideGame {
     if (this.soloPlayerId) {
       this.playerScoreTypeCounters[this.soloPlayerId]["SEA"].incValue(-args.tokenCount);
     }
-    this.scoreCtrl[args.player_id].incValue(args.tokenCount);
+    (this as any).bga.playerPanels.getScoreCounter(args.player_id).incValue(args.tokenCount);
   }
 
   async notif_createSandpiperPile(args: CreateSandpiperPileNotificationData) {
@@ -369,7 +369,7 @@ class Seaside extends GameGui<SeasideGamedatas> implements SeasideGame {
         this.playerScoreTypeCounters[this.soloPlayerId]["SEA"].incValue(-1);
       }
     }
-    this.scoreCtrl[args.player_id].incValue(args.tokenCount);
+    (this as any).bga.playerPanels.getScoreCounter(args.player_id).incValue(args.tokenCount);
   }
 
   async notif_sandpiperIsopodsLost(args: SandpiperIsopodsLostNotificationData) {
@@ -377,7 +377,7 @@ class Seaside extends GameGui<SeasideGamedatas> implements SeasideGame {
     for (const token of args.tokens) {
       this.playerScoreTypeCounters[args.player_id][token.activeType].incValue(-1);
     }
-    this.scoreCtrl[args.player_id].incValue(-args.tokenCount);
+    (this as any).bga.playerPanels.getScoreCounter(args.player_id).incValue(-args.tokenCount);
   }
 
   async notif_endGameWaveBonusTie(args: EndGameWaveBonusTieNotificationData) {
@@ -387,7 +387,7 @@ class Seaside extends GameGui<SeasideGamedatas> implements SeasideGame {
       for (const token of tokens) {
         this.playerScoreTypeCounters[playerId][token.activeType].incValue(1);
       }
-      this.scoreCtrl[playerId].incValue(tokens.length);
+      (this as any).bga.playerPanels.getScoreCounter(playerId).incValue(tokens.length);
     }
   }
 
@@ -399,7 +399,7 @@ class Seaside extends GameGui<SeasideGamedatas> implements SeasideGame {
         this.playerScoreTypeCounters[this.soloPlayerId]["SEA"].incValue(-1);
       }
     }
-    this.scoreCtrl[args.player_id].incValue(args.tokenCount);
+    (this as any).bga.playerPanels.getScoreCounter(args.player_id).incValue(args.tokenCount);
   }
 
   async notif_endGameScoring(args: EndGameScoringNotificationData) {
