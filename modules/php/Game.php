@@ -255,6 +255,11 @@ class Game extends \Bga\GameFramework\Table
         });
     }
 
+    public function getDeckRemainingCount(): int
+    {
+        return (int)$this->tokens->countCardsInLocation(BAG_LOCATION);
+    }
+
     public function getEmojiForType(string $type)
     {
         switch ($type) {

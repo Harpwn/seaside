@@ -253,6 +253,7 @@ class Seaside extends GameGui<SeasideGamedatas> implements SeasideGame {
       this.setupEndGameScoring(gamedatas);
     }
 
+    this.updateLastTurnBanner(gamedatas.deckRemainingCount);
     this.setupNotifications();
   }
 
@@ -414,8 +415,20 @@ class Seaside extends GameGui<SeasideGamedatas> implements SeasideGame {
     soloTextElement.style.opacity = "1";
   }
 
-  async notif_tokenDrawn(args: { token: SeasideToken }) {
+  async notif_tokenDrawn(args: { token: SeasideToken; deckRemainingCount: number }) {
     await this.tokens.drawToken(args.token);
+    this.updateLastTurnBanner(args.deckRemainingCount);
+  }
+
+  private updateLastTurnBanner(deckRemainingCount: number) {
+    (this as any).removeLastTurnBanner?.();
+    if (deckRemainingCount === 0) {
+      (this as any).addLastTurnBanner(_('Last Token!'));
+    } else if (deckRemainingCount === 1) {
+      (this as any).addLastTurnBanner(_('1 token left in the bag!'));
+    } else if (deckRemainingCount === 2) {
+      (this as any).addLastTurnBanner(_('2 tokens left in the bag!'));
+    }
   }
 
   setupPlayerOverallBoardStats(gamedatas: SeasideGamedatas, playerId: string) {

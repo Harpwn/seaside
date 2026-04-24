@@ -36,7 +36,8 @@ class DrawToken extends GameState
             "tokenSide1Type" => $token->side1,
             "tokenSide1Emoji" => $this->game->getEmojiForType($token->side1),
             "tokenSide2Type" => $token->side2,
-            "tokenSide2Emoji" => $this->game->getEmojiForType($token->side2)
+            "tokenSide2Emoji" => $this->game->getEmojiForType($token->side2),
+            "deckRemainingCount" => $this->game->getDeckRemainingCount(),
         ]);
     }
 }
